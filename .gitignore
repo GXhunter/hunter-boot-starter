@@ -1,0 +1,35 @@
+*.class
+/classes/
+#package file
+*.war
+*.ear
+*.bak
+out/
+ssm-base.iml
+velocity.log
+velocity.log.1
+.idea
+/idea/
+
+*.ipr
+*.iml
+*.iws
+
+#temp file
+
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+.DS_Store
+Thumbs.db
+/src/main/resources/rebel.xml
+/mp-generator/target/
+/baseweb/target/
+/**/target/
+**/rebel.xml
+/baseweb/.rebel.xml.bak
+/velocity.log.1
+/classes/

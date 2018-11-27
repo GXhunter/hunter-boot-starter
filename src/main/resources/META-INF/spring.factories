@@ -1,0 +1,7 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.github.gxhunter.config.RedisAutoConfig,\
+  com.github.gxhunter.config.RestTemplateAutoConfig,\
+  com.github.gxhunter.entity.RestTemplateInfo,\
+  com.github.gxhunter.exception.ExceptionResolver
+
+
