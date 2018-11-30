@@ -7,8 +7,11 @@
 5. Redis工具类
 6. RestTemplate工具类
 ---
+## 依赖
+1. springboot
+2. mybatis-plus
 
- 1. ##  通用返回类com.github.gxhunter.dto.Result<T>
+##  通用返回类com.github.gxhunter.dto.Result<T>
  * 字段描述
  1. status  状态码
  2. message 返回信息
@@ -42,7 +45,7 @@ static{
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
         //忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-    }
+}
 ```
 * 静态方法
     1. 对象转为Json字符串
@@ -111,8 +114,36 @@ com.github.gxhunter.service.IRedisClient
 
 引入spring-boot-data-redis-starter即可使用
 
-## resttemplate
+## restTemplate
+* 使用okhttp代替默认的httpclient作为底层实现
+* 具体配置
+    在yml中
+    ```
+    ribbon:
+        readTimeout: 读取超时(默认：5000ms)
+        connectTimeout: 连接超时(默认：3000ms)
+        writeTimeout: 写入超时(默认：5000ms)
+    ```    
+## 返回码枚举
+com.github.gxhunter.enums.ResultEnum
+#### 内置
+```$xslt
+    SUCCESS(0,"成功"),
 
+    QUERY_FAILURE(1,"查询不到任何内容"),
+    CREATE_FAILURE(2,"新建失败"),
+    UPDATE_FAILURE(3,"修改失败"),
+    DELETE_FAILURE(4,"删除失败"),
+
+
+    DEFAULT_ERROR(1000,"操作失败"),
+    METHOD_ARGUMENT_VALID_FAIL(1001,"参数校验失败"),
+    UNKNOW_ERROR(1999,"网络超时"),
+```
+#### 扩展
+继承com.baomidou.mybatisplus.extension.api.IErrorCode
+
+## 未完待续...
 
 
 
