@@ -10,7 +10,18 @@
 ## 依赖
 1. springboot
 2. mybatis-plus
-
+## 快速开始
+1. 下载源码  
+`git clone git@github.com:GXhunter/hunter-boot-starter.git`
+2. 安装到本地仓库/部署到私服  
+`mvn clean install`或`mvn clean deploy`
+3. 引入上述两个依赖包  
+4. 引入本项目  
+```$xslt
+    <groupId>com.github.gxhunter</groupId>
+    <artifactId>hunter-spring-boot-starter</artifactId>
+    <version>version</version>
+```
 ##  通用返回类com.github.gxhunter.dto.Result<T>
  * 字段描述
  1. status  状态码
