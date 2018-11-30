@@ -25,7 +25,9 @@ public class JsonUtil{
     }
 
 
-
+    /**
+     * 对象转json
+     */
     public static <T> String toJSON(T obj){
         if(obj == null){
             return null;
@@ -38,6 +40,9 @@ public class JsonUtil{
         }
     }
 
+    /**
+     * 对象转json数组
+     */
     public static <T> String toJSONPretty(T obj){
         if(obj == null){
             return null;
@@ -50,6 +55,13 @@ public class JsonUtil{
         }
     }
 
+    /**
+     * JSON转为java对象
+     * @param str   json字符串
+     * @param clazz java对象类型
+     * @param <T>   java对象类型
+     * @return
+     */
     public static <T> T parse(String str,Class<T> clazz){
         if(StringUtils.isEmpty(str) || clazz == null){
             return null;
