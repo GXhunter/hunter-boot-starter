@@ -24,10 +24,16 @@
 ```
 ##  通用返回类com.github.gxhunter.dto.Result<T>
  * 字段描述
- 1. status  状态码
- 2. message 返回信息
- 3. data    携带数据
- * 方法描述
+
+
+字段|返回值|描述  
+ :--|:--:|--:  
+ status |int|状态码
+ message|string|返回信息
+ data   |T     |携带数据
+ success|boolean|是否成功
+
+ * 静态方法
  1. success(T data)
  成功并返回数据
  2. success()
@@ -41,7 +47,7 @@
  失败，携带数据和提示信息和code
  6. failed(T data,String message)
  失败，并携带数据和提示信息
- 7.failed()
+ 7. failed()
  失败，不携带信息
  
  ##  Jackson工具类 com.github.gxhunter.util.JsonUtil
