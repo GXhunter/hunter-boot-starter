@@ -9,13 +9,13 @@
 ---
 ## 依赖
 1. springboot
-2. mybatis-plus
+~~2. mybatis-plus~~
 ## 快速开始
 1. 下载源码  
 `git clone git@github.com:GXhunter/hunter-boot-starter.git`
 2. 安装到本地仓库/部署到私服  
 `mvn clean install`或`mvn clean deploy`
-3. 引入上述两个依赖包  
+3. 引入上述依赖包  
 4. 引入本项目  
 ```$xslt
     <groupId>com.github.gxhunter</groupId>
@@ -152,7 +152,7 @@ com.github.gxhunter.enums.ResultEnum
     UNKNOW_ERROR(1999,"网络超时"),
 ```
 #### 扩展
-继承com.baomidou.mybatisplus.extension.api.IErrorCode
+继承com.github.gxhunter.enums.IErrorCode
 
 ## 未完待续...
 

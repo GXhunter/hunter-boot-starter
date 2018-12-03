@@ -1,6 +1,5 @@
 package com.github.gxhunter.enums;
 
-import com.baomidou.mybatisplus.extension.api.IErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

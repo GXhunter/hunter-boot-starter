@@ -1,6 +1,5 @@
 package com.github.gxhunter.exception;
 
-import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.github.gxhunter.dto.Result;
 import com.github.gxhunter.enums.ResultEnum;
 import lombok.extern.slf4j.Slf4j;

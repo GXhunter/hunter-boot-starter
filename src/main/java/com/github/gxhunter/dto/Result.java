@@ -1,7 +1,7 @@
 package com.github.gxhunter.dto;
 
-import com.baomidou.mybatisplus.extension.api.IErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.github.gxhunter.enums.IErrorCode;
 import com.github.gxhunter.enums.ResultEnum;
 import lombok.Data;
 
