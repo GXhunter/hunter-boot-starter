@@ -8,6 +8,7 @@
 6. RestTemplate工具类
 7. 线程池自动装配
 8. swagger 自动装配
+9. DefaultWebMVC注解
 ---
 ## 依赖
 springboot-starter
@@ -29,7 +30,7 @@ springboot-starter
     <artifactId>hunter-spring-boot-starter</artifactId>
     <version>version</version>
 ```
-##  通用返回类com.github.gxhunter.dto.Result<T>
+##  通用返回类com.github.gxhunter.vo.Result<T>
  * 字段描述
 
 
@@ -211,7 +212,22 @@ com.github.gxhunter.enums.ResultEnum
 #### 扩展
 继承com.github.gxhunter.enums.IErrorCode
 
-## 未完待续...
+## @DefaultWebMVC
+* 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
+* 使用方法：再启动类加上 @DefaultWebMVC注解
+ 1. json与java互转格式
+    java对象|json对象
+    :--|:--:
+    Date|yyyy-MM-dd HH:mm:ss
+    LocalDateTime|yyyy-MM-dd HH:mm:ss
+    LocalDate|yyyy-MM-dd
+    LocalTime|HH:mm:ss
+    Long|string
+    null|不序列化
+    > 配置时区为GMT+8
+ 2. 不拦截swagger相关url
+    
+## 待续...
 
 
 

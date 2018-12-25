@@ -1,6 +1,6 @@
 package com.github.gxhunter.exception;
 
-import com.github.gxhunter.dto.Result;
+import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.ResultEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

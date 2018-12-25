@@ -1,6 +1,6 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.dto.Result;
+import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

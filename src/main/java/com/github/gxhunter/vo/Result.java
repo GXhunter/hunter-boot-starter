@@ -1,4 +1,4 @@
-package com.github.gxhunter.dto;
+package com.github.gxhunter.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.gxhunter.enums.IResponseCode;

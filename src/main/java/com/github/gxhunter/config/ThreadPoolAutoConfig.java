@@ -2,11 +2,8 @@ package com.github.gxhunter.config;
 
 import com.github.gxhunter.entity.ThreadPoolInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import lombok.Data;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
