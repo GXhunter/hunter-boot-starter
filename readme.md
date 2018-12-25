@@ -216,6 +216,7 @@ com.github.gxhunter.enums.ResultEnum
 * 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
 * 使用方法：再启动类加上 @DefaultWebMVC注解
  1. json与java互转格式
+ 
     java对象|json对象
     :--|:--:
     Date|yyyy-MM-dd HH:mm:ss
