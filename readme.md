@@ -136,11 +136,19 @@ com.github.gxhunter.service.IRedisClient
 * 具体配置
     在yml中
     ```
-    redis:
+    rest:
         readTimeout: 读取超时(默认：5000ms)
         connectTimeout: 连接超时(默认：3000ms)
         writeTimeout: 写入超时(默认：5000ms)
     ```    
+## 线程池
+可选在yml中配置
+```$xslt
+thread-pool:
+  core-pool-size: 默认20 池中所保存的线程数，包括空闲线程。
+  maximum-pool-size: 默认100 池中允许的最大线程数。
+  keep-alive-time: 默认30 当线程数大于核心时，此为终止前多余的空闲线 程等待新任务的最长时间。
+```
 ## 返回码枚举
 com.github.gxhunter.enums.ResultEnum
 #### 内置
