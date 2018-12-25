@@ -21,17 +21,17 @@ public class SftpTools implements AutoCloseable{
     /**
      * 对外可访问 ChannelSftp对象提供的所有底层方法
      */
-    public ChannelSftp chnSftp;
-    /**配置的远程目录地址*/
+    private ChannelSftp chnSftp;
+    /*配置的远程目录地址*/
 
 
     /**
      * 连接SFTP
      *
-     * @param host
-     * @param port
-     * @param username
-     * @param password
+     * @param host     主机
+     * @param port     端口
+     * @param username 用户名
+     * @param password 密码
      * @throws JSchException
      * @throws SftpException
      * @author inber
@@ -307,10 +307,10 @@ public class SftpTools implements AutoCloseable{
      */
     @Override
     public void close(){
-        if(channel.isConnected()){
+        if(channel != null && channel.isConnected()){
             channel.disconnect();
         }
-        if(session.isConnected()){
+        if(session != null && session.isConnected()){
             session.disconnect();
         }
     }
