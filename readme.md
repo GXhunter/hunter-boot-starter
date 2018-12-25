@@ -224,7 +224,7 @@ com.github.gxhunter.enums.ResultEnum
     LocalTime|HH:mm:ss
     Long|string
     null|不序列化
-    > 配置时区为GMT+8
+> 配置时区为GMT+8
  2. 不拦截swagger相关url
     
 ## 待续...
