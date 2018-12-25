@@ -136,7 +136,7 @@ com.github.gxhunter.service.IRedisClient
 * 具体配置
     在yml中
     ```
-    ribbon:
+    redis:
         readTimeout: 读取超时(默认：5000ms)
         connectTimeout: 连接超时(默认：3000ms)
         writeTimeout: 写入超时(默认：5000ms)

@@ -7,7 +7,12 @@ import java.lang.reflect.Field;
  * @date 2018.11.27
  */
 public class ReflectUtil{
-
+    /**
+     * @param obj  对象
+     * @param name 字段
+     * @return     该对象属性值
+     * @throws IllegalArgumentException
+     */
     public static Object getValueByFieldName(Object obj,String name) throws IllegalArgumentException{
         Class<?> clazz = obj.getClass();
 

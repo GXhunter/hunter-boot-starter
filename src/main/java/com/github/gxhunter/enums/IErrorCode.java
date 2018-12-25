@@ -21,7 +21,7 @@ package com.github.gxhunter.enums;
 public interface IErrorCode{
 
     /**
-     * 错误编码 -1、失败 0、成功
+     * 错误编码
      */
     long getCode();
 

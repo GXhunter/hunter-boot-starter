@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author 树荫下的天空
  * @date 2018/11/27 16:52
  */
-@ConfigurationProperties(prefix = "ribbon")
+@ConfigurationProperties(prefix = "rest")
 @Data
 @AutoConfigureAfter(HttpMessageConvertersAutoConfiguration.class)
 public class RestTemplateInfo{
