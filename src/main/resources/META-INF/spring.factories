@@ -4,6 +4,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.github.gxhunter.entity.RestTemplateInfo,\
   com.github.gxhunter.exception.ExceptionResolver,\
   com.github.gxhunter.entity.ThreadPoolInfo,\
-  com.github.gxhunter.config.ThreadPoolAutoConfig
+  com.github.gxhunter.config.ThreadPoolAutoConfig,\
+  com.github.gxhunter.config.SwaggerAutoConfiguration
 
 

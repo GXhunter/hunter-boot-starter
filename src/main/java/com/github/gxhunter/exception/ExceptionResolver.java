@@ -36,7 +36,7 @@ public class ExceptionResolver{
      * @return
      */
     @ExceptionHandler(ApiException.class)
-    public Result handServerException(ApiException exception){
+    public Object handServerException(ApiException exception){
         if(exception.getErrorCode() != null){
             return Result.failed(exception.getErrorCode());
         }else{
@@ -51,7 +51,7 @@ public class ExceptionResolver{
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Result resolveMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+    public Object resolveMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
         HashMap<String, String> resultMap = new HashMap<>();
         if(!CollectionUtils.isEmpty(objectErrors)){
@@ -72,7 +72,7 @@ public class ExceptionResolver{
      * @return
      */
     @ExceptionHandler(Exception.class)
-    public Result exceptionHandle(Exception e){
+    public Object exceptionHandle(Exception e){
         log.error("出现异常:",e);
         return Result.failed(ResultEnum.UNKNOW_ERROR);
     }

@@ -1,10 +1,7 @@
 package com.github.gxhunter.entity;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import springfox.documentation.service.Contact;
-
 import java.util.ArrayList;
 import java.util.List;
 

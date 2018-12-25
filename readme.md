@@ -175,8 +175,8 @@ private ThreadPoolExecutor mPoolExecutor;
     <version>2.9.2</version>
 </dependency>
 ```
-2. 在启动类上添加注解 `@EnableApiDoc`
-3. 在yml中做相关配置,如
+> 建议结合swagger-bootstart-ui使用
+2. 在yml中做相关配置,如
 ```$xslt
 swagger:
   base-package: 扫描路径
@@ -186,7 +186,7 @@ swagger:
   title: 标题
   license-url: 授权协议url
   host: 127.0.0.1
-  enabled: 是否开启，可省略 默认为true，false时关闭swagger
+  enabled: 是否开启，默认为false 关闭
   contact:
     email: 开发者邮箱
     name: 开发者名称
