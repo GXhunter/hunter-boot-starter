@@ -10,14 +10,19 @@
 8. swagger 自动装配
 ---
 ## 依赖
-1. springboot
-~~2. mybatis-plus~~
+springboot-starter
 ## 快速开始
 1. 下载源码  
 `git clone git@github.com:GXhunter/hunter-boot-starter.git`
 2. 安装到本地仓库/部署到私服  
 `mvn clean install`或`mvn clean deploy`
 3. 引入上述依赖包  
+```$xslt
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+</dependency>
+```
 4. 引入本项目  
 ```$xslt
     <groupId>com.github.gxhunter</groupId>
