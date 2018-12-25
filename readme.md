@@ -6,6 +6,8 @@
 4. StringUtil工具
 5. Redis工具类
 6. RestTemplate工具类
+7. 线程池自动装配
+8. swagger 自动装配
 ---
 ## 依赖
 1. springboot
