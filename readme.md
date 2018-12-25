@@ -142,12 +142,48 @@ com.github.gxhunter.service.IRedisClient
         writeTimeout: 写入超时(默认：5000ms)
     ```    
 ## 线程池
-可选在yml中配置
+在yml中配置（可选）
 ```$xslt
 thread-pool:
   core-pool-size: 默认20 池中所保存的线程数，包括空闲线程。
   maximum-pool-size: 默认100 池中允许的最大线程数。
   keep-alive-time: 默认30 当线程数大于核心时，此为终止前多余的空闲线 程等待新任务的最长时间。
+```
+使用
+```$xslt
+@Autowired
+private ThreadPoolExecutor mPoolExecutor;
+```
+## swagger 支持
+1. 在pom中引入相关依赖，如
+```$xslt
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger-ui</artifactId>
+    <version>2.9.2</version>
+</dependency>
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.9.2</version>
+</dependency>
+```
+2. 在启动类上添加注解 `@EnableApiDoc`
+3. 在yml中做相关配置,如
+```$xslt
+swagger:
+  base-package: 扫描路径
+  version: 版本
+  description: 详细信息
+  license: 授权协议
+  title: 标题
+  license-url: 授权协议url
+  host: 127.0.0.1
+  enabled: 是否开启，可省略 默认为true，false时关闭swagger
+  contact:
+    email: 开发者邮箱
+    name: 开发者名称
+    url: 开发者url
 ```
 ## 返回码枚举
 com.github.gxhunter.enums.ResultEnum

@@ -1,7 +1,7 @@
 package com.github.gxhunter.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.gxhunter.enums.IErrorCode;
+import com.github.gxhunter.enums.IResponseCode;
 import com.github.gxhunter.enums.ResultEnum;
 import lombok.Data;
 
@@ -96,7 +96,7 @@ public class Result<T>{
      * @param <T>       数据类型
      * @return
      */
-    public static <T> Result<T> failed(T data,IErrorCode errorCode){
+    public static <T> Result<T> failed(T data,IResponseCode errorCode){
         return new Result<T>(data,errorCode.getMsg(),errorCode.getCode());
     }
 
@@ -115,7 +115,7 @@ public class Result<T>{
         return failed((String) null);
     }
 
-    public static <T> Result<T> failed(IErrorCode resultEnum){
+    public static <T> Result<T> failed(IResponseCode resultEnum){
         return new Result<T>(null,resultEnum.getMsg(),resultEnum.getCode());
     }
 

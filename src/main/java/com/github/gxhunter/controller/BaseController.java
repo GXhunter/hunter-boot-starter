@@ -1,7 +1,7 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.dto.Result;
-import com.github.gxhunter.enums.IErrorCode;
+import com.github.gxhunter.enums.IResponseCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ public abstract class BaseController{
     /**
      * 返回成功，并携带数据
      *
-     * @param entity
+     * @param entity 携带数据
      * @return
      */
     protected <T> Result<T> success(T entity){
@@ -61,7 +61,9 @@ public abstract class BaseController{
      * @param errorCode
      * @return
      */
-    protected Result faild(IErrorCode errorCode){
+    protected Result faild(IResponseCode errorCode){
         return Result.failed(errorCode);
     }
+
+
 }

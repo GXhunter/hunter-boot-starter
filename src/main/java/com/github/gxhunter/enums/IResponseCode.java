@@ -16,12 +16,11 @@
 package com.github.gxhunter.enums;
 
 /**
- * REST API 错误码接口
+ * @author hunter
  */
-public interface IErrorCode{
-
+public interface IResponseCode{
     /**
-     * 错误编码
+     * 返回码
      */
     long getCode();
 

@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum ResultEnum implements IErrorCode{
+public enum ResultEnum implements IResponseCode{
     SUCCESS(0,"成功"),
 
     QUERY_FAILURE(1,"查询不到任何内容"),
