@@ -67,7 +67,6 @@ public class SftpTools implements AutoCloseable{
      * 得到当前用户当前工作目录地址
      *
      * @return 返回当前工作目录地址
-     * @throws SftpException
      * @author inber
      * @since 2012.02.09
      */
@@ -79,9 +78,8 @@ public class SftpTools implements AutoCloseable{
     /**
      * 判断目录是否存在
      *
-     * @param directory
-     * @return
-     * @throws SftpException
+     * @param directory 目录或文件
+     * @return 是否存在
      * @author inber
      * @since 2012.02.09
      */
@@ -102,8 +100,8 @@ public class SftpTools implements AutoCloseable{
     /**
      * 下载文件后返回流文件
      *
-     * @param sftpFilePath
-     * @return
+     * @param sftpFilePath 文件路径
+     * @return 文件流
      * @throws SftpException
      * @author inber
      * @since 2012.02.09
@@ -118,8 +116,8 @@ public class SftpTools implements AutoCloseable{
     /**
      * 获取远程文件流
      *
-     * @param sftpFilePath
-     * @return
+     * @param sftpFilePath 文件路径
+     * @return  文件流
      * @throws SftpException
      * @author inber
      * @since 2012.02.09
@@ -131,10 +129,8 @@ public class SftpTools implements AutoCloseable{
     /**
      * 获取远程文件字节流
      *
-     * @param sftpFilePath
-     * @return
-     * @throws SftpException
-     * @throws IOException
+     * @param sftpFilePath 文件路径
+     * @return 文件字节流
      */
     public ByteArrayInputStream getByteArrayInputStreamFile(String sftpFilePath) throws SftpException, IOException{
         if(isFileExist(sftpFilePath)){
@@ -148,9 +144,7 @@ public class SftpTools implements AutoCloseable{
      * 删除远程
      * 说明:返回信息定义以:分隔第一个为代码，第二个为返回信息
      *
-     * @param sftpFilePath
-     * @return
-     * @throws SftpException
+     * @param sftpFilePath 文件路径
      */
     public String delFile(String sftpFilePath) throws SftpException{
         String retInfo = "";
