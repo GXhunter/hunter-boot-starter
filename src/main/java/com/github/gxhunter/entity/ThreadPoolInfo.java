@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @date 2018/12/25 14:24
  */
 @Data
-@ConfigurationProperties(prefix = "thread-pool")
+@ConfigurationProperties(prefix = "hunter.spring.thread-pool")
 public class ThreadPoolInfo{
     /**
      * 池中所保存的线程数，包括空闲线程。

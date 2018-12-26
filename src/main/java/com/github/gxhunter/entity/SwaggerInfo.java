@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ConfigurationProperties("swagger")
+@ConfigurationProperties("hunter.spring.swagger")
 public class SwaggerInfo {
 
     /**

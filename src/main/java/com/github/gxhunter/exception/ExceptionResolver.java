@@ -5,6 +5,7 @@ import com.github.gxhunter.enums.ResultEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
@@ -18,7 +19,6 @@ import java.util.List;
 
 /**
  * 全局异常处理器
- * 继承此类覆盖方法
  *
  * @author hunter
  * @date 2017/11/30  18:33
@@ -28,6 +28,7 @@ import java.util.List;
 @ConditionalOnClass(RestControllerAdvice.class)
 @ConditionalOnMissingBean(ExceptionResolver.class)
 @ConditionalOnWebApplication
+@ConditionalOnProperty(name = "hunter.spring.exceptionResolver",matchIfMissing = true)
 public class ExceptionResolver{
     /**
      * 手动抛出的异常，不指定错误码时为“操作失败”

@@ -24,7 +24,7 @@ import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfi
         SwaggerInfo.class,
         Swagger2DocumentationConfiguration.class
 })
-@ConditionalOnProperty(name = "swagger.enabled")
+@ConditionalOnProperty(name = "hunter.spring.swagger.enabled")
 @ConditionalOnClass(EnableSwagger2.class)
 public class SwaggerAutoConfiguration implements BeanFactoryAware{
     private BeanFactory beanFactory;

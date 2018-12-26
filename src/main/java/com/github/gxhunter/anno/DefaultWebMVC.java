@@ -1,6 +1,7 @@
 package com.github.gxhunter.anno;
 
 import com.github.gxhunter.config.DefaultWebConfig;
+import com.github.gxhunter.exception.ExceptionResolver;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -11,11 +12,13 @@ import java.lang.annotation.*;
  * 开启web默认配置
  * bean返回给前端long转string
  * 日期使用yyyy-MM-dd HH:mm:ss
+ * 启用默认异常处理器
  * 注：使用此注解后，在yml配置Jackson信息无效
  *
  */
 @Import({
-        DefaultWebConfig.class
+        DefaultWebConfig.class,
+        ExceptionResolver.class
 })
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

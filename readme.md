@@ -59,21 +59,17 @@
  success|boolean|是否成功
 
  * 静态方法
- 1. success(T data)
- 成功并返回数据
- 2. success()
- 成功不携带数据
- 3. successMsg(String msg)
- 成功并返回信息
- 
- 4. failed(String str)
- 失败，并提示信息，code使用默认
- 5. failed(T data,IErrorCode code)
- 失败，携带数据和提示信息和code
- 6. failed(T data,String message)
- 失败，并携带数据和提示信息
- 7. failed()
- 失败，不携带信息
+
+ 方法名称|描述
+--|--
+success(T data)|成功并返回数据
+success()| 成功不携带数据
+successMsg(String msg)|成功并返回信息
+failed(String str)|失败，并提示信息，code使用默认
+failed(T data,IErrorCode code)|失败，携带数据和提示信息和code
+failed(T data,String message)|失败，并携带数据和提示信息
+failed()|失败，不携带信息
+---
  
  ##  Jackson工具类 com.github.gxhunter.util.JsonUtil
  * **描述**  
@@ -122,11 +118,131 @@ static{
     public static <T> T parse(String str,Class<T> clazz)
     ```
     
+
+## Redis工具类
+com.github.gxhunter.service.IRedisClient
+基于Resttemplate做的二次封装
+
+引入spring-boot-data-redis-starter即可使用
+
+## restTemplate
+* 使用okhttp代替默认的httpclient作为底层实现
+* 具体配置
+    在yml中
+    ```
+    hunter:
+        spring:    
+            rest:
+                readTimeout: 读取超时(默认：5000ms)
+                connectTimeout: 连接超时(默认：3000ms)
+                writeTimeout: 写入超时(默认：5000ms)
+    ```    
+## 线程池
+在yml中配置（可选）
+```$xslt
+hunter:
+    spring: 
+        thread-pool:
+        core-pool-size: 默认20 池中所保存的线程数，包括空闲线程。
+        maximum-pool-size: 默认100 池中允许的最大线程数。
+        keep-alive-time: 默认30 当线程数大于核心时，此为终止前多余的空闲线 程等待新任务的最长时间。
+```
+使用
+```$xslt
+@Autowired
+private ThreadPoolExecutor mPoolExecutor;
+```
+## swagger 支持
+* 描述  
+开发中，我们一般需要swagger来自动生成restapi文档，省去了在postman填写各类参数和url的麻烦，而swagger2官方目前并没有提供自动化装配starter，为了使用swagger2，你不得不编写bean和configuration，为了解决这个繁琐的问题本starter提供了swagger2的自动化装配。
+1. 在pom中引入相关依赖，如
+```$xslt
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger-ui</artifactId>
+    <version>2.9.2</version>
+</dependency>
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.9.2</version>
+</dependency>
+```
+> 建议结合swagger-bootstart-ui使用
+2. 在yml中做相关配置,如
+```$xslt
+hunter:
+    spring:
+        swagger:
+        base-package: 扫描路径
+        version: 版本
+        description: 详细信息
+        license: 授权协议
+        title: 标题
+        license-url: 授权协议url
+        host: 127.0.0.1
+        enabled: 是否开启，默认为false 关闭
+        contact:
+            email: 开发者邮箱
+            name: 开发者名称
+            url: 开发者url
+```
+## 返回码枚举
+com.github.gxhunter.enums.ResultEnum
+### 内置返回码对照表
+遵循COC原则，内置了几个返回码枚举，你也可以实现`IResponseCode.java`自定义扩展
+内置的返回码枚举在`com.github.gxhunter.enums.ResultEnum`
+返回码|描述
+--|--
+0 |成功
+1 |查询不到任何内容
+2 |新建失败
+3 |修改失败
+4 |删除失败
+1000|操作失败（一般是抛出服务端手段throw ApiException）
+1001|参数校验失败
+1999|网络超时（上述之外的其他异常）
+#### 修改默认返回码
+如果你不想使用默认的返回码，那么可以在你的resource目录下新建一个**response-code.properties**文件，配置如下
+```
+SUCCESS=成功时返回码
+QUERY_FAILURE=查询失败返回码
+CREATE_FAILURE=创建失败返回码
+UPDATE_FAILURE=修改失败返回码
+DELETE_FAILURE=删除失败返回码
+DEFAULT_ERROR=默认错误返回码
+METHOD_ARGUMENT_VALID_FAIL=方法校验失败返回码
+UNKNOW_ERROR=其他错误返回码
+```
+> * 注意：如果你的项目下包含了**response-code.properties**文件，那么上述所有字段都必须配置，不能只配置其中几个！
+#### 扩展
+默认提供的ResultEnum只是最基础的几个情况，可能无法满足覆盖业务需求，你可以编写一个枚举继承com.github.gxhunter.enums.IResponseCode实现扩展。
+
+## @DefaultWebMVC
+* 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
+* 使用方法：再启动类加上 @DefaultWebMVC注解
+ 1. json与java互转格式
+ 
+    java对象|json对象
+    :--|:--:
+    Date|yyyy-MM-dd HH:mm:ss
+    LocalDateTime|yyyy-MM-dd HH:mm:ss
+    LocalDate|yyyy-MM-dd
+    LocalTime|HH:mm:ss
+    Long|string
+    null|不序列化
+> 配置时区为GMT+8
+ 2. 不拦截swagger相关url
+ 3. 添加此注解后开启了默认异常处理，捕获服务端的异常，分类返回给前端，具体看下一节
 ## 全局异常处理器 com.github.gxhunter.exception    
 * **描述**  
     在企业项目中，后端的错误不能把具体异常抛给前端，需要做异常捕获、分类等。并且根据异常类型返回不同的错误码（通用返回类Result中的status），
     这里默认捕获了所有异常，并对常见的几个异常做分类，使之返回不同的status。
+* **启用方法**  
+     在启动类加上@DefaultWebMVC注解即可
+        
 * 分类捕获的异常
+
     1. **ApiException** 
     自定义的异常，由后端手动抛出，再被异常处理器捕获，把具体信息[code]返回给前端，比如你在java中这样写  
     `throw new ApiException("服务端抛出异常");`  
@@ -161,110 +277,19 @@ static{
           "success": false
         }
     ```
-* 自定义异常处理器
+* **关闭异常处理器**
     
-    不想使用内置的异常处理器，或者内置的异常处理器不能满足你的业务需求，只需继承
-    com.github.gxhunter.exception.ExceptionResolver
-    重写对应的方法即可
-* 关于 status  
-在上面的常见status是内置的，**具体看下文的ResultEnum介绍**，你也可以实现IResponseCode扩展    
-## Redis工具类
-com.github.gxhunter.service.IRedisClient
-基于Resttemplate做的二次封装
-
-引入spring-boot-data-redis-starter即可使用
-
-## restTemplate
-* 使用okhttp代替默认的httpclient作为底层实现
-* 具体配置
-    在yml中
+    不想使用内置的异常处理器，或者内置的异常处理器不能满足你的业务需求，
+    两种可选方式可以关闭默认的异常处理器， **任选**其一
+    1. 在yml中配置
     ```
-    rest:
-        readTimeout: 读取超时(默认：5000ms)
-        connectTimeout: 连接超时(默认：3000ms)
-        writeTimeout: 写入超时(默认：5000ms)
-    ```    
-## 线程池
-在yml中配置（可选）
-```$xslt
-thread-pool:
-  core-pool-size: 默认20 池中所保存的线程数，包括空闲线程。
-  maximum-pool-size: 默认100 池中允许的最大线程数。
-  keep-alive-time: 默认30 当线程数大于核心时，此为终止前多余的空闲线 程等待新任务的最长时间。
-```
-使用
-```$xslt
-@Autowired
-private ThreadPoolExecutor mPoolExecutor;
-```
-## swagger 支持
-* 描述  
-开发中，我们一般需要swagger来自动生成restapi文档，省去了在postman填写各类参数和url的麻烦，而swagger2官方目前并没有提供自动化装配starter，为了使用swagger2，你不得不编写bean和configuration，为了解决这个繁琐的问题本starter提供了swagger2的自动化装配。
-1. 在pom中引入相关依赖，如
-```$xslt
-<dependency>
-    <groupId>io.springfox</groupId>
-    <artifactId>springfox-swagger-ui</artifactId>
-    <version>2.9.2</version>
-</dependency>
-<dependency>
-    <groupId>io.springfox</groupId>
-    <artifactId>springfox-swagger2</artifactId>
-    <version>2.9.2</version>
-</dependency>
-```
-> 建议结合swagger-bootstart-ui使用
-2. 在yml中做相关配置,如
-```$xslt
-swagger:
-  base-package: 扫描路径
-  version: 版本
-  description: 详细信息
-  license: 授权协议
-  title: 标题
-  license-url: 授权协议url
-  host: 127.0.0.1
-  enabled: 是否开启，默认为false 关闭
-  contact:
-    email: 开发者邮箱
-    name: 开发者名称
-    url: 开发者url
-```
-## 返回码枚举
-com.github.gxhunter.enums.ResultEnum
-#### 内置
-```$xslt
-    SUCCESS(0,"成功"),
-
-    QUERY_FAILURE(1,"查询不到任何内容"),
-    CREATE_FAILURE(2,"新建失败"),
-    UPDATE_FAILURE(3,"修改失败"),
-    DELETE_FAILURE(4,"删除失败"),
-
-
-    DEFAULT_ERROR(1000,"操作失败"),
-    METHOD_ARGUMENT_VALID_FAIL(1001,"参数校验失败"),
-    UNKNOW_ERROR(1999,"网络超时"),
-```
-#### 扩展
-默认提供的ResultEnum只是最基础的几个情况，可能无法满足覆盖业务需求，你可以编写一个枚举继承com.github.gxhunter.enums.IResponseCode实现扩展。
-
-## @DefaultWebMVC
-* 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
-* 使用方法：再启动类加上 @DefaultWebMVC注解
- 1. json与java互转格式
- 
-    java对象|json对象
-    :--|:--:
-    Date|yyyy-MM-dd HH:mm:ss
-    LocalDateTime|yyyy-MM-dd HH:mm:ss
-    LocalDate|yyyy-MM-dd
-    LocalTime|HH:mm:ss
-    Long|string
-    null|不序列化
-> 配置时区为GMT+8
- 2. 不拦截swagger相关url
-    
+    hunter:
+        spring:
+        #      是否开启内置异常处理器
+            exceptionResolver: true
+    ```
+    2. 去除@DefaultWebMVC注解
+     
 ## 待续...
 
 
