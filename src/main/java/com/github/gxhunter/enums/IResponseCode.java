@@ -21,11 +21,13 @@ package com.github.gxhunter.enums;
 public interface IResponseCode{
     /**
      * 返回码
+     * @return
      */
     long getCode();
 
     /**
      * 错误描述
+     * @return
      */
     String getMsg();
 }

@@ -24,6 +24,7 @@ import lombok.Getter;
  * REST API 请求异常类
  * </p>
  */
+@SuppressWarnings("all")
 public class ApiException extends RuntimeException {
 
     /**

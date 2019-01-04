@@ -2,6 +2,7 @@ package com.github.gxhunter.exception;
 
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.ResultEnum;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,7 +55,7 @@ public class ExceptionResolver{
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object resolveMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
-        HashMap<String, String> resultMap = new HashMap<>();
+        HashMap<String, String> resultMap = Maps.newHashMap();
         if(!CollectionUtils.isEmpty(objectErrors)){
             for(ObjectError objectError : objectErrors){
                 String field = ((FieldError) objectError).getField();

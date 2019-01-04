@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  * @author 树荫下的天空
  * @date 2018/12/25 16:43
  */
+@SuppressWarnings("all")
 public abstract class Assert{
 
     public static void state(boolean expression,String message){

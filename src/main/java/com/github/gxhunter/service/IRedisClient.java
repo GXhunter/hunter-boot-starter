@@ -77,6 +77,7 @@ public interface IRedisClient<K,V>{
      * 递增
      *
      * @param key 键
+     * @param delta
      * @return
      */
     long incr(String key,long delta);
@@ -85,6 +86,7 @@ public interface IRedisClient<K,V>{
      * 递减
      *
      * @param key 键
+     * @param delta
      * @return
      */
     long decr(String key,long delta);

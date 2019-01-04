@@ -238,7 +238,7 @@ public class SftpTools implements AutoCloseable{
         if(this.isDirExist(sftpDirPath)){
             return "0:dir is exist !";
         }
-        String pathArry[] = sftpDirPath.split("/");
+        String[] pathArry = sftpDirPath.split("/");
         for(String path : pathArry){
             if("".equals(path)){
                 continue;

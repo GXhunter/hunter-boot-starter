@@ -19,6 +19,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration;
 
 
+/**
+ * @author hunter
+ */
 @Configuration
 @Import({
         SwaggerInfo.class,
