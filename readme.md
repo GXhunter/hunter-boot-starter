@@ -8,12 +8,13 @@
 6. RestTemplate工具类
 7. 线程池自动装配
 8. swagger 自动装配
-9. DefaultWebMVC注解
+9. DefaultWebMVC注解自动装配web项目
 ---
 # 依赖
 1. 所需依赖：springboot-starter、springboot-starter-web
 2. 包含依赖：
-
+    > 项目已经包含了这些依赖，无需重复引入。
+    
     依赖|描述
     --|--
     commons-lang3|apache工具
@@ -41,7 +42,7 @@
 ```$xslt
     <groupId>com.github.gxhunter</groupId>
     <artifactId>hunter-spring-boot-starter</artifactId>
-    <version>仓库最新版本</version>
+    <version>0.6</version>
 ```
 # 功能描述
 > 介绍本starter提供的一些通用工具、自动化装配方案等。
@@ -158,9 +159,9 @@ private ThreadPoolExecutor mPoolExecutor;
 1. 在pom中引入相关依赖，如
 ```$xslt
 <dependency>
-    <groupId>io.springfox</groupId>
-    <artifactId>springfox-swagger-ui</artifactId>
-    <version>2.9.2</version>
+    <groupId>com.github.xiaoymin</groupId>
+    <artifactId>swagger-bootstrap-ui</artifactId>
+    <version>1.8.6</version>
 </dependency>
 <dependency>
     <groupId>io.springfox</groupId>
@@ -196,10 +197,6 @@ com.github.gxhunter.enums.ResultEnum
 返回码|描述
 --|--
 0 |成功
-1 |查询不到任何内容
-2 |新建失败
-3 |修改失败
-4 |删除失败
 1000|操作失败（一般是抛出服务端手段throw ApiException）
 1001|参数校验失败
 1999|网络超时（上述之外的其他异常）
@@ -207,10 +204,6 @@ com.github.gxhunter.enums.ResultEnum
 如果你不想使用默认的返回码，那么可以在你的resource目录下新建一个**response-code.properties**文件，配置如下
 ```
 SUCCESS=成功时返回码
-QUERY_FAILURE=查询失败返回码
-CREATE_FAILURE=创建失败返回码
-UPDATE_FAILURE=修改失败返回码
-DELETE_FAILURE=删除失败返回码
 DEFAULT_ERROR=默认错误返回码
 METHOD_ARGUMENT_VALID_FAIL=方法校验失败返回码
 UNKNOW_ERROR=其他错误返回码

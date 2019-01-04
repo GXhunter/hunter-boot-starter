@@ -38,14 +38,13 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware{
                 .contact(swaggerInfo.getContact().toContact())
                 .licenseUrl(swaggerInfo.getLicenseUrl())
                 .build();
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(swaggerInfo.getBasePackage()))
                 // 扫描该包下的所有需要在Swagger中展示的API，@ApiIgnore注解标注的除外
                 .paths(PathSelectors.any())
                 .build();
-        return docket;
     }
 
 

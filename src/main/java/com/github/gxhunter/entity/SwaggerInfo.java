@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 @ConfigurationProperties("hunter.spring.swagger")
 public class SwaggerInfo {
-
     /**
      * 是否开启swagger
      **/
