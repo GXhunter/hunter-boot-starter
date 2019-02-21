@@ -71,7 +71,7 @@ failed(T data,IErrorCode code)|失败，携带数据和提示信息和code
 failed(T data,String message)|失败，并携带数据和提示信息
 failed()|失败，不携带信息
 ---
- 
+
  ##  Jackson工具类 com.github.gxhunter.util.JsonUtil
  * **描述**  
     Jackson是spring默认的json序列化工具，但是与fastjson不同，没有内置很方便的方法可以在对象和javabean之间互转，大多数情况你可能会考虑fastjson作为json工具类，但这样有个问题，Jackson的注解在fastjson不再适用，为了解决这个问题，你可能还要侵入式地添加fastjson的注解。
@@ -89,7 +89,7 @@ static{
         //忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
 }
-```
+ ```
 * 静态方法
     1. 对象转为Json字符串
     ```$xslt
@@ -137,7 +137,7 @@ com.github.gxhunter.service.IRedisClient
                 readTimeout: 读取超时(默认：5000ms)
                 connectTimeout: 连接超时(默认：3000ms)
                 writeTimeout: 写入超时(默认：5000ms)
-    ```    
+    ```
 ## 线程池
 在yml中配置（可选）
 ```$xslt
@@ -151,7 +151,7 @@ hunter:
 使用
 ```$xslt
 @Autowired
-private ThreadPoolExecutor mPoolExecutor;
+private ExecutorService mPoolExecutor;
 ```
 ## swagger 支持
 * 描述  
@@ -216,7 +216,7 @@ UNKNOW_ERROR=其他错误返回码
 * 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
 * 使用方法：再启动类加上 @DefaultWebMVC注解
  1. json与java互转格式
- 
+
     java对象|json对象
     :--|:--:
     Date|yyyy-MM-dd HH:mm:ss
@@ -234,7 +234,7 @@ UNKNOW_ERROR=其他错误返回码
     这里默认捕获了所有异常，并对常见的几个异常做分类，使之返回不同的status。
 * **启用方法**  
      在启动类加上@DefaultWebMVC注解即可
-        
+     
 * 分类捕获的异常
 
     1. **ApiException** 
@@ -272,7 +272,7 @@ UNKNOW_ERROR=其他错误返回码
         }
     ```
 * **关闭异常处理器**
-    
+  
     不想使用内置的异常处理器，或者内置的异常处理器不能满足你的业务需求，
     两种可选方式可以关闭默认的异常处理器， **任选**其一
     1. 在yml中配置
@@ -283,7 +283,7 @@ UNKNOW_ERROR=其他错误返回码
             exceptionResolver: true
     ```
     2. 去除@DefaultWebMVC注解
-     
+    
 ## 待续...
 
 
