@@ -117,7 +117,7 @@ public class SftpTools implements AutoCloseable{
      * 获取远程文件流
      *
      * @param sftpFilePath 文件路径
-     * @return  文件流
+     * @return 文件流
      * @throws SftpException
      * @author inber
      * @since 2012.02.09

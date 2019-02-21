@@ -14,7 +14,7 @@ import lombok.Data;
 public class Result<T>{
     private long status;
     private String message;
-    T data;
+    private T data;
 
     public Result(){}
 

@@ -17,6 +17,8 @@ package com.github.gxhunter.enums;
 
 /**
  * @author hunter
+ * @date 2019.1.4
+ * 扩展自行实现此接口
  */
 public interface IResponseCode{
     /**

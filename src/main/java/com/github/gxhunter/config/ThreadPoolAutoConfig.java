@@ -2,6 +2,7 @@ package com.github.gxhunter.config;
 
 import com.github.gxhunter.entity.ThreadPoolInfo;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
@@ -23,17 +24,9 @@ public class ThreadPoolAutoConfig{
      * @return
      */
     @Bean
-    public ThreadPoolExecutor threadPool(ThreadPoolInfo threadPoolInfo){
-        BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
-        /*
-         * 丢弃并抛异常
-         */
-        ThreadFactory threadFactory = new ThreadFactoryBuilder()
-                .setNameFormat("backup-pool-%d")
-                .build();
-
+    public ExecutorService threadPool(ThreadPoolInfo threadPoolInfo){
         return new ThreadPoolExecutor(
                 threadPoolInfo.getCorePoolSize(),threadPoolInfo.getMaximumPoolSize(),threadPoolInfo.getKeepAliveTime(),TimeUnit.SECONDS
-                ,blockingQueue,threadFactory);
+                ,threadPoolInfo.getWorkQueue(),threadPoolInfo.getThreadFactory(),threadPoolInfo.getHandler());
     }
 }
