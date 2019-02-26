@@ -24,6 +24,14 @@ public abstract class BaseController{
     protected <T> Result<T> success(T entity){
         return Result.success(entity);
     }
+    /**
+     * 返回成功
+     *
+     * @return
+     */
+    protected <T> Result<T> success(){
+        return Result.success();
+    }
 
     /**
      * 返回成功，并携带提示信息

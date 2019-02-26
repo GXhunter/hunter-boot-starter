@@ -15,17 +15,19 @@
  */
 package com.github.gxhunter.enums;
 
+import java.io.Serializable;
+
 /**
  * @author hunter
  * @date 2019.1.4
  * 扩展自行实现此接口
  */
-public interface IResponseCode{
+public interface IResponseCode<T extends Serializable>{
     /**
      * 返回码
      * @return
      */
-    long getCode();
+    T getCode();
 
     /**
      * 错误描述

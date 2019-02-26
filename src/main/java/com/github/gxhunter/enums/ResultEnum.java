@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class ResultEnum implements IResponseCode{
+public class ResultEnum implements IResponseCode<Integer>{
     /**
      * 成功
      */
@@ -41,7 +41,7 @@ public class ResultEnum implements IResponseCode{
     private String msg;
 
     @Override
-    public long getCode(){
-        return Long.valueOf(code);
+    public Integer getCode(){
+        return Integer.valueOf(code);
     }
 }

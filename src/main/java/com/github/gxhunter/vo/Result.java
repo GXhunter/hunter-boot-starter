@@ -5,6 +5,8 @@ import com.github.gxhunter.enums.IResponseCode;
 import com.github.gxhunter.enums.ResultEnum;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author 树荫下的天空
  * @date 2018/5/31 14:49
@@ -12,16 +14,16 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result<T>{
-    private long status;
+    private Serializable code;
     private String message;
     private T data;
 
     public Result(){}
 
-    private Result(T data,String message,long status){
+    private Result(T data,String message,Serializable code){
         this.data = data;
         this.message = message;
-        this.status = status;
+        this.code = code;
     }
 
     /**
@@ -29,8 +31,8 @@ public class Result<T>{
      *
      * @return true 成功  false 失败
      */
-    public boolean isSuccess(){
-        return this.status == ResultEnum.SUCCESS.getCode();
+    public boolean getFlag(){
+        return this.code.equals(ResultEnum.SUCCESS.getCode());
     }
 
 
