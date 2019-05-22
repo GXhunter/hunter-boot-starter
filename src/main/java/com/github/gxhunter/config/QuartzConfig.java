@@ -64,7 +64,7 @@ public class QuartzConfig{
         Map<String, Object> jobMap = context.getBeansWithAnnotation(TimerJob.class);
         jobMap.forEach((beanName,job) -> {
             if(!(job instanceof AbstractJob)){
-                throw new IllegalArgumentException(beanName + "is not a type of AbstractJob");
+                throw new IllegalArgumentException(job.getClass().getName() + " should extends "+AbstractJob.class.getName());
             }
             AbstractJob abstractJob = (AbstractJob) job;
 
