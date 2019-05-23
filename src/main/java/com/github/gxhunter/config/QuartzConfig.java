@@ -1,43 +1,34 @@
 package com.github.gxhunter.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.github.gxhunter.entity.QuartzInfo;
 import com.github.gxhunter.job.AbstractJob;
 import com.github.gxhunter.job.TimerJob;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.*;
-import org.quartz.spi.JobFactory;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.AdaptableJobFactory;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
-import org.springframework.scheduling.quartz.SpringBeanJobFactory;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
-import javax.sql.DataSource;
-import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author 树荫下的天空
  * @date 2019/2/22 16:25
  */
 @Configuration
-@AutoConfigureAfter(QuartzAutoConfiguration.class)
-@ConditionalOnBean(Scheduler.class)
+@ConditionalOnClass(QuartzAutoConfiguration.class)
 public class QuartzConfig{
 
     /**
@@ -59,39 +50,70 @@ public class QuartzConfig{
         };
     }
 
-    @Bean
-    public Object jobInit(ApplicationContext context,Scheduler scheduler){
+    @Bean(name = "triggers")
+    public CronTriggerImpl[] jobInit(ApplicationContext context){
+        List<CronTriggerImpl> cronTriggers = Lists.newArrayList();
+
         Map<String, Object> jobMap = context.getBeansWithAnnotation(TimerJob.class);
         jobMap.forEach((beanName,job) -> {
             if(!(job instanceof AbstractJob)){
-                throw new IllegalArgumentException(job.getClass().getName() + " should extends "+AbstractJob.class.getName());
+                throw new IllegalArgumentException(job.getClass().getName() + " should extends " + AbstractJob.class.getName());
             }
             AbstractJob abstractJob = (AbstractJob) job;
-
             Class<? extends AbstractJob> jobClass = abstractJob.getClass();
-            TimerJob annotation = jobClass.getAnnotation(TimerJob.class);
+            TimerJob timerJob = jobClass.getAnnotation(TimerJob.class);
             String groupName = StringUtils.isBlank(abstractJob.getGroupName()) ? Scheduler.DEFAULT_GROUP : abstractJob.getGroupName();
 
-            CronTrigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(jobClass.getName(),groupName)
-                    .withSchedule(CronScheduleBuilder.cronSchedule(annotation.cron()))
-                    .startAt(abstractJob.startTime())
-                    .endAt(abstractJob.endTime())
-                    .build();
+            JobKey jobKey = new JobKey(beanName,groupName);
+            JobDetail jobDetail = createJobDetail(jobClass,jobKey);
+            CronTriggerImpl trigger = createTrigger(jobClass,timerJob.cron(),jobKey,jobDetail);
+            cronTriggers.add(trigger);
 
-            JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                    .withIdentity(jobClass.getName(),groupName)
-                    .build();
-
-            try{
-                scheduler.scheduleJob(jobDetail,trigger);
-            }catch(SchedulerException e){
-                throw new RuntimeException(e);
-            }
         });
-        return null;
+        return cronTriggers.toArray(new CronTriggerImpl[cronTriggers.size()]);
     }
 
+
+    /**
+     * 创建jobTrigger
+     *
+     * @param t              job类
+     * @param cronExpression cron表达式
+     * @param jobKey         默认trigger的jobKey和jobDetail的jobKey一样
+     * @return
+     * @throws ParseException
+     */
+    private CronTriggerImpl createTrigger(Class<? extends AbstractJob> t,String cronExpression,JobKey jobKey,JobDetail jobDetail){
+        CronTriggerFactoryBean c = new CronTriggerFactoryBean();
+        c.setJobDetail(jobDetail);
+        c.setCronExpression(cronExpression);
+        c.setName(jobKey.getName());
+        c.setGroup(jobKey.getGroup());
+        try{
+            c.afterPropertiesSet();
+        }catch(ParseException e){
+            throw new RuntimeException(e);
+        }
+        return (CronTriggerImpl) c.getObject();
+    }
+
+    /**
+     * 通过job创建jobDetail
+     *
+     * @param c      job类
+     * @param jobKey
+     * @return
+     */
+    private JobDetail createJobDetail(Class<? extends AbstractJob> c,JobKey jobKey){
+        JobDetailFactoryBean d = new JobDetailFactoryBean();
+        d.setDurability(true);
+        d.setRequestsRecovery(true);
+        d.setJobClass(c);
+        d.setName(jobKey.getName());
+        d.setGroup(jobKey.getGroup());
+        d.afterPropertiesSet();
+        return d.getObject();
+    }
 
 }
 
