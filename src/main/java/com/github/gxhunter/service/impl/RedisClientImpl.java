@@ -1,9 +1,6 @@
 package com.github.gxhunter.service.impl;
 
 import com.github.gxhunter.service.IRedisClient;
-import com.mchange.lang.ByteUtils;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -151,12 +148,12 @@ public class RedisClientImpl implements IRedisClient{
     @Override
     public boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption){
         try{
-            redisTemplate.execute((RedisCallback) connection -> connection.set(key.getBytes(),value.getBytes(),Expiration.from(time,timeUnit),setOption));
+            return (boolean) redisTemplate.execute((RedisCallback<Boolean>) connection
+                    -> connection.set(key.getBytes(),value.getBytes(),Expiration.from(time,timeUnit),setOption));
         }catch(Exception e){
             e.printStackTrace();
             return false;
         }
-        return false;
     }
 
 
