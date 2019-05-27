@@ -1,28 +1,31 @@
 package com.github.gxhunter.job;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
+import org.quartz.*;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author wanggx
  * @date 2019/5/22 14:25
  */
-public abstract class AbstractJob implements Job, Runnable{
+public abstract class AbstractJob implements Job{
     public static final short NEVER_TOMEOUT = 0;
-
+    private JobExecutionContext mContext;
     @Override
     public final void execute(JobExecutionContext context) throws JobExecutionException{
-        if(!before(context)){
-            return;
+        try{
+            if(!before(context)){
+                return;
+            }
+            this.run(context);
+        }finally{
+            after(context);
         }
-        this.run();
-        after(context);
     }
 
+    public abstract void run(JobExecutionContext context) throws JobExecutionException;
     /**
-     * 任务执行后
+     * 任务执行后,不管是否异常，一定会执行
      */
     protected void after(JobExecutionContext context){
 

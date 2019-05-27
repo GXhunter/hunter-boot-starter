@@ -1,7 +1,12 @@
 package com.github.gxhunter.service;
+
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 树荫下的天空
@@ -63,6 +68,7 @@ public interface IRedisClient<K,V>{
      */
     boolean set(String key,V value);
 
+
     /**
      * 普通缓存放入并设置时间
      *
@@ -74,9 +80,21 @@ public interface IRedisClient<K,V>{
     boolean set(String key,V value,long time);
 
     /**
+     * 一般用于分布式锁
+     *
+     * @param key       键
+     * @param value     值
+     * @param time      过期时间
+     * @param timeUnit  时间单位
+     * @param setOption 操作类型
+     * @return 是否设置成功
+     */
+    boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption);
+
+    /**
      * 递增
      *
-     * @param key 键
+     * @param key   键
      * @param delta
      * @return
      */
@@ -85,7 +103,7 @@ public interface IRedisClient<K,V>{
     /**
      * 递减
      *
-     * @param key 键
+     * @param key   键
      * @param delta
      * @return
      */
@@ -327,4 +345,15 @@ public interface IRedisClient<K,V>{
      * @return 移除的个数
      */
     long lRemove(String key,long count,V value);
+
+    /**
+     * 执行lua脚本
+     *
+     * @param redisScript lua脚本
+     * @param keyList     任何需要传递给脚本的键
+     * @param argList     需要传递给脚本的任何args
+     * @param <T>         返回类型
+     * @return 1L：设置成功
+     */
+    <T> T execute(DefaultRedisScript<T> redisScript,List keyList,Object... argList);
 }
