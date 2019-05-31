@@ -98,18 +98,25 @@ public class RedisDistributionLock{
 //        return StringUtils.collectionToDelimitedString(definitionKeyList,".","","");
     }
 
+    private String generateLockValue(){
+        return UUID.randomUUID().toString()+"-"+Thread.currentThread().getId();
+    }
+
 
     /**
      * 加锁,同时设置锁超时时间
      *
      * @param key        分布式锁的key
-     * @param requestId  请求标识
      * @param expireTime 单位是ms
-     * @return 是否成功
+     * @return 生成的锁名称
      */
-    public Boolean lock(String key,String requestId,long expireTime){
-        return mRedisTemplate.execute((RedisCallback<Boolean>) connection
-                -> connection.set(key.getBytes(),requestId.getBytes(),Expiration.from(expireTime,TimeUnit.MILLISECONDS),RedisStringCommands.SetOption.SET_IF_ABSENT));
+    public String lock(String key,long expireTime){
+        String value = generateLockValue();
+        if(mRedisTemplate.execute((RedisCallback<Boolean>) connection
+                -> connection.set(key.getBytes(),value.getBytes(),Expiration.from(expireTime,TimeUnit.MILLISECONDS),RedisStringCommands.SetOption.SET_IF_ABSENT))){
+            return value;
+        }
+        return null;
     }
 
 
@@ -117,12 +124,11 @@ public class RedisDistributionLock{
      * 解锁
      *
      * @param key       锁
-     * @param requestId 请求标识
      * @return 是否释放成功
      */
-    public boolean unlock(String key,String requestId){
+    public boolean unlock(String key,String value){
         log.debug("redis unlock debug, start. resource:[{}].",key);
-        String result = mRedisTemplate.execute(SCRIPT_UNLOCK,mRedisTemplate.getStringSerializer(),mRedisTemplate.getStringSerializer(),Collections.singletonList(key),Collections.singletonList(requestId));
+        String result = mRedisTemplate.execute(SCRIPT_UNLOCK,mRedisTemplate.getStringSerializer(),mRedisTemplate.getStringSerializer(),Collections.singletonList(key),Collections.singletonList(value));
         return StringUtils.equals(result,LOCK_SUCCESS);
     }
 }

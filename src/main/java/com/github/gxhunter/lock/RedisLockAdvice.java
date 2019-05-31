@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
@@ -42,12 +43,12 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable{
         long startTime = System.currentTimeMillis();
-        Boolean lock = false;
         String keyName = null;
+        String lockValue = null;
         try{
             RedisLock lock4j = invocation.getMethod().getAnnotation(RedisLock.class);
             keyName = redisDistributionLock.generateKeyName(invocation,lock4j);
-            while(!(lock = redisDistributionLock.lock(keyName,RedisDistributionLock.UNIQUELY_IDENTIFIES,lock4j.expireTime()))){
+            while((lockValue = redisDistributionLock.lock(keyName,lock4j.expireTime())) == null){
                 if(startTime + lock4j.retryTimes() < System.currentTimeMillis()){
 //                    超时
                     throw new RedisLockException("获取锁超时");
@@ -56,9 +57,9 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
             }
             return invocation.proceed();
         }finally{
-            if(lock && keyName != null){
-                if(!redisDistributionLock.unlock(keyName,RedisDistributionLock.UNIQUELY_IDENTIFIES)){
-                    log.error("redis unlock failed,the key is {},value is {}.",keyName,RedisDistributionLock.UNIQUELY_IDENTIFIES);
+            if(StringUtils.isNoneBlank(keyName,lockValue)){
+                if(!redisDistributionLock.unlock(keyName,lockValue)){
+                    log.error("redis unlock failed,the key is {},value is {}.",keyName,lockValue);
                 }
             }
         }
