@@ -40,9 +40,9 @@ public class ExceptionResolver{
     @ExceptionHandler(ApiException.class)
     public Object handServerException(ApiException exception){
         if(exception.getErrorCode() != null){
-            return Result.failed(exception.getErrorCode());
+            return new Result<>(null,exception.getErrorCode().getMsg(),exception.getErrorCode().getCode());
         }else{
-            return Result.failed(exception.getMessage());
+            return new Result<>(null,exception.getMessage(),ResultEnum.DEFAULT_ERROR.getCode());
         }
     }
 
@@ -62,9 +62,8 @@ public class ExceptionResolver{
                 String message = objectError.getDefaultMessage();
                 resultMap.put(field,message);
             }
-            return Result.failed(resultMap,ResultEnum.METHOD_ARGUMENT_VALID_FAIL);
         }
-        return Result.failed(ResultEnum.METHOD_ARGUMENT_VALID_FAIL);
+        return new Result<>(resultMap,ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getMsg(),ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getCode());
     }
 
     /**
@@ -76,7 +75,7 @@ public class ExceptionResolver{
     @ExceptionHandler(Exception.class)
     public Object exceptionHandle(Exception e){
         log.error("出现异常:",e);
-        return Result.failed(ResultEnum.UNKNOW_ERROR);
+        return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
     }
 
 

@@ -5,6 +5,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.github.gxhunter.entity.ThreadPoolInfo,\
   com.github.gxhunter.config.ThreadPoolAutoConfig,\
   com.github.gxhunter.config.SwaggerAutoConfiguration,\
-  com.github.gxhunter.config.QuartzConfig
+  com.github.gxhunter.config.QuartzConfig,\
+  com.github.gxhunter.config.DistributionLockAutoConfig
 
 

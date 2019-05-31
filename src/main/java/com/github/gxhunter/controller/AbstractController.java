@@ -3,7 +3,6 @@ package com.github.gxhunter.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.gxhunter.entity.BaseEntity;
 import com.github.gxhunter.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +17,7 @@ public class AbstractController<M extends IService<E>,E> extends BaseController{
     protected M mService;
 
     public Result create(E entity){
-        return mService.save(entity) ? success(): Result.failed();
+        return mService.save(entity) ? success():faild();
     }
 
     public Result deleteById(Serializable id){
@@ -28,7 +27,6 @@ public class AbstractController<M extends IService<E>,E> extends BaseController{
     public Result update(E entity){
         return mService.updateById(entity)? success(): faild();
     }
-
 
     public Result listAll(){
         return success(mService.list());

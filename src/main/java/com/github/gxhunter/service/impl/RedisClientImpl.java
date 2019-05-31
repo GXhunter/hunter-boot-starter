@@ -4,8 +4,9 @@ import com.github.gxhunter.service.IRedisClient;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/11/26 11:21
  */
 public class RedisClientImpl implements IRedisClient{
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     public RedisClientImpl(RedisTemplate redisTemplate){
         this.redisTemplate = redisTemplate;
@@ -146,9 +147,9 @@ public class RedisClientImpl implements IRedisClient{
     }
 
     @Override
-    public boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption){
+    public Boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption){
         try{
-            return (boolean) redisTemplate.execute((RedisCallback<Boolean>) connection
+            return redisTemplate.execute((RedisCallback<Boolean>) connection
                     -> connection.set(key.getBytes(),value.getBytes(),Expiration.from(time,timeUnit),setOption));
         }catch(Exception e){
             e.printStackTrace();
@@ -611,8 +612,7 @@ public class RedisClientImpl implements IRedisClient{
     @Override
     public long lRemove(String key,long count,Object value){
         try{
-            Long remove = redisTemplate.opsForList().remove(key,count,value);
-            return remove;
+            return redisTemplate.opsForList().remove(key,count,value);
         }catch(Exception e){
             e.printStackTrace();
             return 0;
@@ -620,7 +620,8 @@ public class RedisClientImpl implements IRedisClient{
     }
 
     @Override
-    public Object execute(DefaultRedisScript redisScript,List keyList,Object... argList){
-        return redisTemplate.execute(redisScript,keyList,argList);
+    public Object execute(RedisScript script,RedisSerializer argsSerializer,RedisSerializer resultSerializer,List keys,Object... args){
+        return redisTemplate.execute(script,argsSerializer,resultSerializer,keys,args);
     }
+
 }

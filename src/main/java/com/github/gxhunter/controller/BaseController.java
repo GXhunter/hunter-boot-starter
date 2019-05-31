@@ -1,5 +1,6 @@
 package com.github.gxhunter.controller;
 
+import com.github.gxhunter.enums.ResultEnum;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public abstract class BaseController{
      * @return
      */
     protected <T> Result<T> success(T entity){
-        return Result.success(entity);
+        return new Result<>(entity,ResultEnum.SUCCESS.getMsg(),ResultEnum.SUCCESS.getCode());
     }
     /**
      * 返回成功
@@ -30,7 +31,7 @@ public abstract class BaseController{
      * @return
      */
     protected <T> Result<T> success(){
-        return Result.success();
+        return new Result<>(null,ResultEnum.SUCCESS.getMsg(),ResultEnum.SUCCESS.getCode());
     }
 
     /**
@@ -40,7 +41,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result successMsg(String message){
-        return Result.successMsg(message);
+        return new Result<>(null,message,ResultEnum.SUCCESS.getCode());
     }
 
     /**
@@ -49,7 +50,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(){
-        return Result.failed();
+        return new Result<>(null,ResultEnum.DEFAULT_ERROR.getMsg(),ResultEnum.DEFAULT_ERROR.getCode());
     }
 
     /**
@@ -59,7 +60,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(String message){
-        return Result.failed(message);
+        return new Result<>(null,message,ResultEnum.DEFAULT_ERROR.getCode());
     }
 
 
@@ -70,7 +71,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(IResponseCode errorCode){
-        return Result.failed(errorCode);
+        return new Result<>(null,errorCode.getMsg(),errorCode.getCode());
     }
 
 

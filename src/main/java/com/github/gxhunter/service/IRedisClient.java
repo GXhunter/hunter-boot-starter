@@ -2,6 +2,8 @@ package com.github.gxhunter.service;
 
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.util.List;
 import java.util.Map;
@@ -89,7 +91,7 @@ public interface IRedisClient<K,V>{
      * @param setOption 操作类型
      * @return 是否设置成功
      */
-    boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption);
+    Boolean set(String key,String value,long time,TimeUnit timeUnit,RedisStringCommands.SetOption setOption);
 
     /**
      * 递增
@@ -346,14 +348,18 @@ public interface IRedisClient<K,V>{
      */
     long lRemove(String key,long count,V value);
 
+
     /**
      * 执行lua脚本
      *
-     * @param redisScript lua脚本
-     * @param keyList     任何需要传递给脚本的键
-     * @param argList     需要传递给脚本的任何args
-     * @param <T>         返回类型
+     * @param script           lua脚本
+     * @param argsSerializer   arg序列化方式
+     * @param resultSerializer 结果序列化方式
+     * @param keys             任何需要传递给脚本的键
+     * @param args             需要传递给脚本的任何args
+     * @param <T>              返回类型
      * @return 1L：设置成功
      */
-    <T> T execute(DefaultRedisScript<T> redisScript,List keyList,Object... argList);
+    <T> T execute(RedisScript<T> script,RedisSerializer<?> argsSerializer,RedisSerializer<T> resultSerializer,
+                  List keys,Object... args);
 }
