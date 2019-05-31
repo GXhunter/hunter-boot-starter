@@ -2,8 +2,6 @@ package com.github.gxhunter.config;
 
 import com.github.gxhunter.lock.RedisDistributionLock;
 import com.github.gxhunter.lock.RedisLockAdvice;
-import com.github.gxhunter.service.IRedisClient;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

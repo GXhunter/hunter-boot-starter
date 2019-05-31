@@ -29,12 +29,24 @@ public interface IMongoService<E extends BaseMongoEntity>{
     /**
      * 新增
      *
-     * @param spit
+     * @param spit 实体类
+     * @return
      */
     E add(E spit);
 
+    /**
+     * 修改
+     * @param id  主键
+     * @param entity 实体类
+     * @return
+     */
     E update(Long id,E entity);
 
+    /**
+     * 修改或删除
+     * @param entity
+     * @return
+     */
     E saveOrUpdate(E entity);
 
     /**
@@ -44,7 +56,15 @@ public interface IMongoService<E extends BaseMongoEntity>{
      */
     void deleteById(Long id);
 
+    /**
+     * 分页查询
+     * @param page
+     * @return
+     */
     Page<E> page(Pageable page);
 
+    /**
+     * 删除所有
+     */
     void deleteAll();
 }

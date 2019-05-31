@@ -15,19 +15,19 @@ public class ResultEnum implements IResponseCode<Integer>{
     /**
      * 成功
      */
-    public static ResultEnum SUCCESS;
+    public final static ResultEnum SUCCESS;
     /**
      * 默认错误(提示操作失败)
      */
-    public static ResultEnum DEFAULT_ERROR;
+    public final static ResultEnum DEFAULT_ERROR;
     /**
      * 校验失败(与@valid一起使用)
      */
-    public static ResultEnum METHOD_ARGUMENT_VALID_FAIL;
+    public final static ResultEnum METHOD_ARGUMENT_VALID_FAIL;
     /**
      * 其他错误(提示网络超时)
      */
-    public static ResultEnum UNKNOW_ERROR;
+    public final static ResultEnum UNKNOW_ERROR;
 
     static{
         ResourceUtil ru = new ResourceUtil("response-code");

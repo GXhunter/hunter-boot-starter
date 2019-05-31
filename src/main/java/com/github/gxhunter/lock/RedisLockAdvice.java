@@ -46,10 +46,10 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
         String keyName = null;
         String lockValue = null;
         try{
-            RedisLock lock4j = invocation.getMethod().getAnnotation(RedisLock.class);
-            keyName = redisDistributionLock.generateKeyName(invocation,lock4j);
-            while((lockValue = redisDistributionLock.lock(keyName,lock4j.expireTime())) == null){
-                if(startTime + lock4j.retryTimes() < System.currentTimeMillis()){
+            RedisLock redisLock = invocation.getMethod().getAnnotation(RedisLock.class);
+            keyName = redisDistributionLock.generateKeyName(invocation,redisLock);
+            while((lockValue = redisDistributionLock.lock(keyName,redisLock.expireTime())) == null){
+                if(startTime + redisLock.retryTimes() < System.currentTimeMillis()){
 //                    超时
                     throw new RedisLockException("获取锁超时");
                 }

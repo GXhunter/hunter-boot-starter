@@ -15,7 +15,7 @@ import java.util.Properties;
  */
 public class SftpTools implements AutoCloseable{
 
-
+    private static final String NSF = "no such file";
     private Session session;
     private Channel channel;
     /**
@@ -90,7 +90,7 @@ public class SftpTools implements AutoCloseable{
             isDirExistFlag = true;
             return sftpATTRS.isDir();
         }catch(Exception e){
-            if("no such file".equals(e.getMessage().toLowerCase())){
+            if(NSF.equals(e.getMessage().toLowerCase())){
                 isDirExistFlag = false;
             }
         }
@@ -288,7 +288,7 @@ public class SftpTools implements AutoCloseable{
         }catch(Exception e){
             //获取文件大小异常
             fileSize = -1;
-            if("no such file".equals(e.getMessage().toLowerCase())){
+            if(NSF.equals(e.getMessage().toLowerCase())){
                 //文件不存在
                 fileSize = -2;
             }

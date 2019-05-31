@@ -1,7 +1,5 @@
 package com.github.gxhunter.entity;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
 /**
@@ -9,6 +7,15 @@ import java.io.Serializable;
  * @date 2019/2/26 10:04
  */
 public interface BaseEntity<T extends Serializable>{
+    /**
+     * 获取主键
+     * @return
+     */
     T getId();
+
+    /**
+     * 设置主键
+     * @param id
+     */
     void setId(T id);
 }

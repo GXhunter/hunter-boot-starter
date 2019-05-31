@@ -30,15 +30,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RedisDistributionLock{
-    /**
-     * 分布式环境 唯一标识,使用IdWork生成
-     */
-    public static final String UNIQUELY_IDENTIFIES = String.valueOf(IdWorker.getId());
 
     /**
      * redis操作客户端
      */
-    private RedisTemplate<String,Object> mRedisTemplate;
+    private RedisTemplate<String, Object> mRedisTemplate;
 
     /**
      * spel表达式解析器
@@ -48,11 +44,11 @@ public class RedisDistributionLock{
     /**
      * 加锁LUA脚本
      */
-    private static final RedisScript<String> SCRIPT_LOCK = new DefaultRedisScript<>("return redis.call('set',KEYS[1],ARGV[1],'NX','PX',ARGV[2])", String.class);
+    private static final RedisScript<String> SCRIPT_LOCK = new DefaultRedisScript<>("return redis.call('set',KEYS[1],ARGV[1],'NX','PX',ARGV[2])",String.class);
     /**
      * 释放锁LUA脚本
      */
-    private static final RedisScript<String> SCRIPT_UNLOCK = new DefaultRedisScript<>("if redis.call('get',KEYS[1]) == ARGV[1] then return tostring(redis.call('del', KEYS[1])==1) else return 'false' end", String.class);
+    private static final RedisScript<String> SCRIPT_UNLOCK = new DefaultRedisScript<>("if redis.call('get',KEYS[1]) == ARGV[1] then return tostring(redis.call('del', KEYS[1])==1) else return 'false' end",String.class);
     private static final String LOCK_SUCCESS = "OK";
 
 
@@ -61,7 +57,7 @@ public class RedisDistributionLock{
     }
 
     /**
-     * 生成key,格式为 报名+方法名+key的spel表达式解析结果
+     * 生成key,格式为 包名+方法名+key的spel表达式解析结果
      *
      * @param invocation 方法
      * @param redisLock  注解，用于获取keys信息 通过spel解析
@@ -83,7 +79,7 @@ public class RedisDistributionLock{
      * @param parameterValues 参数
      * @return
      */
-    private  String getSpelDefinitionKey(String[] expressions,Method method,Object[] parameterValues){
+    private String getSpelDefinitionKey(String[] expressions,Method method,Object[] parameterValues){
         EvaluationContext context = new MethodBasedEvaluationContext(null,method,parameterValues,NAME_DISCOVERER);
         List<String> definitionKeyList = new ArrayList<>(expressions.length);
         for(String expression : expressions){
@@ -99,7 +95,7 @@ public class RedisDistributionLock{
     }
 
     private String generateLockValue(){
-        return UUID.randomUUID().toString()+"-"+Thread.currentThread().getId();
+        return UUID.randomUUID().toString() + "-" + Thread.currentThread().getId();
     }
 
 
@@ -123,7 +119,7 @@ public class RedisDistributionLock{
     /**
      * 解锁
      *
-     * @param key       锁
+     * @param key 锁
      * @return 是否释放成功
      */
     public boolean unlock(String key,String value){
