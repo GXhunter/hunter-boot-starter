@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 public @interface RedisLock{
 
     /**
-     * 要锁定的key中包含的属性
+     * 要锁定的key中包含的属性,不指定时锁定整个方法
      */
     String[] keys() default {};
 

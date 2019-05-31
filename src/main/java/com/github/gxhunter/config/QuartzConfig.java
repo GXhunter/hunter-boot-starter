@@ -1,7 +1,7 @@
 package com.github.gxhunter.config;
 
 import com.github.gxhunter.job.AbstractJob;
-import com.github.gxhunter.job.QuartzJob;
+import com.github.gxhunter.anno.QuartzJob;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.impl.triggers.AbstractTrigger;
