@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
  */
 public abstract class AbstractJob implements Job{
     public static final short NEVER_TOMEOUT = 0;
-    private JobExecutionContext mContext;
     @Override
     public final void execute(JobExecutionContext context) throws JobExecutionException{
         try{

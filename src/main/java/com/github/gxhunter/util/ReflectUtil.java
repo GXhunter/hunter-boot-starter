@@ -1,10 +1,7 @@
 package com.github.gxhunter.util;
 
-import com.github.gxhunter.service.IRedisClient;
-import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.lang.reflect.Field;

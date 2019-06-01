@@ -15,7 +15,9 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.EvaluationException;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import java.lang.reflect.Method;
@@ -30,10 +32,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RedisDistributionLock{
-    /**
-     * 分布式环境 唯一标识,使用IdWork生成
-     */
-    public static final String UNIQUELY_IDENTIFIES = String.valueOf(IdWorker.getId());
 
     /**
      * redis操作客户端
@@ -89,7 +87,13 @@ public class RedisDistributionLock{
         for(String expression : expressions){
             if(expression != null && !expression.isEmpty()){
 //                表达式解析结果
-                String value = PARSER.parseExpression(expression).getValue(context).toString();
+                String value;
+                try{
+                    value = PARSER.parseExpression(expression).getValue(context).toString();
+                }catch(EvaluationException | ParseException e){
+                    log.debug("express {} is invalid",expression);
+                    value = expression;
+                }
                 definitionKeyList.add(value);
             }
         }
@@ -111,12 +115,13 @@ public class RedisDistributionLock{
      * @return 生成的锁名称
      */
     public String lock(String key,long expireTime){
-        String value = generateLockValue();
-        if(mRedisTemplate.execute((RedisCallback<Boolean>) connection
-                -> connection.set(key.getBytes(),value.getBytes(),Expiration.from(expireTime,TimeUnit.MILLISECONDS),RedisStringCommands.SetOption.SET_IF_ABSENT))){
-            return value;
-        }
-        return null;
+        String lockValue = generateLockValue();
+        Object lockResult = mRedisTemplate.execute(SCRIPT_LOCK,
+                mRedisTemplate.getStringSerializer(),
+                mRedisTemplate.getStringSerializer(),
+                Collections.singletonList(key),
+                lockValue, String.valueOf(expireTime));
+        return LOCK_SUCCESS.equals(lockResult)?lockValue:null;
     }
 
 
@@ -128,7 +133,8 @@ public class RedisDistributionLock{
      */
     public boolean unlock(String key,String value){
         log.debug("redis unlock debug, start. resource:[{}].",key);
-        String result = mRedisTemplate.execute(SCRIPT_UNLOCK,mRedisTemplate.getStringSerializer(),mRedisTemplate.getStringSerializer(),Collections.singletonList(key),Collections.singletonList(value));
-        return StringUtils.equals(result,LOCK_SUCCESS);
+        String result = mRedisTemplate.execute(SCRIPT_UNLOCK,mRedisTemplate.getStringSerializer(),mRedisTemplate.getStringSerializer(),Collections.singletonList(key),value);
+        log.debug("redis lock release status {}",result);
+        return Boolean.valueOf(result);
     }
 }

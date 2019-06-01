@@ -14,7 +14,7 @@ public abstract class BaseController{
     /**
      * 日志打印
      */
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * 返回成功，并携带数据
