@@ -10,8 +10,6 @@ import javax.annotation.PostConstruct;
  */
 public abstract class AbstractJob implements Job{
     public static final short NEVER_TOMEOUT = 0;
-    private JobExecutionContext mContext;
-
     @Override
     public final void execute(JobExecutionContext context) throws JobExecutionException{
         try{
@@ -24,14 +22,7 @@ public abstract class AbstractJob implements Job{
         }
     }
 
-    /**
-     * 定时执行的方法
-     *
-     * @param context quartz上下文
-     * @throws JobExecutionException 异常
-     */
     public abstract void run(JobExecutionContext context) throws JobExecutionException;
-
     /**
      * 任务执行后,不管是否异常，一定会执行
      */

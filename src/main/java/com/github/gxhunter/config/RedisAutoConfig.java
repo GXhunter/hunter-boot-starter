@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.gxhunter.service.IRedisClient;
 import com.github.gxhunter.service.impl.RedisClientImpl;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -25,6 +26,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @ConditionalOnMissingBean(RedisClientImpl.class)
 @ConditionalOnClass({RedisTemplate.class,RedisOperations.class})
 @EnableConfigurationProperties(RedisProperties.class)
+@AutoConfigureBefore(DistributionLockAutoConfig.class)
 public class RedisAutoConfig{
 
     @Bean

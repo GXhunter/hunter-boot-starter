@@ -13,17 +13,16 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @date 2019/5/31 11:33
  */
 @Configuration
+@ConditionalOnBean(IRedisClient.class)
 public class DistributionLockAutoConfig{
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(RedisDistributionLock.class)
     public RedisLockAdvice mRedisLockAdvice(RedisDistributionLock redisDistributionLock){
         return new RedisLockAdvice(redisDistributionLock);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(RedisTemplate.class)
     public RedisDistributionLock mRedisDistributionLock(RedisTemplate redisTemplate){
         return new RedisDistributionLock(redisTemplate);
     }
