@@ -83,17 +83,17 @@ public class QuartzConfig{
      * @throws ParseException
      */
     private CronTriggerImpl createTrigger(Class<? extends AbstractJob> t,String cronExpression,JobKey jobKey,JobDetail jobDetail){
-        CronTriggerFactoryBean c = new CronTriggerFactoryBean();
-        c.setJobDetail(jobDetail);
-        c.setCronExpression(cronExpression);
-        c.setName(jobKey.getName());
-        c.setGroup(jobKey.getGroup());
+        CronTriggerFactoryBean triggerFactoryBean = new CronTriggerFactoryBean();
+        triggerFactoryBean.setJobDetail(jobDetail);
+        triggerFactoryBean.setCronExpression(cronExpression);
+        triggerFactoryBean.setName(jobKey.getName());
+        triggerFactoryBean.setGroup(jobKey.getGroup());
         try{
-            c.afterPropertiesSet();
+            triggerFactoryBean.afterPropertiesSet();
         }catch(ParseException e){
             throw new RuntimeException(e);
         }
-        return (CronTriggerImpl) c.getObject();
+        return (CronTriggerImpl) triggerFactoryBean.getObject();
     }
 
     /**
@@ -104,14 +104,14 @@ public class QuartzConfig{
      * @return
      */
     private JobDetail createJobDetail(Class<? extends AbstractJob> c,JobKey jobKey){
-        JobDetailFactoryBean d = new JobDetailFactoryBean();
-        d.setDurability(true);
-        d.setRequestsRecovery(true);
-        d.setJobClass(c);
-        d.setName(jobKey.getName());
-        d.setGroup(jobKey.getGroup());
-        d.afterPropertiesSet();
-        return d.getObject();
+        JobDetailFactoryBean detailFactoryBean = new JobDetailFactoryBean();
+        detailFactoryBean.setDurability(true);
+        detailFactoryBean.setRequestsRecovery(true);
+        detailFactoryBean.setJobClass(c);
+        detailFactoryBean.setName(jobKey.getName());
+        detailFactoryBean.setGroup(jobKey.getGroup());
+        detailFactoryBean.afterPropertiesSet();
+        return detailFactoryBean.getObject();
     }
 
 
@@ -136,20 +136,20 @@ public class QuartzConfig{
                     if(!newTriNames.contains(dbTriggerName)){
                         // 暂停 触发器
                         scheduler.pauseTrigger(triggerKey);
-                        Trigger g = scheduler.getTrigger(triggerKey);
-                        JobKey jk = null;
-                        if(null != g){
-                            jk = g.getJobKey();
+                        Trigger trigger = scheduler.getTrigger(triggerKey);
+                        JobKey jobKey = null;
+                        if(null != trigger){
+                            jobKey = trigger.getJobKey();
                         }
                         // 停止触发器
                         scheduler.pauseTrigger(triggerKey);
                         // 注销 触发器
                         scheduler.unscheduleJob(triggerKey);
-                        if(null != jk){
+                        if(null != jobKey){
                             // 暂停任务
-                            scheduler.pauseJob(jk);
+                            scheduler.pauseJob(jobKey);
                             // 删除任务
-                            scheduler.deleteJob(jk);
+                            scheduler.deleteJob(jobKey);
                         }
                     }
                 }

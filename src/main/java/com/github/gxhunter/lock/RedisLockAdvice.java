@@ -2,7 +2,6 @@ package com.github.gxhunter.lock;
 
 import com.github.gxhunter.anno.RedisLock;
 import com.github.gxhunter.exception.RedisLockException;
-import com.github.gxhunter.service.IRedisClient;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -11,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author wanggx
@@ -19,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Slf4j
 public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodInterceptor{
-    @Autowired
-    private IRedisClient mRedisClient;
 
     private RedisDistributionLock redisDistributionLock;
 
