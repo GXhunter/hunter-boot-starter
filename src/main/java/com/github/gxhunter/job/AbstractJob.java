@@ -22,6 +22,11 @@ public abstract class AbstractJob implements Job{
         }
     }
 
+    /**
+     * 定时执行这部分逻辑
+     * @param context 上下文
+     * @throws JobExecutionException 异常
+     */
     public abstract void run(JobExecutionContext context) throws JobExecutionException;
     /**
      * 任务执行后,不管是否异常，一定会执行
