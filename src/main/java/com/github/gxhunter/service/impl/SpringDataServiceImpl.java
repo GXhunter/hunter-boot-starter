@@ -46,7 +46,7 @@ public class SpringDataServiceImpl<T extends PagingAndSortingRepository<E, Long>
     @Override
     public E getById(Long id){
         try{
-            return mRepository.findById(id).get();
+            return mRepository.findById(id).orElse(null);
         }catch(NoSuchElementException e){
             return null;
         }

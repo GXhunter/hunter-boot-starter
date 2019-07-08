@@ -89,8 +89,8 @@ public class RedisDistributionLock{
 //                表达式解析结果
                 String value;
                 try{
-                    value = PARSER.parseExpression(expression).getValue(context).toString();
-                }catch(EvaluationException | ParseException e){
+                    value = Objects.requireNonNull(PARSER.parseExpression(expression).getValue(context)).toString();
+                }catch(NullPointerException | EvaluationException | ParseException e){
                     log.debug("express {} is invalid",expression);
                     value = expression;
                 }
