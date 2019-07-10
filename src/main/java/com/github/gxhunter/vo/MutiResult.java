@@ -1,13 +1,13 @@
 package com.github.gxhunter.vo;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 /**
  * @author wanggx
  * @date 2019/7/3 15:28
- * 支持多返回值
+ * 支持多返回值,底层由{@link ConcurrentHashMap}支持，线程安全
  */
 public class MutiResult<K extends Enum<K>,V>{
     private Map<K, V> resultMap;
@@ -60,7 +60,7 @@ public class MutiResult<K extends Enum<K>,V>{
         }
 
         Builder(){
-            this(new HashMap<>(4));
+            this(new ConcurrentHashMap<>());
         }
 
         /**
