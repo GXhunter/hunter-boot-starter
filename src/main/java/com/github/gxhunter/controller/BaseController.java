@@ -119,7 +119,7 @@ public abstract class BaseController{
     @Target(ElementType.METHOD)
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
-    @interface ExceptionList{
+    public @interface ExceptionList{
         IfException[] value();
     }
 
