@@ -25,6 +25,7 @@ public abstract class BaseController{
     protected <T> Result<T> success(T entity){
         return new Result<>(entity,ResultEnum.SUCCESS.getMsg(),ResultEnum.SUCCESS.getCode());
     }
+
     /**
      * 返回成功
      *

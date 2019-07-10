@@ -1,7 +1,6 @@
 package com.github.gxhunter.anno;
 
 import com.github.gxhunter.config.DefaultWebConfig;
-import com.github.gxhunter.exception.ExceptionResolver;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -17,8 +16,7 @@ import java.lang.annotation.*;
  *
  */
 @Import({
-        DefaultWebConfig.class,
-        ExceptionResolver.class
+        DefaultWebConfig.class
 })
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
