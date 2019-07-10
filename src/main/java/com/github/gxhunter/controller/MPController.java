@@ -22,10 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * 继承自{{@link BaseController}} 包含默认的异常处理，并支持{{@link com.github.gxhunter.controller.BaseController.IfException}}注解
  * @author 树荫下的天空
- * @date 2019/2/25 16:27
+ * @param <M>
+ * @param <E>
+ *
  */
-public class AbstractController<M extends IService<E>,E> extends BaseController{
+public class MPController<M extends IService<E>,E> extends BaseController{
     @Autowired(required = false)
     protected M mService;
 
@@ -53,9 +56,5 @@ public class AbstractController<M extends IService<E>,E> extends BaseController{
     public Result<E> getById(Serializable id){
         return success(mService.getById(id));
     }
-
-
-
-
 
 }

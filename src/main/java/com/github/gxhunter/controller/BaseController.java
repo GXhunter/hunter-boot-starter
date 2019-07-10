@@ -119,7 +119,7 @@ public abstract class BaseController{
     @Target(ElementType.METHOD)
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface ExceptionList{
+    protected @interface ExceptionList{
         IfException[] value();
     }
 
@@ -145,7 +145,7 @@ public abstract class BaseController{
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object resolveMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+    public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
         HashMap<String, String> resultMap = Maps.newHashMap();
         if(!CollectionUtils.isEmpty(objectErrors)){
@@ -165,7 +165,7 @@ public abstract class BaseController{
      * @return
      */
     @ExceptionHandler(Exception.class)
-    public Object exceptionHandle(MethodHandle handle,Exception e){
+    public Object handleOtherException(MethodHandle handle,Exception e){
         log.error("出现异常:",e);
         return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
     }
