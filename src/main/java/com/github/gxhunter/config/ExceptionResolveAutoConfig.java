@@ -1,6 +1,6 @@
 package com.github.gxhunter.config;
 
-import com.github.gxhunter.exception.ExceptionResolveAdvice;
+import com.github.gxhunter.controller.ExceptionResolveAdvice;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

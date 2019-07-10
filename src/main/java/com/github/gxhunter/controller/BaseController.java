@@ -4,7 +4,10 @@ import com.github.gxhunter.enums.ResultEnum;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AliasFor;
@@ -16,9 +19,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author 树荫下的天空
@@ -93,7 +96,8 @@ public abstract class BaseController{
     @Target(ElementType.METHOD)
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface IfException{
+    @Repeatable(value = ExceptionList.class)
+    protected @interface IfException{
         /**
          * @return 返回给前端的提示信息
          */
@@ -112,6 +116,12 @@ public abstract class BaseController{
 
     }
 
+    @Target(ElementType.METHOD)
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface ExceptionList{
+        IfException[] value();
+    }
 
     /**
      * 手动抛出的异常，不指定错误码时为“操作失败”
@@ -160,4 +170,29 @@ public abstract class BaseController{
         return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
     }
 
+    static List<IfExceptionInfo> getIfExceptionList(Method method){
+        List<IfExceptionInfo> result = Lists.newArrayList();
+        for(IfException ifException : method.getAnnotation(ExceptionList.class).value()){
+            result.add(new IfExceptionInfo(ifException.value(),ifException.code(),ifException.when()));
+        }
+        return result;
+    }
+    @AllArgsConstructor
+    @Getter
+    static class IfExceptionInfo{
+        /**
+         * @return 返回给前端的提示信息
+         */
+        String value;
+
+        /**
+         * @return 错误码 默认为{@link ResultEnum} 默认错误码
+         */
+        long code;
+
+        /**
+         * @return 捕获哪些异常，默认为{{@link Exception}}
+         */
+        Class<? extends Exception>[] when;
+    }
 }

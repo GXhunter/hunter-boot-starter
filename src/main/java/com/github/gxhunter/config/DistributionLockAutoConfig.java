@@ -1,6 +1,5 @@
 package com.github.gxhunter.config;
 
-import com.github.gxhunter.exception.ExceptionResolveAdvice;
 import com.github.gxhunter.lock.RedisDistributionLock;
 import com.github.gxhunter.lock.RedisLockAdvice;
 import com.github.gxhunter.service.IRedisClient;

@@ -1,7 +1,6 @@
 package com.github.gxhunter.config;
 
 import com.github.gxhunter.entity.RestTemplateInfo;
-import com.github.gxhunter.exception.ExceptionResolveAdvice;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
