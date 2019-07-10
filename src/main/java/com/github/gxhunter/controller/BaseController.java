@@ -1,10 +1,24 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.enums.ResultEnum;
+import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.lang.annotation.*;
+import java.lang.invoke.MethodHandle;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author 树荫下的天空
@@ -75,5 +89,75 @@ public abstract class BaseController{
         return new Result<>(null,errorCode.getMsg(),errorCode.getCode());
     }
 
+
+    @Target(ElementType.METHOD)
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface IfException{
+        /**
+         * @return 返回给前端的提示信息
+         */
+        @AliasFor(value = "errorMessage")
+        String value() default "";
+
+        /**
+         * @return 错误码 默认为{@link ResultEnum} 默认错误码
+         */
+        long code() default -1L;
+
+        /**
+         * @return 捕获哪些异常，默认为{{@link Exception}}
+         */
+        Class<? extends Exception>[] when() default Exception.class;
+
+    }
+
+
+    /**
+     * 手动抛出的异常，不指定错误码时为“操作失败”
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(ApiException.class)
+    public Object handServerException(ApiException exception){
+        if(exception.getErrorCode() != null){
+            return new Result<>(null,exception.getErrorCode().getMsg(),exception.getErrorCode().getCode());
+        }else{
+            return new Result<>(null,exception.getMessage(),ResultEnum.DEFAULT_ERROR.getCode());
+        }
+    }
+
+    /**
+     * 参数校验失败
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Object resolveMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
+        HashMap<String, String> resultMap = Maps.newHashMap();
+        if(!CollectionUtils.isEmpty(objectErrors)){
+            for(ObjectError objectError : objectErrors){
+                String field = ((FieldError) objectError).getField();
+                String message = objectError.getDefaultMessage();
+                resultMap.put(field,message);
+            }
+        }
+        return new Result<>(resultMap,ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getMsg(),ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getCode());
+    }
+
+    /**
+     * 不可预料的异常
+     *
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(Exception.class)
+    public Object exceptionHandle(MethodHandle handle,Exception e){
+        log.error("出现异常:",e);
+        return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
+    }
 
 }
