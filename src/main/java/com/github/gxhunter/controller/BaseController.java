@@ -2,25 +2,19 @@ package com.github.gxhunter.controller;
 
 import com.github.gxhunter.enums.ResultEnum;
 import com.github.gxhunter.exception.ApiException;
+import com.github.gxhunter.exception.ClassifyException;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.util.CollectionUtils;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -93,6 +87,10 @@ public abstract class BaseController{
     }
 
 
+    /**
+     * 加在Controller上自动捕获分类目标异常，并封装成 {@link ClassifyException}交由异常处理器处理，
+     * 可继承{@link BaseController}重写{@link #handleClassifyException(ClassifyException)}方法自定义处理逻辑。
+     */
     @Target(ElementType.METHOD)
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
@@ -110,9 +108,9 @@ public abstract class BaseController{
         long code() default -1L;
 
         /**
-         * @return 捕获哪些异常，默认为{{@link Exception}}
+         * @return 捕获哪些异常，默认为{@link Exception}
          */
-        Class<? extends Exception>[] when() default Exception.class;
+        Class<? extends Exception>[] on() default Exception.class;
 
     }
 
@@ -130,7 +128,7 @@ public abstract class BaseController{
      * @return
      */
     @ExceptionHandler(ApiException.class)
-    public Object handServerException(ApiException exception){
+    public Object handleApiException(ApiException exception){
         if(exception.getErrorCode() != null){
             return new Result<>(null,exception.getErrorCode().getMsg(),exception.getErrorCode().getCode());
         }else{
@@ -139,33 +137,26 @@ public abstract class BaseController{
     }
 
     /**
-     * 参数校验失败
+     * 捕获分类异常（对应Controller加上{{@link IfException}}）注解分类到的异常。
+     * 重写此方法 重定义{@link IfException}捕获到异常后 的处理逻辑
      *
      * @param ex
      * @return
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
-        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
-        HashMap<String, String> resultMap = Maps.newHashMap();
-        if(!CollectionUtils.isEmpty(objectErrors)){
-            for(ObjectError objectError : objectErrors){
-                String field = ((FieldError) objectError).getField();
-                String message = objectError.getDefaultMessage();
-                resultMap.put(field,message);
-            }
-        }
-        return new Result<>(resultMap,ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getMsg(),ResultEnum.METHOD_ARGUMENT_VALID_FAIL.getCode());
+    @ExceptionHandler(ClassifyException.class)
+    public Object handleClassifyException(ClassifyException ex){
+        log.error(ex.getExceptionClass().getName() + ":" + ex.getMessage(),ex);
+        return new Result<>(null,ex.getErrorCode().getMsg(),ex.getErrorCode().getCode());
     }
 
     /**
-     * 不可预料的异常
+     * 其他异常
      *
      * @param e
      * @return
      */
     @ExceptionHandler(Exception.class)
-    public Object handleOtherException(MethodHandle handle,Exception e){
+    public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
         return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
     }
@@ -173,10 +164,11 @@ public abstract class BaseController{
     static List<IfExceptionInfo> getIfExceptionList(Method method){
         List<IfExceptionInfo> result = Lists.newArrayList();
         for(IfException ifException : method.getAnnotation(ExceptionList.class).value()){
-            result.add(new IfExceptionInfo(ifException.value(),ifException.code(),ifException.when()));
+            result.add(new IfExceptionInfo(ifException.value(),ifException.code(),ifException.on()));
         }
         return result;
     }
+
     @AllArgsConstructor
     @Getter
     static class IfExceptionInfo{
