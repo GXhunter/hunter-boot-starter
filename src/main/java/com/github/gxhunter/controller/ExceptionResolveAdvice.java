@@ -41,6 +41,7 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable{
         try{
+            log.info("进入aop");
             return invocation.proceed();
         }catch(Exception e){
             for(BaseController.IfExceptionInfo exceptionInfo : BaseController.getIfExceptionList(invocation.getMethod())){

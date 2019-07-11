@@ -11,11 +11,13 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author 树荫下的天空
@@ -146,7 +148,7 @@ public abstract class BaseController{
     @ExceptionHandler(ClassifyException.class)
     public Object handleClassifyException(ClassifyException ex){
         log.error(ex.getExceptionClass().getName() + ":" + ex.getMessage(),ex);
-        return new Result<>(null,ex.getErrorCode().getMsg(),ex.getErrorCode().getCode());
+        return new Result<>(null,ex.getExceptionInfo().getMsg(),ex.getExceptionInfo().getCode());
     }
 
     /**
@@ -163,8 +165,15 @@ public abstract class BaseController{
 
     static List<IfExceptionInfo> getIfExceptionList(Method method){
         List<IfExceptionInfo> result = Lists.newArrayList();
-        for(IfException ifException : method.getAnnotation(ExceptionList.class).value()){
+        IfException ifException = method.getAnnotation(IfException.class);
+        if(ifException != null){
             result.add(new IfExceptionInfo(ifException.value(),ifException.code(),ifException.on()));
+        }
+        ExceptionList exceptionList = method.getAnnotation(ExceptionList.class);
+        if(exceptionList != null){
+            for(IfException exception : exceptionList.value()){
+                result.add(new IfExceptionInfo(exception.value(),exception.code(),exception.on()));
+            }
         }
         return result;
     }

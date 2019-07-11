@@ -31,7 +31,7 @@ public class ClassifyException extends RuntimeException {
      * 错误码
      */
     @Getter
-    private IResponseCode errorCode;
+    private IResponseCode exceptionInfo;
 
     /**
      * 捕获到的原始异常类型
@@ -39,15 +39,15 @@ public class ClassifyException extends RuntimeException {
     @Getter
     private Class<? extends Exception> exceptionClass;
 
-    public ClassifyException(IResponseCode errorCode) {
-        super(errorCode.getMsg());
-        this.errorCode = errorCode;
+    public ClassifyException(IResponseCode exceptionInfo) {
+        super(exceptionInfo.getMsg());
+        this.exceptionInfo = exceptionInfo;
     }
 
 
-    public ClassifyException(IResponseCode errorCode,Class<? extends Exception> exceptionClass) {
-        super(errorCode.getMsg());
-        this.errorCode = errorCode;
+    public ClassifyException(IResponseCode exceptionInfo,Class<? extends Exception> exceptionClass) {
+        super(exceptionInfo.getMsg());
+        this.exceptionInfo = exceptionInfo;
         this.exceptionClass = exceptionClass;
     }
 
