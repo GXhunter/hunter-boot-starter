@@ -2,8 +2,8 @@ package com.github.gxhunter.controller;
 
 import com.github.gxhunter.enums.IResponseCode;
 import com.github.gxhunter.enums.ResultEnum;
-import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
+import com.github.gxhunter.util.SpelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -41,10 +41,9 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable{
         try{
-            log.info("进入aop");
             return invocation.proceed();
         }catch(Exception e){
-            for(BaseController.IfExceptionInfo exceptionInfo : BaseController.getIfExceptionList(invocation.getMethod())){
+            for(BaseController.IfExceptionInfo exceptionInfo : BaseController.getIfExceptionList(invocation.getMethod(),invocation.getArguments())){
                 for(Class<? extends Exception> exClazz : exceptionInfo.getWhen()){
                     if(exClazz.isInstance(e)){
                         long errorCode = exceptionInfo.getCode() == -1L ? ResultEnum.DEFAULT_ERROR.getCode() : exceptionInfo.getCode();

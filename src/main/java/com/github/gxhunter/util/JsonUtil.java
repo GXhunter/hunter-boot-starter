@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 /**
  * @author hunter
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
  */
 public class JsonUtil{
     private static ObjectMapper objectMapper = new ObjectMapper();
+
     static{
         //只序列化不为null的字段
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -37,9 +39,9 @@ public class JsonUtil{
         if(obj == null){
             return null;
         }
-        try {
-            return obj instanceof String ? (String)obj :  objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
+        try{
+            return obj instanceof String ? (String) obj : objectMapper.writeValueAsString(obj);
+        }catch(Exception e){
             e.printStackTrace();
             return null;
         }
@@ -52,9 +54,9 @@ public class JsonUtil{
         if(obj == null){
             return null;
         }
-        try {
-            return obj instanceof String ? (String)obj :  objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-        } catch (Exception e) {
+        try{
+            return obj instanceof String ? (String) obj : objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        }catch(Exception e){
             e.printStackTrace();
             return null;
         }
@@ -62,6 +64,7 @@ public class JsonUtil{
 
     /**
      * JSON转为java对象
+     *
      * @param str   json字符串
      * @param clazz java对象类型
      * @param <T>   java对象类型
@@ -72,32 +75,41 @@ public class JsonUtil{
             return null;
         }
 
-        try {
-            return clazz.equals(String.class)? (T)str : objectMapper.readValue(str,clazz);
-        } catch (Exception e) {
+        try{
+            return clazz.equals(String.class) ? (T) str : objectMapper.readValue(str,clazz);
+        }catch(Exception e){
             e.printStackTrace();
             return null;
         }
     }
 
-    public static <T> T parse(String str, TypeReference<T> typeReference){
+    public static <T> T parse(String str,TypeReference<T> typeReference){
         if(StringUtils.isEmpty(str) || typeReference == null){
             return null;
         }
-        try {
-            return (T)(typeReference.getType().equals(String.class)? str : objectMapper.readValue(str,typeReference));
-        } catch (Exception e) {
+        try{
+            return (T) (typeReference.getType().equals(String.class) ? str : objectMapper.readValue(str,typeReference));
+        }catch(Exception e){
             e.printStackTrace();
             return null;
         }
     }
 
 
-    public static <T> T parse(String str,Class<?> collectionClass,Class<?>... elementClasses){
+    /**
+     * 转为集合
+     *
+     * @param str             json字符串
+     * @param collectionClass 集合
+     * @param elementClasses  元素
+     * @return 对象
+     */
+    @SafeVarargs
+    public static <T extends Collection<E>,E> T parse(String str,Class<T> collectionClass,Class<E>... elementClasses){
         JavaType javaType = objectMapper.getTypeFactory().constructParametricType(collectionClass,elementClasses);
-        try {
+        try{
             return objectMapper.readValue(str,javaType);
-        } catch (Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
             return null;
         }

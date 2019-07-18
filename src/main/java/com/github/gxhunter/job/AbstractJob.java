@@ -46,7 +46,7 @@ public abstract class AbstractJob implements Job{
     }
 
     /**
-     * 任务超时时间，默认{@link #NEVER_TOMEOUT} 永不超时
+     * 任务执行超时时间，默认{@link #NEVER_TOMEOUT} 永不超时
      *
      * @return 时间戳
      */

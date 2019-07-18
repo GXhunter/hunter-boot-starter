@@ -3,11 +3,13 @@ package com.github.gxhunter.controller;
 import com.github.gxhunter.enums.ResultEnum;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
+import com.github.gxhunter.util.SpelUtil;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AliasFor;
@@ -114,6 +116,13 @@ public abstract class BaseController{
          */
         Class<? extends Exception>[] on() default Exception.class;
 
+        /**
+         * spel表达式
+         *
+         * @return
+         */
+        String el() default "";
+
     }
 
     @Target(ElementType.METHOD)
@@ -131,6 +140,7 @@ public abstract class BaseController{
      */
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
+        log.error(exception.getMessage(),exception);
         if(exception.getErrorCode() != null){
             return new Result<>(null,exception.getErrorCode().getMsg(),exception.getErrorCode().getCode());
         }else{
@@ -142,13 +152,13 @@ public abstract class BaseController{
      * 捕获分类异常（对应Controller加上{{@link IfException}}）注解分类到的异常。
      * 重写此方法 重定义{@link IfException}捕获到异常后 的处理逻辑
      *
-     * @param ex
-     * @return
+     * @param ex {@link IfException}捕获到的异常
+     * @return 返回给前端的json数据
      */
     @ExceptionHandler(ClassifyException.class)
     public Object handleClassifyException(ClassifyException ex){
         log.error(ex.getExceptionClass().getName() + ":" + ex.getMessage(),ex);
-        return new Result<>(null,ex.getExceptionInfo().getMsg(),ex.getExceptionInfo().getCode());
+        return faild(ex.getExceptionInfo());
     }
 
     /**
@@ -163,16 +173,16 @@ public abstract class BaseController{
         return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
     }
 
-    static List<IfExceptionInfo> getIfExceptionList(Method method){
+    static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
         List<IfExceptionInfo> result = Lists.newArrayList();
-        IfException ifException = method.getAnnotation(IfException.class);
-        if(ifException != null){
-            result.add(new IfExceptionInfo(ifException.value(),ifException.code(),ifException.on()));
-        }
         ExceptionList exceptionList = method.getAnnotation(ExceptionList.class);
         if(exceptionList != null){
             for(IfException exception : exceptionList.value()){
-                result.add(new IfExceptionInfo(exception.value(),exception.code(),exception.on()));
+                String value = exception.value();
+                if(StringUtils.isNotBlank(exception.el())){
+                    value = String.format(value,SpelUtil.getValueFromMethod(exception.el(),method,arguments,String.class));
+                }
+                result.add(new IfExceptionInfo(value,exception.code(),exception.on()));
             }
         }
         return result;
