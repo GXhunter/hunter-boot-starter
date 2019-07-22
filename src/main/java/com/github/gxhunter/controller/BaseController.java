@@ -3,23 +3,21 @@ package com.github.gxhunter.controller;
 import com.github.gxhunter.enums.ResultEnum;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
-import com.github.gxhunter.util.SpelUtil;
+import com.github.gxhunter.util.SpelPaser;
 import com.github.gxhunter.vo.Result;
 import com.github.gxhunter.enums.IResponseCode;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +26,7 @@ import java.util.regex.Pattern;
  * @date 2018.12.21
  */
 public abstract class BaseController{
-    private static final Pattern PATTERN = Pattern.compile("#\\{[\\w.\\d]+}");
+    private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
      * 日志打印
      */
@@ -169,45 +167,18 @@ public abstract class BaseController{
     }
 
     static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
+        SPEL_PASER.setContext(method,arguments);
         List<IfExceptionInfo> result = Lists.newArrayList();
         ExceptionList exceptionList = method.getAnnotation(ExceptionList.class);
         if(exceptionList != null){
             for(IfException exception : exceptionList.value()){
-                String value = parse(exception.value(),method,arguments);
+                String value = SPEL_PASER.parse(exception.value());
                 result.add(new IfExceptionInfo(value,exception.code(),exception.on()));
             }
         }
         return result;
     }
 
-    /**
-     * 解析字符串中的el表达式
-     * @param value
-     * @param method
-     * @param args
-     * @return
-     */
-    private static String parse(String value,Method method,Object[] args){
-        byte[] bytes = value.getBytes();
-        String el;
-        StringBuilder result = new StringBuilder();
-        Matcher matcher = PATTERN.matcher(value);
-        for(int i = 0, len = value.length(); i < len; ){
-            if(matcher.find(i)){
-                int start = matcher.start();
-                int end = matcher.end();
-                if(start != i){
-                    result.append(value,i,start);
-                }
-                el = value.substring(start,end).replaceAll("[{}]","");
-                result.append(SpelUtil.getValueFromMethod(el,method,args,String.class));
-                i = end;
-            }else{
-                result.append(value,i,len);
-            }
-        }
-        return result.toString();
-    }
 
 
     @AllArgsConstructor
