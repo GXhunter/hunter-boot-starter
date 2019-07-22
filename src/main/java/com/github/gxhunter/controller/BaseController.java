@@ -20,12 +20,15 @@ import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author 树荫下的天空
  * @date 2018.12.21
  */
 public abstract class BaseController{
+    private static final Pattern PATTERN = Pattern.compile("#\\{[\\w.\\d]+}");
     /**
      * 日志打印
      */
@@ -95,10 +98,9 @@ public abstract class BaseController{
      * 加在Controller上自动捕获分类目标异常，并封装成 {@link ClassifyException}交由异常处理器处理，
      * 可继承{@link BaseController}重写{@link #handleClassifyException(ClassifyException)}方法自定义处理逻辑。
      */
-    @Target(ElementType.METHOD)
+    @Target(ElementType.ANNOTATION_TYPE)
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
-    @Repeatable(value = ExceptionList.class)
     protected @interface IfException{
         /**
          * @return 返回给前端的提示信息
@@ -115,13 +117,6 @@ public abstract class BaseController{
          * @return 捕获哪些异常，默认为{@link Exception}
          */
         Class<? extends Exception>[] on() default Exception.class;
-
-        /**
-         * spel表达式
-         *
-         * @return
-         */
-        String el() default "";
 
     }
 
@@ -178,15 +173,42 @@ public abstract class BaseController{
         ExceptionList exceptionList = method.getAnnotation(ExceptionList.class);
         if(exceptionList != null){
             for(IfException exception : exceptionList.value()){
-                String value = exception.value();
-                if(StringUtils.isNotBlank(exception.el())){
-                    value = String.format(value,SpelUtil.getValueFromMethod(exception.el(),method,arguments,String.class));
-                }
+                String value = parse(exception.value(),method,arguments);
                 result.add(new IfExceptionInfo(value,exception.code(),exception.on()));
             }
         }
         return result;
     }
+
+    /**
+     * 解析字符串中的el表达式
+     * @param value
+     * @param method
+     * @param args
+     * @return
+     */
+    private static String parse(String value,Method method,Object[] args){
+        byte[] bytes = value.getBytes();
+        String el;
+        StringBuilder result = new StringBuilder();
+        Matcher matcher = PATTERN.matcher(value);
+        for(int i = 0, len = value.length(); i < len; ){
+            if(matcher.find(i)){
+                int start = matcher.start();
+                int end = matcher.end();
+                if(start != i){
+                    result.append(value,i,start);
+                }
+                el = value.substring(start,end).replaceAll("[{}]","");
+                result.append(SpelUtil.getValueFromMethod(el,method,args,String.class));
+                i = end;
+            }else{
+                result.append(value,i,len);
+            }
+        }
+        return result.toString();
+    }
+
 
     @AllArgsConstructor
     @Getter
