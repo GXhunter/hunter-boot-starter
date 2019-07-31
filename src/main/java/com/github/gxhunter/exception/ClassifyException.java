@@ -40,13 +40,13 @@ public class ClassifyException extends RuntimeException {
     private Class<? extends Exception> exceptionClass;
 
     public ClassifyException(IResponseCode exceptionInfo) {
-        super(exceptionInfo.getMsg());
+        super(exceptionInfo.getMessage());
         this.exceptionInfo = exceptionInfo;
     }
 
 
     public ClassifyException(IResponseCode exceptionInfo,Class<? extends Exception> exceptionClass) {
-        super(exceptionInfo.getMsg());
+        super(exceptionInfo.getMessage());
         this.exceptionInfo = exceptionInfo;
         this.exceptionClass = exceptionClass;
     }

@@ -34,7 +34,7 @@ public class ApiException extends RuntimeException {
     private IResponseCode errorCode;
 
     public ApiException(IResponseCode errorCode) {
-        super(errorCode.getMsg());
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 

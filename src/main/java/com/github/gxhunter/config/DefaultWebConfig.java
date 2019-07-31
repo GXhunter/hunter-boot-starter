@@ -8,14 +8,19 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.github.gxhunter.jackson.LocalDateTimeDeserializer;
+import com.github.gxhunter.jackson.LocalDateTimeSerializer;
+import com.github.gxhunter.jackson.ResultVoSerializer;
+import com.github.gxhunter.vo.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -27,7 +32,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * @author hunter
@@ -36,7 +40,16 @@ import java.util.TimeZone;
 @Configuration
 @ConditionalOnMissingBean(WebMvcConfigurationSupport.class)
 @ConditionalOnWebApplication
+@Import({LocalDateTimeSerializer.class,LocalDateTimeDeserializer.class})
 public class DefaultWebConfig extends WebMvcConfigurationSupport{
+    @Autowired
+    private JacksonProperties mJacksonProperties;
+    @Autowired
+    private LocalDateTimeSerializer mLocalDateTimeSerializer;
+    @Autowired
+    private LocalDateTimeDeserializer mLocalDateTimeDeserializer;
+    @Autowired
+    private ResultVoSerializer mResultVoSerializer;
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("doc.html")
@@ -57,12 +70,14 @@ public class DefaultWebConfig extends WebMvcConfigurationSupport{
          * java8 时间日期序列化与反序列化
          */
         javaTimeModule.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        javaTimeModule.addSerializer(LocalDateTime.class,new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                mLocalDateTimeDeserializer);
+        javaTimeModule.addSerializer(LocalDateTime.class,mLocalDateTimeSerializer);
         javaTimeModule.addDeserializer(LocalDate.class,new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         javaTimeModule.addSerializer(LocalDate.class,new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         javaTimeModule.addDeserializer(LocalTime.class,new LocalTimeDeserializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
         javaTimeModule.addSerializer(LocalTime.class,new LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm:ss")));
+
+
 
         ObjectMapper objectMapper = new ObjectMapper();
 //        排除null字段
@@ -72,12 +87,13 @@ public class DefaultWebConfig extends WebMvcConfigurationSupport{
 //        忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误。
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
-        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        objectMapper.setTimeZone(mJacksonProperties.getTimeZone());
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 //        序列换成json时,将所有的long转成string
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(Long.class,ToStringSerializer.instance);
         simpleModule.addSerializer(Long.TYPE,ToStringSerializer.instance);
+        simpleModule.addSerializer(Result.class,mResultVoSerializer);
         objectMapper.registerModule(simpleModule);
         objectMapper.registerModule(javaTimeModule);
         jackson2HttpMessageConverter.setObjectMapper(objectMapper);

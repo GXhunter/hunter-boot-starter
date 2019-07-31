@@ -1,12 +1,8 @@
 package com.github.gxhunter.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.gxhunter.enums.IResponseCode;
-import com.github.gxhunter.enums.ResultEnum;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * @author 树荫下的天空
@@ -14,26 +10,16 @@ import java.io.Serializable;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Result<T>{
-    private Serializable code;
+public class Result<T> implements IResponseCode{
+    private Integer code;
     private String message;
     private T data;
 
     public Result(){}
 
-    public Result(T data,String message,Serializable code){
+    public Result(T data,String message,Integer code){
         this.data = data;
         this.message = message;
         this.code = code;
     }
-
-    /**
-     * 本次请求是否成功
-     *
-     * @return true 成功  false 失败
-     */
-    public boolean getFlag(){
-        return this.code.equals(ResultEnum.SUCCESS.getCode());
-    }
-
 }

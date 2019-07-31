@@ -1,31 +1,31 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.ResultEnum;
+import com.github.gxhunter.enums.IResultCodeAware;
+import com.github.gxhunter.enums.IResponseCode;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
 import com.github.gxhunter.util.SpelPaser;
 import com.github.gxhunter.vo.Result;
-import com.github.gxhunter.enums.IResponseCode;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.expression.MethodBasedEvaluationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author 树荫下的天空
  * @date 2018.12.21
  */
 public abstract class BaseController{
+    @Autowired(required = false)
+    protected IResultCodeAware mBaseResultCode;
     private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
      * 日志打印
@@ -39,7 +39,7 @@ public abstract class BaseController{
      * @return
      */
     protected <T> Result<T> success(T entity){
-        return new Result<>(entity,ResultEnum.SUCCESS.getMsg(),ResultEnum.SUCCESS.getCode());
+        return new Result<>(entity,mBaseResultCode.success().getMessage(),mBaseResultCode.success().getCode());
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class BaseController{
      * @return
      */
     protected <T> Result<T> success(){
-        return new Result<>(null,ResultEnum.SUCCESS.getMsg(),ResultEnum.SUCCESS.getCode());
+        return new Result<>(null,mBaseResultCode.success().getMessage(),mBaseResultCode.success().getCode());
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result successMsg(String message){
-        return new Result<>(null,message,ResultEnum.SUCCESS.getCode());
+        return new Result<>(null,message,mBaseResultCode.success().getCode());
     }
 
     /**
@@ -67,7 +67,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(){
-        return new Result<>(null,ResultEnum.DEFAULT_ERROR.getMsg(),ResultEnum.DEFAULT_ERROR.getCode());
+        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.faild().getCode());
     }
 
     /**
@@ -77,7 +77,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(String message){
-        return new Result<>(null,message,ResultEnum.DEFAULT_ERROR.getCode());
+        return new Result<>(null,message,mBaseResultCode.faild().getCode());
     }
 
 
@@ -88,7 +88,7 @@ public abstract class BaseController{
      * @return
      */
     protected Result faild(IResponseCode errorCode){
-        return new Result<>(null,errorCode.getMsg(),errorCode.getCode());
+        return new Result<>(null,errorCode.getMessage(),errorCode.getCode());
     }
 
 
@@ -107,9 +107,9 @@ public abstract class BaseController{
         String value() default "";
 
         /**
-         * @return 错误码 默认为{@link ResultEnum} 默认错误码
+         * @return 错误码 默认为{@link } 默认错误码
          */
-        long code() default -1L;
+        int code() default -1;
 
         /**
          * @return 捕获哪些异常，默认为{@link Exception}
@@ -135,9 +135,9 @@ public abstract class BaseController{
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
         if(exception.getErrorCode() != null){
-            return new Result<>(null,exception.getErrorCode().getMsg(),exception.getErrorCode().getCode());
+            return new Result<>(null,exception.getErrorCode().getMessage(),exception.getErrorCode().getCode());
         }else{
-            return new Result<>(null,exception.getMessage(),ResultEnum.DEFAULT_ERROR.getCode());
+            return new Result<>(null,exception.getMessage(),mBaseResultCode.faild().getCode());
         }
     }
 
@@ -163,7 +163,7 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        return new Result<>(null,ResultEnum.UNKNOW_ERROR.getMsg(),ResultEnum.UNKNOW_ERROR.getCode());
+        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.faild().getCode());
     }
 
     static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
@@ -190,9 +190,9 @@ public abstract class BaseController{
         String value;
 
         /**
-         * @return 错误码 默认为{@link ResultEnum} 默认错误码
+         * @return 错误码 默认为{@link } 默认错误码
          */
-        long code;
+        Integer code;
 
         /**
          * @return 捕获哪些异常，默认为{{@link Exception}}
