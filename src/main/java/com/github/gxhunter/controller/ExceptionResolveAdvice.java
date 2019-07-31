@@ -1,6 +1,7 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.enums.IResponseCode;
+import com.github.gxhunter.enums.IResultCodeAware;
 import com.github.gxhunter.exception.ClassifyException;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -9,6 +10,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author wanggx
@@ -16,6 +18,8 @@ import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
  */
 @Slf4j
 public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements MethodInterceptor{
+    @Autowired
+    private IResultCodeAware mResultCodeAware;
     @Override
     public Pointcut getPointcut(){
         return AnnotationMatchingPointcut.forMethodAnnotation(BaseController.ExceptionList.class);
@@ -41,7 +45,7 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
             for(BaseController.IfExceptionInfo exceptionInfo : BaseController.getIfExceptionList(invocation.getMethod(),invocation.getArguments())){
                 for(Class<? extends Exception> exClazz : exceptionInfo.getWhen()){
                     if(exClazz.isInstance(e)){
-                        Integer errorCode = -1;
+                        Integer errorCode = exceptionInfo.getCode() == -1L ? mResultCodeAware.faild().getCode() : exceptionInfo.getCode();
                         IResponseCode responseCode = new IResponseCode(){
                             @Override
                             public Integer getCode(){
