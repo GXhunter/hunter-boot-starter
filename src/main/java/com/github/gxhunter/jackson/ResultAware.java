@@ -13,8 +13,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
  */
 @Getter
 @Setter
-@ConditionalOnMissingBean(IResultCodeAware.class)
-public class ResultAware implements IResultCodeAware{
+@ConditionalOnMissingBean(IResultAware.class)
+public class ResultAware implements IResultAware{
     /**
      * 提供一个表示“成功”的返回类到spring上下文。
      * 主要在{{@link BaseController#success()}}使用

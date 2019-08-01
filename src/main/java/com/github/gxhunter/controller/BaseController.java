@@ -3,7 +3,7 @@ package com.github.gxhunter.controller;
 import com.github.gxhunter.enums.IResult;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
-import com.github.gxhunter.jackson.IResultCodeAware;
+import com.github.gxhunter.jackson.IResultAware;
 import com.github.gxhunter.util.SpelPaser;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class BaseController{
     @Autowired(required = false)
-    protected IResultCodeAware mBaseResultCode;
+    protected IResultAware mResultAware;
     private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
      * 日志打印
@@ -35,7 +35,7 @@ public abstract class BaseController{
     @PostConstruct
     void initResult(){
         try{
-            mResult = mBaseResultCode.resultClass().newInstance();
+            mResult = mResultAware.resultClass().newInstance();
         }catch(InstantiationException | IllegalAccessException e){
             e.printStackTrace();
         }
@@ -48,8 +48,8 @@ public abstract class BaseController{
      */
     protected <T> IResult<T> success(T entity){
         IResult<T> result = mResult.clone();
-        result.setCode(mBaseResultCode.success().getCode());
-        result.setMessage(mBaseResultCode.success().getMessage());
+        result.setCode(mResultAware.success().getCode());
+        result.setMessage(mResultAware.success().getMessage());
         result.setData(entity);
         return result;
     }
@@ -71,7 +71,7 @@ public abstract class BaseController{
      */
     protected IResult successMsg(String message){
         IResult result = mResult.clone();
-        result.setCode(mBaseResultCode.success().getCode());
+        result.setCode(mResultAware.success().getCode());
         result.setMessage(message);
         return result;
     }
@@ -83,8 +83,8 @@ public abstract class BaseController{
      */
     protected IResult faild(){
         IResult result = mResult.clone();
-        result.setMessage(mBaseResultCode.faild().getMessage());
-        result.setCode(mBaseResultCode.faild().getCode());
+        result.setMessage(mResultAware.faild().getMessage());
+        result.setCode(mResultAware.faild().getCode());
         return result;
     }
 
@@ -97,7 +97,7 @@ public abstract class BaseController{
     protected IResult faild(String message){
         IResult result = mResult.clone();
         result.setMessage(message);
-        result.setCode(mBaseResultCode.faild().getCode());
+        result.setCode(mResultAware.faild().getCode());
         return result;
     }
 
@@ -111,7 +111,7 @@ public abstract class BaseController{
     protected IResult faild(IResult errorCode){
         IResult result = mResult.clone();
         result.setMessage(errorCode.getMessage());
-        result.setCode(mBaseResultCode.faild().getCode());
+        result.setCode(mResultAware.faild().getCode());
         return result;
     }
 
@@ -162,7 +162,7 @@ public abstract class BaseController{
         if(exception.getErrorCode() != null){
             return exception.getErrorCode();
         }else{
-            result.setCode(mBaseResultCode.exception().getCode());
+            result.setCode(mResultAware.exception().getCode());
             result.setMessage(exception.getMessage());
             return result;
         }
@@ -191,8 +191,8 @@ public abstract class BaseController{
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
         IResult result = mResult.clone();
-        result.setMessage(mBaseResultCode.faild().getMessage());
-        result.setCode(mBaseResultCode.exception().getCode());
+        result.setMessage(mResultAware.faild().getMessage());
+        result.setCode(mResultAware.exception().getCode());
         return result;
     }
 

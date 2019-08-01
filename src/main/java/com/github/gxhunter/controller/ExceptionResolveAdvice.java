@@ -1,7 +1,7 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.enums.IResult;
-import com.github.gxhunter.jackson.IResultCodeAware;
+import com.github.gxhunter.jackson.IResultAware;
 import com.github.gxhunter.exception.ClassifyException;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements MethodInterceptor{
     @Autowired
-    private IResultCodeAware mResultCodeAware;
+    private IResultAware mResultCodeAware;
     @Override
     public Pointcut getPointcut(){
         return AnnotationMatchingPointcut.forMethodAnnotation(BaseController.ExceptionList.class);

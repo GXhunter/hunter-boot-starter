@@ -6,7 +6,7 @@ import com.github.gxhunter.enums.IResult;
  * @author 树荫下的天空
  * @date 2019/7/27 10:28
  */
-public interface IResultCodeAware{
+public interface IResultAware{
     /**
      * 成功返回
      *
