@@ -65,7 +65,7 @@ public class QuartzConfig{
 
             JobKey jobKey = new JobKey(beanName,groupName);
             JobDetail jobDetail = createJobDetail(jobClass,jobKey);
-            CronTriggerImpl trigger = createTrigger(jobClass,quartzJob.cron(),jobKey,jobDetail);
+            CronTriggerImpl trigger = createTrigger(quartzJob.cron(),jobKey,jobDetail);
             cronTriggers.add(trigger);
 
         });
@@ -76,13 +76,12 @@ public class QuartzConfig{
     /**
      * 创建jobTrigger
      *
-     * @param t              job类
      * @param cronExpression cron表达式
      * @param jobKey         默认trigger的jobKey和jobDetail的jobKey一样
      * @return
      * @throws ParseException
      */
-    private CronTriggerImpl createTrigger(Class<? extends AbstractJob> t,String cronExpression,JobKey jobKey,JobDetail jobDetail){
+    private CronTriggerImpl createTrigger(String cronExpression,JobKey jobKey,JobDetail jobDetail){
         CronTriggerFactoryBean triggerFactoryBean = new CronTriggerFactoryBean();
         triggerFactoryBean.setJobDetail(jobDetail);
         triggerFactoryBean.setCronExpression(cronExpression);
@@ -99,15 +98,15 @@ public class QuartzConfig{
     /**
      * 通过job创建jobDetail
      *
-     * @param c      job类
+     * @param jobClass      job类
      * @param jobKey
      * @return
      */
-    private JobDetail createJobDetail(Class<? extends AbstractJob> c,JobKey jobKey){
+    private JobDetail createJobDetail(Class<? extends AbstractJob> jobClass,JobKey jobKey){
         JobDetailFactoryBean detailFactoryBean = new JobDetailFactoryBean();
         detailFactoryBean.setDurability(true);
         detailFactoryBean.setRequestsRecovery(true);
-        detailFactoryBean.setJobClass(c);
+        detailFactoryBean.setJobClass(jobClass);
         detailFactoryBean.setName(jobKey.getName());
         detailFactoryBean.setGroup(jobKey.getGroup());
         detailFactoryBean.afterPropertiesSet();
@@ -118,6 +117,9 @@ public class QuartzConfig{
     /**
      * 添加该方法的目的在于一个使用场景。如果代码中删除了不需要的定时任务，但是数据库中不会删除掉，会导致之前
      * 的定时任务一直在运行，如果把定时任务依赖的类删除了，就会导致报错，找不到目标。所以配置动态删除任务
+     * @param triggers
+     * @param scheduler
+     * @return
      */
     public String fulsh(@Qualifier("triggers") CronTriggerImpl[] triggers,Scheduler scheduler){
         try{

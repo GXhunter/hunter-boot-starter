@@ -24,7 +24,7 @@ import java.util.List;
  * @date 2018.12.21
  */
 public abstract class BaseController{
-    @Autowired(required = false)
+    @Autowired
     protected IResultAware mResultAware;
     private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
