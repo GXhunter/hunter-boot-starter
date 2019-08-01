@@ -5,7 +5,6 @@ import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
 import com.github.gxhunter.jackson.IResultCodeAware;
 import com.github.gxhunter.util.SpelPaser;
-import com.github.gxhunter.vo.Result;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +31,7 @@ public abstract class BaseController{
      * 日志打印
      */
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected IResult mResult;
+    private IResult mResult;
     @PostConstruct
     void initResult(){
         try{
@@ -74,7 +73,6 @@ public abstract class BaseController{
         IResult result = mResult.clone();
         result.setCode(mBaseResultCode.success().getCode());
         result.setMessage(message);
-        result.setData(null);
         return result;
     }
 
@@ -160,10 +158,13 @@ public abstract class BaseController{
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
+        IResult result = mResult.clone();
         if(exception.getErrorCode() != null){
-            return new Result<>(null,exception.getErrorCode().getMessage(),exception.getErrorCode().getCode());
+            return exception.getErrorCode();
         }else{
-            return new Result<>(null,exception.getMessage(),mBaseResultCode.exception().getCode());
+            result.setCode(mBaseResultCode.exception().getCode());
+            result.setMessage(exception.getMessage());
+            return result;
         }
     }
 
@@ -189,7 +190,10 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.exception().getCode());
+        IResult result = mResult.clone();
+        result.setMessage(mBaseResultCode.faild().getMessage());
+        result.setCode(mBaseResultCode.exception().getCode());
+        return result;
     }
 
     static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
