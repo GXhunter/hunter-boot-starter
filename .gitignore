@@ -32,3 +32,4 @@ Thumbs.db
 **/rebel.xml
 /baseweb/.rebel.xml.bak
 /velocity.log.1
+/src/main/test/

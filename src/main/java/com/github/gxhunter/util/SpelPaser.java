@@ -62,6 +62,7 @@ public class SpelPaser{
                 i = end;
             }else{
                 result.append(value,i,len);
+                i += len;
             }
         }
         return result.toString();

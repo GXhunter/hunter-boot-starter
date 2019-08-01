@@ -1,7 +1,7 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.IResponseCode;
-import com.github.gxhunter.enums.IResultCodeAware;
+import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.jackson.IResultCodeAware;
 import com.github.gxhunter.exception.ClassifyException;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -45,18 +45,11 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
             for(BaseController.IfExceptionInfo exceptionInfo : BaseController.getIfExceptionList(invocation.getMethod(),invocation.getArguments())){
                 for(Class<? extends Exception> exClazz : exceptionInfo.getWhen()){
                     if(exClazz.isInstance(e)){
-                        Integer errorCode = exceptionInfo.getCode() == -1L ? mResultCodeAware.faild().getCode() : exceptionInfo.getCode();
-                        IResponseCode responseCode = new IResponseCode(){
-                            @Override
-                            public Integer getCode(){
-                                return errorCode;
-                            }
-                            @Override
-                            public String getMessage(){
-                                return exceptionInfo.getValue();
-                            }
-                        };
-                        throw new ClassifyException(responseCode,exClazz);
+                        Integer errorCode = exceptionInfo.getCode() == -1L ? mResultCodeAware.exception().getCode() : exceptionInfo.getCode();
+                        IResult result = mResultCodeAware.resultClass().newInstance();
+                        result.setCode(errorCode);
+                        result.setMessage(exceptionInfo.getValue());
+                        throw new ClassifyException(result,exClazz);
                     }
                 }
             }

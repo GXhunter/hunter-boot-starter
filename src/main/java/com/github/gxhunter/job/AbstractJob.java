@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
  */
 public abstract class AbstractJob implements Job{
     public static final short NEVER_TOMEOUT = 0;
+
     @Override
     public final void execute(JobExecutionContext context) throws JobExecutionException{
         try{
@@ -24,12 +25,17 @@ public abstract class AbstractJob implements Job{
 
     /**
      * 定时执行这部分逻辑
+     *
      * @param context 上下文
      * @throws JobExecutionException 异常
      */
     public abstract void run(JobExecutionContext context) throws JobExecutionException;
+
     /**
-     * 任务执行后,不管是否异常，一定会执行
+     * <pre>
+     *
+     * 任务执行后,不管是否异常，一定会执行,一般用于资源回收
+     * </pre>
      */
     protected void after(JobExecutionContext context){
 

@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author 树荫下的天空
  * @date 2018/12/25 14:18
- * 线程池
  */
 @Configuration
 public class ExceptionResolveAutoConfig{

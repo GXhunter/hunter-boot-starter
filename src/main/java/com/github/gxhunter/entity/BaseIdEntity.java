@@ -10,9 +10,9 @@ import org.springframework.data.annotation.Id;
  */
 @Data
 @ToString
-public abstract class BaseSpringDataEntity{
+public abstract class BaseIdEntity{
     /**
-     * mongodb主键
+     * 主键
      */
     @Id
     private Long id;

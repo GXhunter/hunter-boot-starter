@@ -1,9 +1,9 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.IResultCodeAware;
-import com.github.gxhunter.enums.IResponseCode;
+import com.github.gxhunter.enums.IResult;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
+import com.github.gxhunter.jackson.IResultCodeAware;
 import com.github.gxhunter.util.SpelPaser;
 import com.github.gxhunter.vo.Result;
 import com.google.common.collect.Lists;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.annotation.PostConstruct;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -31,15 +32,27 @@ public abstract class BaseController{
      * 日志打印
      */
     protected final Logger log = LoggerFactory.getLogger(getClass());
-
+    protected IResult mResult;
+    @PostConstruct
+    void initResult(){
+        try{
+            mResult = mBaseResultCode.resultClass().newInstance();
+        }catch(InstantiationException | IllegalAccessException e){
+            e.printStackTrace();
+        }
+    }
     /**
      * 返回成功，并携带数据
      *
      * @param entity 携带数据
      * @return
      */
-    protected <T> Result<T> success(T entity){
-        return new Result<>(entity,mBaseResultCode.success().getMessage(),mBaseResultCode.success().getCode());
+    protected <T> IResult<T> success(T entity){
+        IResult<T> result = mResult.clone();
+        result.setCode(mBaseResultCode.success().getCode());
+        result.setMessage(mBaseResultCode.success().getMessage());
+        result.setData(entity);
+        return result;
     }
 
     /**
@@ -47,8 +60,8 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected <T> Result<T> success(){
-        return new Result<>(null,mBaseResultCode.success().getMessage(),mBaseResultCode.success().getCode());
+    protected <T> IResult<T> success(){
+        return success(null);
     }
 
     /**
@@ -57,8 +70,12 @@ public abstract class BaseController{
      * @param message
      * @return
      */
-    protected Result successMsg(String message){
-        return new Result<>(null,message,mBaseResultCode.success().getCode());
+    protected IResult successMsg(String message){
+        IResult result = mResult.clone();
+        result.setCode(mBaseResultCode.success().getCode());
+        result.setMessage(message);
+        result.setData(null);
+        return result;
     }
 
     /**
@@ -66,8 +83,11 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected Result faild(){
-        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.faild().getCode());
+    protected IResult faild(){
+        IResult result = mResult.clone();
+        result.setMessage(mBaseResultCode.faild().getMessage());
+        result.setCode(mBaseResultCode.faild().getCode());
+        return result;
     }
 
     /**
@@ -76,8 +96,11 @@ public abstract class BaseController{
      * @param message 错误信息
      * @return
      */
-    protected Result faild(String message){
-        return new Result<>(null,message,mBaseResultCode.faild().getCode());
+    protected IResult faild(String message){
+        IResult result = mResult.clone();
+        result.setMessage(message);
+        result.setCode(mBaseResultCode.faild().getCode());
+        return result;
     }
 
 
@@ -87,8 +110,11 @@ public abstract class BaseController{
      * @param errorCode
      * @return
      */
-    protected Result faild(IResponseCode errorCode){
-        return new Result<>(null,errorCode.getMessage(),errorCode.getCode());
+    protected IResult faild(IResult errorCode){
+        IResult result = mResult.clone();
+        result.setMessage(errorCode.getMessage());
+        result.setCode(mBaseResultCode.faild().getCode());
+        return result;
     }
 
 
@@ -137,7 +163,7 @@ public abstract class BaseController{
         if(exception.getErrorCode() != null){
             return new Result<>(null,exception.getErrorCode().getMessage(),exception.getErrorCode().getCode());
         }else{
-            return new Result<>(null,exception.getMessage(),mBaseResultCode.faild().getCode());
+            return new Result<>(null,exception.getMessage(),mBaseResultCode.exception().getCode());
         }
     }
 
@@ -163,7 +189,7 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.faild().getCode());
+        return new Result<>(null,mBaseResultCode.faild().getMessage(),mBaseResultCode.exception().getCode());
     }
 
     static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
