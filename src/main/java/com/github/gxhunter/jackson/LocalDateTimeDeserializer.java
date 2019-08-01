@@ -11,6 +11,9 @@ import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * @author 树荫下的天空
@@ -21,8 +24,12 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime>{
     private JacksonProperties mJacksonProperties;
     @Override
     public LocalDateTime deserialize(JsonParser jsonParser,DeserializationContext ctxt) throws IOException, JsonProcessingException{
+        ZoneId zoneId = Optional.ofNullable(mJacksonProperties)
+                .map(JacksonProperties::getTimeZone)
+                .map(TimeZone::toZoneId)
+                .orElseGet(TimeZone.getDefault()::toZoneId);
         if(jsonParser != null && StringUtils.isNotEmpty(jsonParser.getText())){
-            return LocalDateTime.ofInstant(Instant.ofEpochMilli(jsonParser.getLongValue()),mJacksonProperties.getTimeZone().toZoneId());
+            return LocalDateTime.ofInstant(Instant.ofEpochMilli(jsonParser.getLongValue()),zoneId);
         }else{
             return null;
         }

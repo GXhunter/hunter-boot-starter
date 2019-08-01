@@ -9,7 +9,6 @@ import lombok.Data;
  * 序列化方法可自行在yml配置
  * @author 树荫下的天空
  * @date 2018/5/31 14:49
- * @see com.github.gxhunter.jackson.ResultVoSerializer
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
