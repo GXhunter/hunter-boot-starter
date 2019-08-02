@@ -1,8 +1,10 @@
 package com.github.gxhunter.util;
 
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
@@ -22,19 +24,32 @@ public class ProxyUtil{
         if(clazz.isInterface()){
             return jdkProxy(clazz,handler);
         }else{
-           return cglibProxy(clazz,handler);
+            return cglibProxy(clazz,handler);
         }
     }
 
     public static <T> T jdkProxy(Class<T> clazz,InvocationHandler handler){
-            return (T) Proxy.newProxyInstance(clazz.getClassLoader(),clazz.getInterfaces(),handler);
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},handler);
     }
 
     public static <T> T cglibProxy(Class<T> clazz,InvocationHandler handler){
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
-        enhancer.setCallback((net.sf.cglib.proxy.InvocationHandler) (proxy,method,args) -> handler.invoke(proxy,method,args));
+        enhancer.setCallback((MethodInterceptor) (obj,method,args,proxy) -> {
+            if(declaringInObject(method)){
+                return proxy.invokeSuper(obj,args);
+            }
+            return handler.invoke(proxy,method,args);
+        });
         return (T) enhancer.create();
+    }
+
+    /**
+     * @param method 方法
+     * @return 是否是从{{@link Object}}继承到的方法
+     */
+    public static boolean declaringInObject(Method method){
+        return method.getDeclaringClass() == Object.class;
     }
 
 }
