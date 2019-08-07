@@ -27,6 +27,4 @@ public interface IResultAware{
      * @return
      */
     IResult exception();
-
-    Class<? extends IResult> resultClass();
 }

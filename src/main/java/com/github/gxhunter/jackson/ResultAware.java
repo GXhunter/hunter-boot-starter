@@ -5,7 +5,9 @@ import com.github.gxhunter.enums.IResult;
 import com.github.gxhunter.vo.Result;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author wanggx
@@ -15,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 @Setter
 @ConditionalOnMissingBean(IResultAware.class)
 public class ResultAware implements IResultAware{
+    @Autowired
+    private IResult mResult;
     /**
      * 提供一个表示“成功”的返回类到spring上下文。
      * 主要在{{@link BaseController#success()}}使用
@@ -49,11 +53,5 @@ public class ResultAware implements IResultAware{
     public IResult exception(){
         return exceptionResult != null ? exceptionResult : failedResult;
     }
-
-    @Override
-    public Class<? extends IResult> resultClass(){
-        return Result.class;
-    }
-
 
 }

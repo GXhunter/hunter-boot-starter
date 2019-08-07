@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements MethodInterceptor{
     @Autowired
     private IResultAware mResultCodeAware;
+    @Autowired
+    private IResult mResult;
     @Override
     public Pointcut getPointcut(){
         return AnnotationMatchingPointcut.forMethodAnnotation(BaseController.ExceptionList.class);
@@ -46,7 +48,7 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
                 for(Class<? extends Exception> exClazz : exceptionInfo.getWhen()){
                     if(exClazz.isInstance(e)){
                         Integer errorCode = exceptionInfo.getCode() == -1L ? mResultCodeAware.exception().getCode() : exceptionInfo.getCode();
-                        IResult result = mResultCodeAware.resultClass().newInstance();
+                        IResult result = mResult.clone();
                         result.setCode(errorCode);
                         result.setMessage(exceptionInfo.getValue());
                         throw new ClassifyException(result,exClazz);

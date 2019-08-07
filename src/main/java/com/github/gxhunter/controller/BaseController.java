@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.annotation.PostConstruct;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -31,15 +30,8 @@ public abstract class BaseController{
      * 日志打印
      */
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    @Autowired
     private IResult mResult;
-    @PostConstruct
-    void initResult(){
-        try{
-            mResult = mResultAware.resultClass().newInstance();
-        }catch(InstantiationException | IllegalAccessException e){
-            e.printStackTrace();
-        }
-    }
     /**
      * 返回成功，并携带数据
      *
