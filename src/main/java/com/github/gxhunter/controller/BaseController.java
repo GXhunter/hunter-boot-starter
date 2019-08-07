@@ -30,8 +30,6 @@ public abstract class BaseController{
      * 日志打印
      */
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    @Autowired
-    private IResult mResult;
     /**
      * 返回成功，并携带数据
      *
@@ -39,7 +37,7 @@ public abstract class BaseController{
      * @return
      */
     protected <T> IResult<T> success(T entity){
-        IResult<T> result = mResult.clone();
+        IResult<T> result = mResultAware.success().clone();
         result.setCode(mResultAware.success().getCode());
         result.setMessage(mResultAware.success().getMessage());
         result.setData(entity);
@@ -62,7 +60,7 @@ public abstract class BaseController{
      * @return
      */
     protected IResult successMsg(String message){
-        IResult result = mResult.clone();
+        IResult result = mResultAware.success().clone();
         result.setCode(mResultAware.success().getCode());
         result.setMessage(message);
         return result;
@@ -74,7 +72,7 @@ public abstract class BaseController{
      * @return
      */
     protected IResult faild(){
-        IResult result = mResult.clone();
+        IResult result = mResultAware.faild().clone();
         result.setMessage(mResultAware.faild().getMessage());
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -87,7 +85,7 @@ public abstract class BaseController{
      * @return
      */
     protected IResult faild(String message){
-        IResult result = mResult.clone();
+        IResult result = mResultAware.faild().clone();
         result.setMessage(message);
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -101,7 +99,7 @@ public abstract class BaseController{
      * @return
      */
     protected IResult faild(IResult errorCode){
-        IResult result = mResult.clone();
+        IResult result = mResultAware.faild().clone();
         result.setMessage(errorCode.getMessage());
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -150,7 +148,7 @@ public abstract class BaseController{
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
-        IResult result = mResult.clone();
+        IResult result = mResultAware.exception().clone();
         if(exception.getErrorCode() != null){
             return exception.getErrorCode();
         }else{
@@ -182,7 +180,7 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        IResult result = mResult.clone();
+        IResult result = mResultAware.exception().clone();
         result.setMessage(mResultAware.faild().getMessage());
         result.setCode(mResultAware.exception().getCode());
         return result;
