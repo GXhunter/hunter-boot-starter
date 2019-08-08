@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 /**
  * @author wanggx
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Bean;
 @Setter
 @ConditionalOnMissingBean(IResultAware.class)
 public class ResultAware implements IResultAware{
-    @Autowired
-    private IResult mResult;
     /**
      * 提供一个表示“成功”的返回类到spring上下文。
      * 主要在{{@link BaseController#success()}}使用

@@ -9,6 +9,7 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.AdaptableJobFactory;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.text.ParseException;
 import java.util.*;
@@ -27,7 +30,9 @@ import java.util.stream.Collectors;
  * @date 2019/2/22 16:25
  */
 @Configuration
-@ConditionalOnClass(QuartzAutoConfiguration.class)
+@ConditionalOnClass({ Scheduler.class, SchedulerFactoryBean.class,
+        PlatformTransactionManager.class,QuartzAutoConfiguration.class })
+@AutoConfigureAfter(QuartzAutoConfiguration.class)
 public class QuartzConfig{
 
     /**
