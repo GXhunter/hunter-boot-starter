@@ -21,13 +21,15 @@ import lombok.extern.slf4j.Slf4j;
  * @author hunter
  * @date 2019.1.4
  * @see com.github.gxhunter.vo.Result
+ * @see Cloneable 支持原型模式
  * 扩展自行实现此接口
  */
 @Slf4j
 @SuppressWarnings("all")
-public abstract class IResult<T> implements Cloneable{
+public abstract class AResult<T> implements Cloneable{
     /**
      * 返回码
+     *
      * @return json序列化可在yml配置
      * <pre>
      * hunter:
@@ -40,12 +42,13 @@ public abstract class IResult<T> implements Cloneable{
 
     /**
      * 错误描述
+     *
      * @return json序列化可在yml配置
      * <p>
      * hunter:
-     *   spring:
-     *     result:
-     *       message-key: "msg"
+     * spring:
+     * result:
+     * message-key: "msg"
      * <p/>
      */
     public abstract String getMessage();
@@ -60,9 +63,9 @@ public abstract class IResult<T> implements Cloneable{
     public abstract void setData(T data);
 
     @Override
-    public IResult<T> clone(){
+    public AResult<T> clone(){
         try{
-            return (IResult<T>) super.clone();
+            return (AResult<T>) super.clone();
         }catch(CloneNotSupportedException e){
             log.error("clone Result 发生异常：",e);
         }

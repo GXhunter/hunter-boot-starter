@@ -1,14 +1,11 @@
 package com.github.gxhunter.jackson;
 
 import com.github.gxhunter.controller.BaseController;
-import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.enums.AResult;
 import com.github.gxhunter.vo.Result;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
 /**
  * @author wanggx
@@ -39,17 +36,17 @@ public class ResultAware implements IResultAware{
     private Result failedResult = new Result<>(null,"faild",0);
 
     @Override
-    public IResult success(){
+    public AResult success(){
         return successResult;
     }
 
     @Override
-    public IResult faild(){
+    public AResult faild(){
         return failedResult;
     }
 
     @Override
-    public IResult exception(){
+    public AResult exception(){
         return exceptionResult != null ? exceptionResult : failedResult;
     }
 

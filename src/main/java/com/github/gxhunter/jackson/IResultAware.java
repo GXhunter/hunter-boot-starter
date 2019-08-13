@@ -1,6 +1,6 @@
 package com.github.gxhunter.jackson;
 
-import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.enums.AResult;
 
 /**
  * @author 树荫下的天空
@@ -12,19 +12,19 @@ public interface IResultAware{
      *
      * @return
      */
-    IResult success();
+    AResult success();
 
     /**
      * 失败返回
      *
      * @return
      */
-    IResult faild();
+    AResult faild();
 
     /**
      * 异常返回，异常处理器拦截到异常时的返回，默认和{{@link #faild()}}一样
      *
      * @return
      */
-    IResult exception();
+    AResult exception();
 }

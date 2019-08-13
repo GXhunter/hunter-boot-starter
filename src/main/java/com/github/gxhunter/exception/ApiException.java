@@ -16,7 +16,7 @@
 package com.github.gxhunter.exception;
 
 
-import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.enums.AResult;
 import lombok.Getter;
 
 /**
@@ -31,9 +31,9 @@ public class ApiException extends RuntimeException {
      * 错误码
      */
     @Getter
-    private IResult errorCode;
+    private AResult errorCode;
 
-    public ApiException(IResult errorCode) {
+    public ApiException(AResult errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }

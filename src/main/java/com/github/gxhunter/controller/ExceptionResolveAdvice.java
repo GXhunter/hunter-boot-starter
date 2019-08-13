@@ -1,6 +1,6 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.enums.AResult;
 import com.github.gxhunter.jackson.IResultAware;
 import com.github.gxhunter.exception.ClassifyException;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class ExceptionResolveAdvice extends AbstractPointcutAdvisor implements M
                 for(Class<? extends Exception> exClazz : exceptionInfo.getWhen()){
                     if(exClazz.isInstance(e)){
                         Integer errorCode = exceptionInfo.getCode() == -1L ? mResultCodeAware.exception().getCode() : exceptionInfo.getCode();
-                        IResult result = mResultCodeAware.exception().clone();
+                        AResult result = mResultCodeAware.exception().clone();
                         result.setCode(errorCode);
                         result.setMessage(exceptionInfo.getValue());
                         throw new ClassifyException(result,exClazz);

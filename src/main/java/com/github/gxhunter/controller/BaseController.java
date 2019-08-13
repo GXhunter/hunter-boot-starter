@@ -1,6 +1,6 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.IResult;
+import com.github.gxhunter.enums.AResult;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
 import com.github.gxhunter.jackson.IResultAware;
@@ -36,8 +36,8 @@ public abstract class BaseController{
      * @param entity 携带数据
      * @return
      */
-    protected <T> IResult<T> success(T entity){
-        IResult<T> result = mResultAware.success().clone();
+    protected <T> AResult<T> success(T entity){
+        AResult<T> result = mResultAware.success().clone();
         result.setCode(mResultAware.success().getCode());
         result.setMessage(mResultAware.success().getMessage());
         result.setData(entity);
@@ -49,7 +49,7 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected <T> IResult<T> success(){
+    protected <T> AResult<T> success(){
         return success(null);
     }
 
@@ -59,8 +59,8 @@ public abstract class BaseController{
      * @param message
      * @return
      */
-    protected IResult successMsg(String message){
-        IResult result = mResultAware.success().clone();
+    protected AResult successMsg(String message){
+        AResult result = mResultAware.success().clone();
         result.setCode(mResultAware.success().getCode());
         result.setMessage(message);
         return result;
@@ -71,8 +71,8 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected IResult faild(){
-        IResult result = mResultAware.faild().clone();
+    protected AResult faild(){
+        AResult result = mResultAware.faild().clone();
         result.setMessage(mResultAware.faild().getMessage());
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -84,8 +84,8 @@ public abstract class BaseController{
      * @param message 错误信息
      * @return
      */
-    protected IResult faild(String message){
-        IResult result = mResultAware.faild().clone();
+    protected AResult faild(String message){
+        AResult result = mResultAware.faild().clone();
         result.setMessage(message);
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -98,8 +98,8 @@ public abstract class BaseController{
      * @param errorCode
      * @return
      */
-    protected IResult faild(IResult errorCode){
-        IResult result = mResultAware.faild().clone();
+    protected AResult faild(AResult errorCode){
+        AResult result = mResultAware.faild().clone();
         result.setMessage(errorCode.getMessage());
         result.setCode(mResultAware.faild().getCode());
         return result;
@@ -148,7 +148,7 @@ public abstract class BaseController{
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
-        IResult result = mResultAware.exception().clone();
+        AResult result = mResultAware.exception().clone();
         if(exception.getErrorCode() != null){
             return exception.getErrorCode();
         }else{
@@ -180,7 +180,7 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        IResult result = mResultAware.exception().clone();
+        AResult result = mResultAware.exception().clone();
         result.setMessage(mResultAware.faild().getMessage());
         result.setCode(mResultAware.exception().getCode());
         return result;
