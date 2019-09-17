@@ -106,6 +106,7 @@ public abstract class BaseController{
     }
 
 
+
     /**
      * 加在Controller上自动捕获分类目标异常，并封装成 {@link ClassifyException}交由异常处理器处理，
      * 可继承{@link BaseController}重写{@link #handleClassifyException(ClassifyException)}方法自定义处理逻辑。
