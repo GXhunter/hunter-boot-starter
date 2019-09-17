@@ -14,46 +14,39 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class BeanMapperFactory implements ApplicationContextAware {
     private static BeanMapperUtil jsonMapper;
     private static BeanMapperUtil yamlMapper;
-    private static Jackson2ObjectMapperBuilder mMapperBuilder;
 
 
+    /**
+     * 全局单例  饿汉式
+     *
+     * @return
+     */
     public static BeanMapperUtil getJsonMapper() {
-        Assert.notNull(mMapperBuilder);
-        if (jsonMapper == null) {
-            synchronized (BeanMapperFactory.class) {
-                if (jsonMapper == null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    mMapperBuilder.configure(objectMapper);
-                    jsonMapper = new BeanMapperUtil(objectMapper);
-                }
-            }
-        }
         return jsonMapper;
     }
 
     /**
-     * 单例的
+     * 全局单例  饿汉式
+     *
      * @return
      */
     public static BeanMapperUtil getYamlMapper() {
-        Assert.notNull(mMapperBuilder);
-        if (yamlMapper == null) {
-            synchronized (BeanMapperFactory.class) {
-                if (yamlMapper == null) {
-                    YAMLMapper yamlMapper = new YAMLMapper();
-                    mMapperBuilder.configure(yamlMapper);
-                    BeanMapperFactory.yamlMapper = new BeanMapperUtil(yamlMapper);
-                }
-            }
-        }
         return yamlMapper;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        mMapperBuilder = applicationContext.getBean(Jackson2ObjectMapperBuilder.class);
-        if (mMapperBuilder == null) {
-            mMapperBuilder = new Jackson2ObjectMapperBuilder();
+        Jackson2ObjectMapperBuilder mapperBuilder = applicationContext.getBean(Jackson2ObjectMapperBuilder.class);
+        if (mapperBuilder == null) {
+            mapperBuilder = new Jackson2ObjectMapperBuilder();
         }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        mapperBuilder.configure(objectMapper);
+        jsonMapper = new BeanMapperUtil(objectMapper);
+
+        YAMLMapper yamlMapper = new YAMLMapper();
+        mapperBuilder.configure(yamlMapper);
+        BeanMapperFactory.yamlMapper = new BeanMapperUtil(yamlMapper);
     }
 }
