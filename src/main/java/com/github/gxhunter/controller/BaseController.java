@@ -3,7 +3,7 @@ package com.github.gxhunter.controller;
 import com.github.gxhunter.enums.AResult;
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.exception.ClassifyException;
-import com.github.gxhunter.jackson.IResultAware;
+import com.github.gxhunter.jackson.ResultSupport;
 import com.github.gxhunter.util.SpelPaser;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public abstract class BaseController{
     @Autowired
-    protected IResultAware mResultAware;
+    protected ResultSupport mResultSupport;
     private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
      * 日志打印
@@ -37,9 +37,9 @@ public abstract class BaseController{
      * @return
      */
     protected <T> AResult<T> success(T entity){
-        AResult<T> result = mResultAware.success().clone();
-        result.setCode(mResultAware.success().getCode());
-        result.setMessage(mResultAware.success().getMessage());
+        AResult<T> result = mResultSupport.success().clone();
+        result.setCode(mResultSupport.success().getCode());
+        result.setMessage(mResultSupport.success().getMessage());
         result.setData(entity);
         return result;
     }
@@ -60,8 +60,8 @@ public abstract class BaseController{
      * @return
      */
     protected AResult successMsg(String message){
-        AResult result = mResultAware.success().clone();
-        result.setCode(mResultAware.success().getCode());
+        AResult result = mResultSupport.success().clone();
+        result.setCode(mResultSupport.success().getCode());
         result.setMessage(message);
         return result;
     }
@@ -72,9 +72,9 @@ public abstract class BaseController{
      * @return
      */
     protected AResult faild(){
-        AResult result = mResultAware.faild().clone();
-        result.setMessage(mResultAware.faild().getMessage());
-        result.setCode(mResultAware.faild().getCode());
+        AResult result = mResultSupport.faild().clone();
+        result.setMessage(mResultSupport.faild().getMessage());
+        result.setCode(mResultSupport.faild().getCode());
         return result;
     }
 
@@ -85,9 +85,9 @@ public abstract class BaseController{
      * @return
      */
     protected AResult faild(String message){
-        AResult result = mResultAware.faild().clone();
+        AResult result = mResultSupport.faild().clone();
         result.setMessage(message);
-        result.setCode(mResultAware.faild().getCode());
+        result.setCode(mResultSupport.faild().getCode());
         return result;
     }
 
@@ -99,9 +99,9 @@ public abstract class BaseController{
      * @return
      */
     protected AResult faild(AResult errorCode){
-        AResult result = mResultAware.faild().clone();
+        AResult result = mResultSupport.faild().clone();
         result.setMessage(errorCode.getMessage());
-        result.setCode(mResultAware.faild().getCode());
+        result.setCode(mResultSupport.faild().getCode());
         return result;
     }
 
@@ -149,11 +149,11 @@ public abstract class BaseController{
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
-        AResult result = mResultAware.exception().clone();
+        AResult result = mResultSupport.exception().clone();
         if(exception.getErrorCode() != null){
             return exception.getErrorCode();
         }else{
-            result.setCode(mResultAware.exception().getCode());
+            result.setCode(mResultSupport.exception().getCode());
             result.setMessage(exception.getMessage());
             return result;
         }
@@ -181,9 +181,9 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        AResult result = mResultAware.exception().clone();
-        result.setMessage(mResultAware.faild().getMessage());
-        result.setCode(mResultAware.exception().getCode());
+        AResult result = mResultSupport.exception().clone();
+        result.setMessage(mResultSupport.faild().getMessage());
+        result.setCode(mResultSupport.exception().getCode());
         return result;
     }
 

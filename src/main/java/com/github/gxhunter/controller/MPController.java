@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.gxhunter.enums.AResult;
-import com.github.gxhunter.jackson.IResultAware;
+import com.github.gxhunter.jackson.ResultSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  * <pre>
  * <h2>注意：在项目引入mybatis-plus后才可用</h2>
  * 继承自{@link BaseController} 包含默认的异常处理，并支持{@link com.github.gxhunter.controller.BaseController.IfException}注解
- * 在spring容器中，提供一个{@link IResultAware}，即可配置返回的{@link AResult}对象
+ * 在spring容器中，提供一个{@link ResultSupport}，即可配置返回的{@link AResult}对象
  * </pre>
  *
  * @param <M> 服务层
@@ -21,7 +21,7 @@ import java.io.Serializable;
  * @author 树荫下的天空
  * @see BaseController
  * @see AResult
- * @see IResultAware
+ * @see ResultSupport
  * @see com.github.gxhunter.controller.BaseController.IfException
  */
 public class MPController<M extends IService<E>,E> extends BaseController{
