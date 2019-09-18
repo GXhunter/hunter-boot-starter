@@ -1,17 +1,20 @@
 package com.github.gxhunter.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.github.gxhunter.config.BeanMapperAutoConfig;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
  * @author wanggx
  * @date 2019/9/17 下午5:33
  */
-public class BeanMapperFactory implements ApplicationContextAware {
+@Import(BeanMapperAutoConfig.class)
+@ConditionalOnBean(Jackson2ObjectMapperBuilder.class)
+public class BeanMapperFactory implements ApplicationContextAware{
     private static BeanMapperUtil jsonMapper;
     private static BeanMapperUtil yamlMapper;
 
@@ -35,18 +38,8 @@ public class BeanMapperFactory implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Jackson2ObjectMapperBuilder mapperBuilder = applicationContext.getBean(Jackson2ObjectMapperBuilder.class);
-        if (mapperBuilder == null) {
-            mapperBuilder = new Jackson2ObjectMapperBuilder();
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        mapperBuilder.configure(objectMapper);
-        jsonMapper = new BeanMapperUtil(objectMapper);
-
-        YAMLMapper yamlMapper = new YAMLMapper();
-        mapperBuilder.configure(yamlMapper);
-        BeanMapperFactory.yamlMapper = new BeanMapperUtil(yamlMapper);
+    public void setApplicationContext(ApplicationContext context) throws BeansException {
+        jsonMapper = context.getBean("jsonUtil",BeanMapperUtil.class);
+        yamlMapper = context.getBean("yamlUtil",BeanMapperUtil.class);
     }
 }
