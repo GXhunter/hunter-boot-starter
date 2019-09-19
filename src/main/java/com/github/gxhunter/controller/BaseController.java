@@ -182,7 +182,7 @@ public abstract class BaseController{
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
         AResult result = mResultSupport.exception().clone();
-        result.setMessage(mResultSupport.faild().getMessage());
+        result.setMessage(mResultSupport.exception().getMessage());
         result.setCode(mResultSupport.exception().getCode());
         return result;
     }

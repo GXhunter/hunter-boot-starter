@@ -9,7 +9,7 @@
     <groupId>com.github.gxhunter</groupId>
     <artifactId>hunter-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-beta</version>
 
     <licenses>
         <license>
