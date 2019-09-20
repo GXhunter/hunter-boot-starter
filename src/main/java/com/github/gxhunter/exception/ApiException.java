@@ -16,7 +16,7 @@
 package com.github.gxhunter.exception;
 
 
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.IResult;
 import lombok.Getter;
 
 /**
@@ -31,11 +31,32 @@ public class ApiException extends RuntimeException {
      * 错误码
      */
     @Getter
-    private AResult errorCode;
+    private IResult errorCode;
 
-    public ApiException(AResult errorCode) {
+    public ApiException(IResult errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
+    }
+
+
+    public ApiException(IResult errorCode, Object errorData) {
+        super(errorCode.getMessage());
+        this.errorCode = new IResult() {
+            @Override
+            public Integer getCode() {
+                return errorCode.getCode();
+            }
+
+            @Override
+            public String getMessage() {
+                return errorCode.getMessage();
+            }
+
+            @Override
+            public Object getData() {
+                return errorData;
+            }
+        };
     }
 
     public ApiException(String message) {
@@ -46,7 +67,7 @@ public class ApiException extends RuntimeException {
         super(cause);
     }
 
-    public ApiException(String message,Throwable cause) {
+    public ApiException(String message, Throwable cause) {
         super(message, cause);
     }
 }

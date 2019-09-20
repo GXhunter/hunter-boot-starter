@@ -1,6 +1,6 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.jackson.ResultSupport;
 import com.github.gxhunter.exception.ClassifyException;
 import lombok.extern.slf4j.Slf4j;

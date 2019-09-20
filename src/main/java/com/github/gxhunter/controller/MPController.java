@@ -3,8 +3,9 @@ package com.github.gxhunter.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.jackson.ResultSupport;
+import com.github.gxhunter.result.IResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
@@ -36,7 +37,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PostMapping
      * @see org.springframework.web.bind.annotation.RequestBody
      */
-    public AResult create(E entity){
+    public IResult create(E entity){
         return mService.save(entity) ? success() : faild();
     }
 
@@ -47,7 +48,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @return
      * @see org.springframework.web.bind.annotation.DeleteMapping
      */
-    public AResult deleteById(Serializable id){
+    public IResult deleteById(Serializable id){
         return mService.removeById(id) ? success() : faild();
     }
 
@@ -57,7 +58,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @param entity id不为空时修改，为空新增
      * @return
      */
-    public AResult saveOrUpdate(E entity){
+    public IResult saveOrUpdate(E entity){
         return mService.saveOrUpdate(entity) ? success() : faild();
     }
 
@@ -69,7 +70,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PutMapping
      * @see org.springframework.web.bind.annotation.RequestBody
      */
-    public AResult update(E entity){
+    public IResult update(E entity){
         return mService.updateById(entity) ? success() : faild();
     }
 
@@ -79,7 +80,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @return
      * @see org.springframework.web.bind.annotation.GetMapping
      */
-    public AResult listAll(){
+    public IResult listAll(){
         return success(mService.list());
     }
 
@@ -93,7 +94,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PathVariable
      * @see org.springframework.web.bind.annotation.GetMapping
      */
-    public AResult<IPage<E>> page(Integer pageNum,Integer pageSize){
+    public IResult<IPage<E>> page(Integer pageNum,Integer pageSize){
         Page<E> page = new Page<>(pageNum,pageSize);
         return success(mService.page(page));
     }
@@ -106,7 +107,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.GetMapping
      * @see org.springframework.web.bind.annotation.PathVariable
      */
-    public AResult<E> getById(Serializable id){
+    public IResult<E> getById(Serializable id){
         return success(mService.getById(id));
     }
 

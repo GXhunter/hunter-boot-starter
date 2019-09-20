@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.github.gxhunter.enums;
+package com.github.gxhunter.result;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,35 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @SuppressWarnings("all")
-public abstract class AResult<T> implements Cloneable{
-    /**
-     * 返回码
-     *
-     * @return json序列化可在yml配置
-     * <pre>
-     * hunter:
-     *   spring:
-     *     result:
-     *       status-key: "status"
-     * <pre/>
-     */
-    public abstract Integer getCode();
-
-    /**
-     * 错误描述
-     *
-     * @return json序列化可在yml配置
-     * <p>
-     * hunter:
-     * spring:
-     * result:
-     * message-key: "msg"
-     * <p/>
-     */
-    public abstract String getMessage();
-
-    public abstract T getData();
-
+public abstract class AResult<T> implements Cloneable, IResult {
 
     public abstract void setCode(Integer code);
 
@@ -63,11 +35,11 @@ public abstract class AResult<T> implements Cloneable{
     public abstract void setData(T data);
 
     @Override
-    public AResult<T> clone(){
-        try{
+    public AResult<T> clone() {
+        try {
             return (AResult<T>) super.clone();
-        }catch(CloneNotSupportedException e){
-            log.error("clone Result 发生异常：",e);
+        } catch (CloneNotSupportedException e) {
+            log.error("clone Result 发生异常：", e);
         }
         return null;
     }

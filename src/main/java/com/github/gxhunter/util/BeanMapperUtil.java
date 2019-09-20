@@ -2,14 +2,13 @@ package com.github.gxhunter.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 
 /**
@@ -43,6 +42,31 @@ public class BeanMapperUtil {
         }
     }
 
+    /**
+     * 解析文件并写到输出流里
+     *
+     * @param object       java对象
+     * @param outputStream 输出流
+     */
+    public void write(Object object, OutputStream outputStream) {
+        if (object == null) {
+            return;
+        }
+        try (
+                SequenceWriter writer = objectMapper.writer().writeValues(outputStream);
+        ) {
+            writer.write(object);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解析文件并生成文件
+     *
+     * @param object java对象
+     * @param file   生成的文件
+     */
     public void write(Object object, File file) {
         if (object == null) {
             return;

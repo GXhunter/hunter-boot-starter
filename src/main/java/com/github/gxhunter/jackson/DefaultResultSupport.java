@@ -1,7 +1,7 @@
 package com.github.gxhunter.jackson;
 
 import com.github.gxhunter.controller.BaseController;
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.vo.Result;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +24,7 @@ public class DefaultResultSupport implements ResultSupport {
     /**
      * 捕获到异常时返回的result
      */
-    private Result exceptionResult;
+    private Result exceptionResult = new Result<>(null,null,999);;
     /**
      * 提供一个表示“失败”的返回类到spring上下文。
      * 主要在{{@link BaseController#faild()}}和异常处理相关使用
@@ -47,7 +47,7 @@ public class DefaultResultSupport implements ResultSupport {
 
     @Override
     public AResult exception(){
-        return exceptionResult != null ? exceptionResult : failedResult;
+        return exceptionResult;
     }
 
 }

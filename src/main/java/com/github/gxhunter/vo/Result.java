@@ -1,7 +1,7 @@
 package com.github.gxhunter.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

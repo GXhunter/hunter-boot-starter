@@ -1,6 +1,6 @@
 package com.github.gxhunter.jackson;
 
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 
 /**
  * @author 树荫下的天空

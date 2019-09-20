@@ -16,7 +16,7 @@
 package com.github.gxhunter.exception;
 
 
-import com.github.gxhunter.enums.AResult;
+import com.github.gxhunter.result.AResult;
 import lombok.Getter;
 
 /**
