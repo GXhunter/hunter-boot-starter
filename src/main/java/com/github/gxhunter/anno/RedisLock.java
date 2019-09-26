@@ -14,18 +14,20 @@ import java.lang.annotation.Target;
 public @interface RedisLock{
 
     /**
-     * 要锁定的key中包含的属性,不指定时锁定整个方法
+     * 要锁定的key中包含的属性,不指定时锁定当前方法
      */
     String[] keys() default {};
 
     /**
      * 超时时间，单位毫秒
+     * 默认30秒
      */
-    long expireTime() default 10000;
+    long expireTime() default 30*1000;
 
     /**
      * 获取不到锁的等待时间，单位毫秒
+     * 默认10秒
      */
-    long retryTimes() default 2000;
+    long retryTimes() default 10*1000;
 
 }

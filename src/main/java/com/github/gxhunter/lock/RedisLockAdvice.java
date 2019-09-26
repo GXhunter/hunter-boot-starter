@@ -53,7 +53,7 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
             while((lockValue = redisDistributionLock.lock(keyName,redisLock.expireTime())) == null){
                 if(startTime + redisLock.retryTimes() < System.currentTimeMillis()){
 //                    超时
-                    throw new RedisLockException("获取锁超时");
+                    throw new RedisLockException("获取锁超时,等待时间："+redisLock.retryTimes()+"毫秒");
                 }
                 Thread.sleep(50);
             }
