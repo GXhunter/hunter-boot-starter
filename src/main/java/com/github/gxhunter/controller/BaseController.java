@@ -7,16 +7,22 @@ import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
 import com.github.gxhunter.util.SpelPaser;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +83,14 @@ public abstract class BaseController{
         AResult result = mResultSupport.faild().clone();
         result.setMessage(mResultSupport.faild().getMessage());
         result.setCode(mResultSupport.faild().getCode());
+        return result;
+    }
+
+    protected IResult faild(Object data){
+        AResult result = mResultSupport.faild().clone();
+        result.setMessage(mResultSupport.faild().getMessage());
+        result.setCode(mResultSupport.faild().getCode());
+        result.setData(data);
         return result;
     }
 
@@ -175,6 +189,23 @@ public abstract class BaseController{
         return faild(ex.getExceptionInfo());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Object handMethodValidException(MethodArgumentNotValidException ex){
+        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
+        HashMap<String, String> resultMap = Maps.newHashMap();
+        if(!CollectionUtils.isEmpty(objectErrors)){
+            for(ObjectError objectError : objectErrors){
+                String field = ((FieldError) objectError).getField();
+                String message = objectError.getDefaultMessage();
+                resultMap.put(field,message);
+            }
+        }
+        AResult result = mResultSupport.exception().clone();
+        result.setData(resultMap);
+        return result;
+    }
+
+
     /**
      * 其他异常
      *
@@ -190,6 +221,7 @@ public abstract class BaseController{
         result.setMessage(message);
         return result;
     }
+
 
     static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
         SPEL_PASER.setContext(method,arguments);

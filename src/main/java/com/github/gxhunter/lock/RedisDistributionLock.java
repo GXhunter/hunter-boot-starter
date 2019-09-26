@@ -90,7 +90,7 @@ public class RedisDistributionLock {
                 try {
                     value = Objects.requireNonNull(PARSER.parseExpression(expression).getValue(context)).toString();
                 } catch (NullPointerException | EvaluationException | ParseException e) {
-                    log.error("express {} is invalid", expression, e);
+                    log.debug("express {} is invalid", expression, e);
                     value = expression;
                 }
                 definitionKeyList.add(value);
@@ -99,10 +99,6 @@ public class RedisDistributionLock {
 
         return definitionKeyList.stream().reduce((a, b) -> a + SPLIT + b).orElse("");
 //        return StringUtils.collectionToDelimitedString(definitionKeyList,".","","");
-    }
-
-    private String generateLockValue() {
-        return UUID.randomUUID().toString() + "-" + Thread.currentThread().getId();
     }
 
 
@@ -114,7 +110,8 @@ public class RedisDistributionLock {
      * @return 生成的锁名称
      */
     public String lock(String key, long expireTime) {
-        String lockValue = generateLockValue();
+//        只有当前应用，当前线程才能解锁
+        String lockValue = UUID.randomUUID().toString() + "-" + Thread.currentThread().getId();
         Object lockResult = mRedisTemplate.execute(SCRIPT_LOCK,
                 mRedisTemplate.getStringSerializer(),
                 mRedisTemplate.getStringSerializer(),
