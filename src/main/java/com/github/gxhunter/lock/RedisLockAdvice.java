@@ -40,19 +40,19 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         long id = Thread.currentThread().getId();
-        log.info(id + "尝试获取锁...");
         long startTime = System.currentTimeMillis();
         String keyName = null;
         String lockValue = null;
         try {
             RedisLock redisLock = invocation.getMethod().getAnnotation(RedisLock.class);
             keyName = redisDistributionLock.generateKeyName(invocation, redisLock);
+            log.info(keyName + "尝试获取锁...");
             while ((lockValue = redisDistributionLock.lock(keyName, redisLock.expireTime())) == null) {
                 if (startTime + redisLock.retryTimes() < System.currentTimeMillis()) {
 //                    超时
                     throw new RedisLockException("获取锁超时,等待时间：" + redisLock.retryTimes() + "毫秒");
                 }
-                Thread.sleep(50);
+                Thread.sleep(100);
             }
             log.info(id + "成功获取到锁");
             return invocation.proceed();
@@ -60,6 +60,8 @@ public class RedisLockAdvice extends AbstractPointcutAdvisor implements MethodIn
             if (StringUtils.isNoneBlank(keyName, lockValue)) {
                 if (!redisDistributionLock.unlock(keyName, lockValue)) {
                     log.error("redis 解锁失败,请检查是否已超时自动释放,key ： {},value ： {}.", keyName, lockValue);
+                } else {
+                    log.info("redis 解锁成功,key ： {},value ： {}.", keyName, lockValue);
                 }
             }
         }

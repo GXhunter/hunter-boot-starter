@@ -9,10 +9,10 @@ import java.util.function.BiConsumer;
  * @date 2019/7/3 15:28
  * 支持多返回值,底层由{@link ConcurrentHashMap}支持，线程安全
  */
-public class MutiResult<K extends Enum<K>,V>{
+public class MultiResult<K extends Enum<K>,V>{
     private Map<K, V> resultMap;
 
-    private MutiResult(Map<K, V> resultMap){
+    private MultiResult(Map<K, V> resultMap){
         this.resultMap = resultMap;
     }
 
@@ -70,8 +70,8 @@ public class MutiResult<K extends Enum<K>,V>{
          *
          * @return
          */
-        public MutiResult<K, V> build(){
-            return new MutiResult<>(resultMap);
+        public MultiResult<K, V> build(){
+            return new MultiResult<>(resultMap);
         }
 
         /**
