@@ -43,9 +43,9 @@ public @interface Lock{
     long retryTimes() default 10*1000;
 
     /**
-     * 方法执行后自动释放锁，设置为false时，只能等待超时释放
-     * @return
+     * 是否延迟释放
+     * @return false:不延迟，方法执行结束就释放。true:方法执行结束后不释放，等待超时
      */
-    boolean autoRelease() default true;
+    boolean delay() default false;
 
 }

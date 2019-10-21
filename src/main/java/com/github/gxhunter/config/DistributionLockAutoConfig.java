@@ -19,8 +19,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class DistributionLockAutoConfig{
     @Bean
     @ConditionalOnMissingBean
-    public LockAdvice mRedisLockAdvice(AbstractLockTemplate redisLockTemplate){
-        return new LockAdvice(redisLockTemplate);
+    public LockAdvice lockAdvice(AbstractLockTemplate lockTemplate){
+        return new LockAdvice(lockTemplate);
     }
 
     @Bean
