@@ -1,7 +1,7 @@
 package com.github.gxhunter.lock;
 
 import com.github.gxhunter.anno.Lock;
-import com.github.gxhunter.exception.RedisLockException;
+import com.github.gxhunter.exception.LockException;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -47,25 +47,27 @@ public class LockAdvice extends AbstractPointcutAdvisor implements MethodInterce
         String lockValue = null;
         Lock lock = invocation.getMethod().getAnnotation(Lock.class);
         try{
-            keyName = mLockTemplate.generateKeyName(invocation,lock);
+            keyName = mLockTemplate.getLockKey(invocation.getMethod(),invocation.getArguments(),lock);
+            String value = mLockTemplate.getLockValue(lock.reentrant());
             log.debug(keyName + "尝试获取锁...");
-            while((lockValue = mLockTemplate.lock(keyName,lock.expireTime())) == null){
+            while((lockValue = mLockTemplate.lock(keyName,value,lock.expireTime())) == null){
                 if(startTime + lock.retryTimes() < System.currentTimeMillis()){
 //                    超时
-                    throw new RedisLockException("获取锁超时,等待时间：" + lock.retryTimes() + "毫秒");
+                    throw new LockException("获取锁超时,等待时间：" + lock.retryTimes() + "毫秒");
                 }
                 Thread.sleep(100);
             }
-            log.info(id + "成功获取到锁");
+            log.debug(id + "成功获取到锁");
             return invocation.proceed();
         }finally{
             if(!lock.delay() && StringUtils.isNoneBlank(keyName,lockValue)){
-                if(!mLockTemplate.unlock(keyName,lockValue)){
-                    log.error("redis 解锁失败,请检查是否已超时自动释放,key ： {},value ： {}.",keyName,lockValue);
-                }else{
+                if(mLockTemplate.unlock(keyName,lockValue)){
                     log.debug("redis 解锁成功,key ： {},value ： {}.",keyName,lockValue);
+                }else{
+                    log.error("redis 解锁失败,请检查是否已超时自动释放,key ： {},value ： {}.",keyName,lockValue);
                 }
             }
         }
+
     }
 }

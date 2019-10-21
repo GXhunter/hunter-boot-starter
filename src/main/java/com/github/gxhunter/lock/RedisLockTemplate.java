@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import java.util.Collections;
-import java.util.UUID;
 
 /**
  * redis分布式锁
@@ -44,15 +43,17 @@ public class RedisLockTemplate extends AbstractLockTemplate{
      * @param expireTime 单位是ms
      * @return 生成的锁名称,null
      */
-    public String lock(String key,long expireTime){
+    public String lock(String key,String value,long expireTime){
 //        只有当前应用，当前线程才能解锁
-        String lockValue = UUID.randomUUID().toString() + "-" + Thread.currentThread().getId();
-        Object lockResult = mRedisTemplate.execute(SCRIPT_LOCK,
+        Object lockResult = mRedisTemplate.execute(
+                SCRIPT_LOCK,
                 mRedisTemplate.getStringSerializer(),
                 mRedisTemplate.getStringSerializer(),
                 Collections.singletonList(key),
-                lockValue,String.valueOf(expireTime));
-        return LOCK_SUCCESS.equals(lockResult) ? lockValue : null;
+                value,
+                String.valueOf(expireTime)
+        );
+        return LOCK_SUCCESS.equals(lockResult) ? value : null;
     }
 
 
@@ -64,7 +65,12 @@ public class RedisLockTemplate extends AbstractLockTemplate{
      */
     public boolean unlock(String key,String value){
         log.debug("redis unlock debug, start. resource:[{}].",key);
-        String result = mRedisTemplate.execute(SCRIPT_UNLOCK,mRedisTemplate.getStringSerializer(),mRedisTemplate.getStringSerializer(),Collections.singletonList(key),value);
+        String result = mRedisTemplate.execute(
+                SCRIPT_UNLOCK,
+                mRedisTemplate.getStringSerializer(),
+                mRedisTemplate.getStringSerializer(),
+                Collections.singletonList(key),value
+        );
         log.debug("redis lock release status {}",result);
         return Boolean.parseBoolean(result);
     }
