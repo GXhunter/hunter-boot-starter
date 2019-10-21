@@ -1,5 +1,7 @@
 package com.github.gxhunter.anno;
 
+import com.github.gxhunter.lock.RedisLockTemplate;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RedisLock{
+public @interface Lock{
 
     /**
      * <p>
@@ -23,8 +25,8 @@ public @interface RedisLock{
      *  自行指定key时：固定前缀+指定的key(多个key使用分隔符分割，且每个key支持spel语法)
      * </p>
      *
-     * @see com.github.gxhunter.lock.RedisDistributionLock#keyPrex
-     * @see com.github.gxhunter.lock.RedisDistributionLock#SPLIT
+     * @see RedisLockTemplate#keyPrex
+     * @see RedisLockTemplate#SPLIT
      */
     String[] keys() default {};
 
@@ -39,5 +41,11 @@ public @interface RedisLock{
      * 默认10秒
      */
     long retryTimes() default 10*1000;
+
+    /**
+     * 方法执行后自动释放锁，设置为false时，只能等待超时释放
+     * @return
+     */
+    boolean autoRelease() default true;
 
 }

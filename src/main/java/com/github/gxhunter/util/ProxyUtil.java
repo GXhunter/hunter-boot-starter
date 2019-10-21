@@ -16,7 +16,7 @@ public class ProxyUtil{
      * 创建动态代理对象
      *
      * @param clazz   如果是接口使用JDK动态代理，如果是对象使用cglib
-     * @param handler 方法拦截
+     * @param handler 方法拦截,来自Object的方法不作处理
      * @param <T>     对象类型
      * @return 子类、实现类
      */
@@ -28,8 +28,18 @@ public class ProxyUtil{
         }
     }
 
+
+
     public static <T> T jdkProxy(Class<T> clazz,InvocationHandler handler){
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},handler);
+        return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},new InvocationHandler(){
+            @Override
+            public Object invoke(Object proxy,Method method,Object[] args) throws Throwable{
+                if(method.getDeclaringClass() == Object.class){
+                    return method.invoke(this,args);
+                }
+                return handler.invoke(proxy, method, args);
+            }
+        }));
     }
 
     public static <T> T cglibProxy(Class<T> clazz,InvocationHandler handler){
@@ -41,7 +51,7 @@ public class ProxyUtil{
             }
             return handler.invoke(proxy,method,args);
         });
-        return (T) enhancer.create();
+        return clazz.cast(enhancer.create());
     }
 
     /**

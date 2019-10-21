@@ -1,7 +1,8 @@
 package com.github.gxhunter.config;
 
-import com.github.gxhunter.lock.RedisDistributionLock;
-import com.github.gxhunter.lock.RedisLockAdvice;
+import com.github.gxhunter.lock.AbstractLockTemplate;
+import com.github.gxhunter.lock.RedisLockTemplate;
+import com.github.gxhunter.lock.LockAdvice;
 import com.github.gxhunter.service.IRedisClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,14 +19,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class DistributionLockAutoConfig{
     @Bean
     @ConditionalOnMissingBean
-    public RedisLockAdvice mRedisLockAdvice(RedisDistributionLock redisDistributionLock){
-        return new RedisLockAdvice(redisDistributionLock);
+    public LockAdvice mRedisLockAdvice(AbstractLockTemplate redisLockTemplate){
+        return new LockAdvice(redisLockTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public RedisDistributionLock mRedisDistributionLock(RedisTemplate redisTemplate){
-        return new RedisDistributionLock(redisTemplate);
+    public AbstractLockTemplate LockTemplate(RedisTemplate redisTemplate){
+        return new RedisLockTemplate(redisTemplate);
     }
 
 }
