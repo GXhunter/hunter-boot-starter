@@ -1,4 +1,4 @@
-package com.github.gxhunter.config;
+package com.github.gxhunter.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;

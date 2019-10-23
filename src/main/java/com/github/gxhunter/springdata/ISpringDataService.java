@@ -1,4 +1,4 @@
-package com.github.gxhunter.service;
+package com.github.gxhunter.springdata;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

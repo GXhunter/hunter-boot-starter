@@ -1,4 +1,4 @@
-package com.github.gxhunter.anno;
+package com.github.gxhunter.lock;
 
 import com.github.gxhunter.lock.AbstractLockTemplate;
 

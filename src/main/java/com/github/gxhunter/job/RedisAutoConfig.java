@@ -1,6 +1,7 @@
-package com.github.gxhunter.config;
+package com.github.gxhunter.job;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.gxhunter.lock.DistributionLockAutoConfig;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -28,7 +29,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author 树荫下的天空

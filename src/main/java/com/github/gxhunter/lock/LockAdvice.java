@@ -1,6 +1,5 @@
 package com.github.gxhunter.lock;
 
-import com.github.gxhunter.anno.Lock;
 import com.github.gxhunter.exception.LockException;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;

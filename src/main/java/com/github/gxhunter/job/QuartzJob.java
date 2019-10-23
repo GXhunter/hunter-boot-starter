@@ -1,4 +1,4 @@
-package com.github.gxhunter.anno;
+package com.github.gxhunter.job;
 
 import org.springframework.stereotype.Component;
 import java.lang.annotation.*;

@@ -1,4 +1,4 @@
-package com.github.gxhunter.config;
+package com.github.gxhunter.webmvc;
 
 import com.github.gxhunter.entity.SwaggerInfo;
 import org.springframework.beans.BeansException;

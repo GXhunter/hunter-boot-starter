@@ -1,8 +1,6 @@
-package com.github.gxhunter.config;
+package com.github.gxhunter.webmvc;
 
 import com.github.gxhunter.entity.ThreadPoolInfo;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;

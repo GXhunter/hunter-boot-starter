@@ -1,6 +1,5 @@
 package com.github.gxhunter.lock;
 
-import com.github.gxhunter.anno.Lock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.expression.MethodBasedEvaluationContext;

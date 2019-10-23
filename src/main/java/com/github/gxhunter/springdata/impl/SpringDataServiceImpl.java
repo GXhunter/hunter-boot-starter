@@ -1,7 +1,7 @@
-package com.github.gxhunter.service.impl;
+package com.github.gxhunter.springdata.impl;
 
 import com.github.gxhunter.exception.ApiException;
-import com.github.gxhunter.service.ISpringDataService;
+import com.github.gxhunter.springdata.ISpringDataService;
 import com.github.gxhunter.util.IdWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;

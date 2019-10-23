@@ -121,7 +121,7 @@ static{
     
 
 ## Redis工具类
-com.github.gxhunter.service.IRedisClient
+com.github.gxhunter.springdata.IRedisClient
 基于Resttemplate做的二次封装
 
 引入spring-boot-data-redis-starter即可使用

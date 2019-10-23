@@ -1,6 +1,6 @@
 package com.github.gxhunter.util;
 
-import com.github.gxhunter.config.BeanMapperAutoConfig;
+import com.github.gxhunter.jackson.BeanMapperAutoConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationContext;

@@ -1,4 +1,4 @@
-package com.github.gxhunter.config;
+package com.github.gxhunter.lock;
 
 import com.github.gxhunter.lock.AbstractLockTemplate;
 import com.github.gxhunter.lock.LockAdvice;

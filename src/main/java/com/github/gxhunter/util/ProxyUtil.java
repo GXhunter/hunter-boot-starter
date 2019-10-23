@@ -31,15 +31,10 @@ public class ProxyUtil{
 
 
     public static <T> T jdkProxy(Class<T> clazz,InvocationHandler handler){
-        return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(),new Class[]{clazz},new InvocationHandler(){
-            @Override
-            public Object invoke(Object proxy,Method method,Object[] args) throws Throwable{
-                if(method.getDeclaringClass() == Object.class){
-                    return method.invoke(this,args);
-                }
-                return handler.invoke(proxy, method, args);
-            }
-        }));
+        return clazz.cast(
+                Proxy.newProxyInstance(clazz.getClassLoader(),
+                new Class[]{clazz},
+                (proxy,method,args) -> clazz.cast(handler.invoke(proxy, method, args))));
     }
 
     public static <T> T cglibProxy(Class<T> clazz,InvocationHandler handler){
