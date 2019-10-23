@@ -1,27 +1,20 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.exception.ApiException;
-import com.github.gxhunter.exception.ClassifyException;
 import com.github.gxhunter.jackson.ResultSupport;
 import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
 import com.github.gxhunter.util.SpelPaser;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.AliasFor;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.lang.annotation.*;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -122,41 +115,6 @@ public abstract class BaseController{
         return result;
     }
 
-
-
-    /**
-     * 加在Controller上自动捕获分类目标异常，并封装成 {@link ClassifyException}交由异常处理器处理，
-     * 可继承{@link BaseController}重写{@link #handleClassifyException(ClassifyException)}方法自定义处理逻辑。
-     */
-    @Target(ElementType.ANNOTATION_TYPE)
-    @Documented
-    @Retention(RetentionPolicy.RUNTIME)
-    protected @interface IfException{
-        /**
-         * @return 返回给前端的提示信息
-         */
-        @AliasFor(value = "errorMessage")
-        String value() default "";
-
-        /**
-         * @return 错误码 默认为{@link } 默认错误码
-         */
-        int code() default -1;
-
-        /**
-         * @return 捕获哪些异常，默认为{@link Exception}
-         */
-        Class<? extends Exception>[] on() default Exception.class;
-
-    }
-
-    @Target(ElementType.METHOD)
-    @Documented
-    @Retention(RetentionPolicy.RUNTIME)
-    protected @interface ExceptionList{
-        IfException[] value();
-    }
-
     /**
      * 手动抛出的异常，不指定错误码时为“操作失败”
      *
@@ -176,18 +134,6 @@ public abstract class BaseController{
         }
     }
 
-    /**
-     * 捕获分类异常（对应Controller加上{{@link IfException}}）注解分类到的异常。
-     * 重写此方法 重定义{@link IfException}捕获到异常后 的处理逻辑
-     *
-     * @param ex {@link IfException}捕获到的异常
-     * @return 返回给前端的json数据
-     */
-    @ExceptionHandler(ClassifyException.class)
-    public Object handleClassifyException(ClassifyException ex){
-        log.error(ex.getExceptionClass().getName() + ":" + ex.getMessage(),ex);
-        return faild(ex.getExceptionInfo());
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object handMethodValidException(MethodArgumentNotValidException ex){
@@ -205,7 +151,6 @@ public abstract class BaseController{
         return result;
     }
 
-
     /**
      * 其他异常
      *
@@ -222,38 +167,4 @@ public abstract class BaseController{
         return result;
     }
 
-
-    static List<IfExceptionInfo> getIfExceptionList(Method method,Object[] arguments){
-        SPEL_PASER.setContext(method,arguments);
-        List<IfExceptionInfo> result = Lists.newArrayList();
-        ExceptionList exceptionList = method.getAnnotation(ExceptionList.class);
-        if(exceptionList != null){
-            for(IfException exception : exceptionList.value()){
-                String value = SPEL_PASER.parse(exception.value());
-                result.add(new IfExceptionInfo(value,exception.code(),exception.on()));
-            }
-        }
-        return result;
-    }
-
-
-
-    @AllArgsConstructor
-    @Getter
-    static class IfExceptionInfo{
-        /**
-         * @return 返回给前端的提示信息
-         */
-        String value;
-
-        /**
-         * @return 错误码 默认为{@link } 默认错误码
-         */
-        Integer code;
-
-        /**
-         * @return 捕获哪些异常，默认为{{@link Exception}}
-         */
-        Class<? extends Exception>[] when;
-    }
 }

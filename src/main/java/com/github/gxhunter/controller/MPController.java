@@ -3,8 +3,8 @@ package com.github.gxhunter.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.jackson.ResultSupport;
+import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +13,7 @@ import java.io.Serializable;
 /**
  * <pre>
  * <h2>注意：在项目引入mybatis-plus后才可用</h2>
- * 继承自{@link BaseController} 包含默认的异常处理，并支持{@link com.github.gxhunter.controller.BaseController.IfException}注解
+ * 继承自{@link BaseController} 包含默认的异常处理
  * 在spring容器中，提供一个{@link ResultSupport}，即可配置返回的{@link AResult}对象
  * </pre>
  *
@@ -23,7 +23,6 @@ import java.io.Serializable;
  * @see BaseController
  * @see AResult
  * @see ResultSupport
- * @see com.github.gxhunter.controller.BaseController.IfException
  */
 public class MPController<M extends IService<E>,E> extends BaseController{
     @Autowired(required = false)
