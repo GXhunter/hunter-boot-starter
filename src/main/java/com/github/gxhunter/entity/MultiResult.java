@@ -1,4 +1,4 @@
-package com.github.gxhunter.vo;
+package com.github.gxhunter.entity;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

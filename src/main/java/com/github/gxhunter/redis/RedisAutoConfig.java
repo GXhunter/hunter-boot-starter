@@ -1,4 +1,4 @@
-package com.github.gxhunter.job;
+package com.github.gxhunter.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.gxhunter.lock.DistributionLockAutoConfig;

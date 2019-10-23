@@ -15,12 +15,13 @@
  */
 package com.github.gxhunter.result;
 
+import com.github.gxhunter.entity.Result;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hunter
  * @date 2019.1.4
- * @see com.github.gxhunter.vo.Result
+ * @see Result
  * @see Cloneable 支持原型模式
  * 扩展自行实现此接口
  */

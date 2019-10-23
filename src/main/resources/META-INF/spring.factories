@@ -1,13 +1,13 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.github.gxhunter.job.RedisAutoConfig,\
+  com.github.gxhunter.redis.RedisAutoConfig,\
   com.github.gxhunter.webmvc.RestTemplateAutoConfig,\
-  com.github.gxhunter.entity.RestTemplateInfo,\
-  com.github.gxhunter.entity.ThreadPoolInfo,\
-  com.github.gxhunter.webmvc.ThreadPoolAutoConfig,\
+  com.github.gxhunter.webmvc.RestTemplateProperties,\
+  com.github.gxhunter.threadpool.ThreadPoolProperties,\
+  com.github.gxhunter.threadpool.ThreadPoolAutoConfig,\
   com.github.gxhunter.webmvc.SwaggerAutoConfiguration,\
   com.github.gxhunter.job.QuartzConfig,\
   com.github.gxhunter.lock.DistributionLockAutoConfig,\
-  com.github.gxhunter.jackson.DefaultResultSupport,\
+  com.github.gxhunter.result.DefaultResultSupport,\
   com.github.gxhunter.util.BeanMapperFactory
 
 

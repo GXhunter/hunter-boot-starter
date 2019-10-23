@@ -1,6 +1,5 @@
 package com.github.gxhunter.webmvc;
 
-import com.github.gxhunter.entity.SwaggerInfo;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -24,7 +23,7 @@ import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfi
  */
 @Configuration
 @Import({
-        SwaggerInfo.class,
+        SwaggerProperties.class,
         Swagger2DocumentationConfiguration.class
 })
 @ConditionalOnProperty(name = "hunter.spring.swagger.enabled")
@@ -32,19 +31,19 @@ import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfi
 public class SwaggerAutoConfiguration implements BeanFactoryAware{
     private BeanFactory beanFactory;
     @Bean
-    public Docket createRestApi(SwaggerInfo swaggerInfo) {
+    public Docket createRestApi(SwaggerProperties swaggerProperties) {
         ApiInfo apiInfo = new ApiInfoBuilder()
-                .title(swaggerInfo.getTitle())
-                .description(swaggerInfo.getDescription())
-                .version(swaggerInfo.getVersion())
-                .license(swaggerInfo.getLicense())
-                .contact(swaggerInfo.getContact().toContact())
-                .licenseUrl(swaggerInfo.getLicenseUrl())
+                .title(swaggerProperties.getTitle())
+                .description(swaggerProperties.getDescription())
+                .version(swaggerProperties.getVersion())
+                .license(swaggerProperties.getLicense())
+                .contact(swaggerProperties.getContact().toContact())
+                .licenseUrl(swaggerProperties.getLicenseUrl())
                 .build();
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(swaggerInfo.getBasePackage()))
+                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 // 扫描该包下的所有需要在Swagger中展示的API，@ApiIgnore注解标注的除外
                 .paths(PathSelectors.any())
                 .build();

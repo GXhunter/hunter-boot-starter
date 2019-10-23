@@ -1,6 +1,5 @@
 package com.github.gxhunter.webmvc;
 
-import com.github.gxhunter.entity.RestTemplateInfo;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +27,7 @@ public class RestTemplateAutoConfig{
 
     @Bean
     @SuppressWarnings("all")
-    public ClientHttpRequestFactory simpleClientHttpRequestFactory(RestTemplateInfo info){
+    public ClientHttpRequestFactory simpleClientHttpRequestFactory(RestTemplateProperties info){
         OkHttp3ClientHttpRequestFactory factory = new OkHttp3ClientHttpRequestFactory();
         factory.setReadTimeout(info.getReadTimeout());
         factory.setConnectTimeout(info.getConnectTimeout());

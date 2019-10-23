@@ -1,8 +1,7 @@
-package com.github.gxhunter.jackson;
+package com.github.gxhunter.result;
 
 import com.github.gxhunter.controller.BaseController;
-import com.github.gxhunter.result.AResult;
-import com.github.gxhunter.vo.Result;
+import com.github.gxhunter.entity.Result;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

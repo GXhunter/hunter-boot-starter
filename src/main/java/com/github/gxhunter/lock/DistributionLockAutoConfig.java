@@ -1,8 +1,5 @@
 package com.github.gxhunter.lock;
 
-import com.github.gxhunter.lock.AbstractLockTemplate;
-import com.github.gxhunter.lock.LockAdvice;
-import com.github.gxhunter.lock.RedisLockTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

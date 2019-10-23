@@ -1,4 +1,4 @@
-package com.github.gxhunter.jackson;
+package com.github.gxhunter.result;
 
 import com.github.gxhunter.result.AResult;
 

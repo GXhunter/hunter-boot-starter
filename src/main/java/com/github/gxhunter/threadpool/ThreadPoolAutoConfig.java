@@ -1,6 +1,5 @@
-package com.github.gxhunter.webmvc;
+package com.github.gxhunter.threadpool;
 
-import com.github.gxhunter.entity.ThreadPoolInfo;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
@@ -14,17 +13,17 @@ import java.util.concurrent.*;
  * 线程池
  */
 @Configuration
-@AutoConfigureAfter(ThreadPoolInfo.class)
-@ConditionalOnBean(ThreadPoolInfo.class)
+@AutoConfigureAfter(ThreadPoolProperties.class)
+@ConditionalOnBean(ThreadPoolProperties.class)
 public class ThreadPoolAutoConfig{
     /**
      * 线程池
      * @return
      */
     @Bean
-    public ExecutorService threadPool(ThreadPoolInfo threadPoolInfo){
+    public ExecutorService threadPool(ThreadPoolProperties threadPoolProperties){
         return new ThreadPoolExecutor(
-                threadPoolInfo.getCorePoolSize(),threadPoolInfo.getMaximumPoolSize(),threadPoolInfo.getKeepAliveTime(),TimeUnit.SECONDS
-                ,threadPoolInfo.getWorkQueue(),threadPoolInfo.getThreadFactory(),threadPoolInfo.getHandler());
+                threadPoolProperties.getCorePoolSize(),threadPoolProperties.getMaximumPoolSize(),threadPoolProperties.getKeepAliveTime(),TimeUnit.SECONDS
+                ,threadPoolProperties.getWorkQueue(),threadPoolProperties.getThreadFactory(),threadPoolProperties.getHandler());
     }
 }

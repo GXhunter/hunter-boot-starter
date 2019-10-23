@@ -1,4 +1,4 @@
-package com.github.gxhunter.vo;
+package com.github.gxhunter.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.gxhunter.result.AResult;

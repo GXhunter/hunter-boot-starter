@@ -1,4 +1,4 @@
-package com.github.gxhunter.entity;
+package com.github.gxhunter.threadpool;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,7 +12,7 @@ import java.util.concurrent.*;
  */
 @Data
 @ConfigurationProperties(prefix = "hunter.spring.thread-pool")
-public class ThreadPoolInfo{
+public class ThreadPoolProperties{
     /**
      * 核心线程数
      */

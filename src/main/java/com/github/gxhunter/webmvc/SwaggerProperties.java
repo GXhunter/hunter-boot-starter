@@ -1,4 +1,4 @@
-package com.github.gxhunter.entity;
+package com.github.gxhunter.webmvc;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties("hunter.spring.swagger")
-public class SwaggerInfo {
+public class SwaggerProperties{
     /**
      * 是否开启swagger
      **/

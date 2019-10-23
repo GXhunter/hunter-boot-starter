@@ -1,4 +1,4 @@
-package com.github.gxhunter.entity;
+package com.github.gxhunter.webmvc;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "hunter.spring.rest")
 @Data
 @AutoConfigureAfter(HttpMessageConvertersAutoConfiguration.class)
-public class RestTemplateInfo{
+public class RestTemplateProperties{
     /**
      * 读取超时，单位毫秒
      */

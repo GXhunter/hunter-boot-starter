@@ -3,7 +3,7 @@ package com.github.gxhunter.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.gxhunter.jackson.ResultSupport;
+import com.github.gxhunter.result.ResultSupport;
 import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
 import org.springframework.beans.factory.annotation.Autowired;
