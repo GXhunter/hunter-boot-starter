@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -25,7 +26,6 @@ public class SpringDataServiceImpl<T extends PagingAndSortingRepository<E, Long>
      */
     @Autowired
     protected T mRepository;
-    private E mEntity;
 
     /**
      * 查询全部记录
@@ -61,6 +61,9 @@ public class SpringDataServiceImpl<T extends PagingAndSortingRepository<E, Long>
     public E save(E entity){
         Field field = getIdField(entity);
         try{
+            if(!Modifier.isPublic(field.getModifiers())){
+                field.setAccessible(true);
+            }
             field.set(entity,IdWorker.getId());
         }catch(IllegalAccessException e){
             e.printStackTrace();

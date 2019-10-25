@@ -1,26 +1,37 @@
 # hunter-spring-boot-starter
-提供以下内置工具和对象
+提供以下功能和内置对象
 1. 通用返回类Result
-2. 全局异常处理
-3. Jackson工具类
-4. StringUtil工具
-5. Redis工具类
-6. RestTemplate工具类
-7. 线程池自动装配
-8. swagger 自动装配
-9. DefaultWebMVC注解自动装配web项目
+
+2. redis分布式锁
+
+3. redis多数据源支持
+
+4. quartz定时器自动装配
+
+5. 全局异常处理
+
+6. Jackson、yaml工具类
+
+7. RestTemplate工具类
+
+8. 线程池自动装配
+
+9. swagger 自动装配
+
+   
 ---
 # 依赖
 1. 所需依赖：springboot-starter、springboot-starter-web
 2. 包含依赖：
     > 项目已经包含了这些依赖，无需重复引入。
     
-    依赖|描述
-    --|--
-    commons-lang3|apache工具
-    commons-lang| 工具集
-    lombok|简化代码
-    guava |googlet提供的工具
+    依赖|描述|版本
+    --|--|--
+    cglib|动态代理|3.2.12
+    commons-lang3|apache工具|3.7
+    commons-lang| 工具集| 2.5 
+    lombok|简化代码|1.16.20
+    commons-pool2 ||2.7.0
 
 # 快速开始
 1. 引入上述所需的依赖包  
@@ -42,7 +53,7 @@
 ```$xslt
     <groupId>com.github.gxhunter</groupId>
     <artifactId>hunter-spring-boot-starter</artifactId>
-    <version>0.6</version>
+    <version>1.0.5</version>
 ```
 # 功能描述
 > 介绍本starter提供的一些通用工具、自动化装配方案等。
@@ -72,52 +83,265 @@ failed(T data,String message)|失败，并携带数据和提示信息
 failed()|失败，不携带信息
 ---
 
- ##  Jackson工具类 com.github.gxhunter.util.BeanMapperUtil
+
+
+## 分布式锁
+
+* 核心注解 `com.github.gxhunter.lock.Lock`
+
+* 注解参数
+
+  ```java
+     /**
+       * <p>
+       * 同一
+      /**
+       * <p>
+       * 同一个应用，同一个线程可重入。
+       * 要锁定的key中包含的属性,不指定时锁定当前方法
+       * 指定key时将覆盖默认key生成策略，
+       * 支持spel表达式，也支持纯文本字符串
+       * 固定前缀：{keyPrex}{split}
+       * 默认的key策略：固定前缀+方法全路径
+       * 自行指定key时：固定前缀+指定的key(多个key使用分隔符分割，且每个key支持spel语法)
+       * </p>
+       *
+       * @see AbstractLockTemplate#keyPrex
+       * @see AbstractLockTemplate#SPLIT
+       */
+      String[] keys() default {};
+  
+      /**
+       * 超时时间，单位毫秒
+       * 默认30秒
+       */
+      long expireTime() default 30 * 1000;
+  
+      /**
+       * 获取不到锁的等待时间，单位毫秒
+       * 默认10秒
+       */
+      long retryTimes() default 10 * 1000;
+  
+      /**
+       * 是否延迟释放
+       *
+       * @return false:不延迟，方法执行结束就释放。true:方法执行结束后不释放，等待超时
+       */
+      boolean delay() default false;
+  
+      /**
+       * 是否可重入（同个应用同个线程）
+       * @return
+       */
+      boolean reentrant() default true;个应用，同一个线程可重入。
+       * 要锁定的key中包含的属性,不指定时锁定当前方法
+       * 指定key时将覆盖默认key生成策略，
+       * 支持spel表达式，也支持纯文本字符串
+       * 固定前缀：{keyPrex}{split}
+       * 默认的key策略：固定前缀+方法全路径
+       * 自行指定key时：固定前缀+指定的key(多个key使用分隔符分割，且每个key支持spel语法)
+       * </p>
+       *
+       * @see AbstractLockTemplate#keyPrex
+       * @see AbstractLockTemplate#SPLIT
+       */
+      String[] keys() default {};
+  ```
+
+  
+
+* 使用方法
+
+  ```
+   /**
+       * 注解加在目标方法上即可，根据业务需求添加参数
+       * @return
+       * @see Lock
+       */
+      @Lock
+      public IResult testLock(){
+          return success(Thread.currentThread().getId());
+      }
+  ```
+
+
+
+## redis多数据源
+
+* 介绍
+
+  spring-data-redis默认提供的redis装配和redisTemplate都只支持单数据源，单数据源配置如下：
+
+  ```yaml
+  spring:
+    redis:
+      host: 192.168.60.150
+      port: 6379
+  ```
+
+* 多数据源，配置非常简单
+
+  ```
+  hunter:
+    redis:
+      source:
+  #      第一个数据源，名称自定义
+        work0:
+          host: 192.168.60.150
+          port: 6379
+  #      第一个数据源，名称自定义
+        work1:
+          host: 192.168.60.150
+          port: 6380
+  ```
+
+* 使用
+
+  使用方法非常简单，需要在原来的基础上添加Qualifier注解  并指定名称即可
+
+  ```
+      @Qualifier("work0")
+      @Autowired
+      RedisTemplate work0;
+  
+      @Qualifier("work1")
+      @Autowired
+      RedisTemplate work1;
+  ```
+
+
+
+## quartz-starter
+
+* 介绍
+
+  quartz的定时器功能比jdk原生的timer和spring-schedule都更加强大的多，但是每次新增一个定时器都有手动添加 `JobDetail`和`Triggers`到容器，非常麻烦。
+
+* 配置
+
+  1. 引入maven依赖
+
+     ```
+        <dependency>
+                 <groupId>org.springframework.boot</groupId>
+                 <artifactId>spring-boot-starter-quartz</artifactId>
+             </dependency>
+     ```
+
+     
+
+  2. 在yml配置(参考)
+
+     ```yml
+     spring:  
+       quartz:
+         job-store-type: jdbc #数据库方式
+         jdbc:
+           initialize-schema: never #不初始化表结构
+         properties:
+           org:
+             quartz:
+               scheduler:
+                 instanceId: AUTO #默认主机名和时间戳生成实例ID,可以是任何字符串，但对于所有调度程序来说，必须是唯一的 对应qrtz_scheduler_state INSTANCE_NAME字段
+                 #instanceName: clusteredScheduler #quartzScheduler
+               jobStore:
+                 class: org.quartz.impl.jdbcjobstore.JobStoreTX #持久化配置
+                 driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate #我们仅为数据库制作了特定于数据库的代理
+                 useProperties: false #以指示JDBCJobStore将JobDataMaps中的所有值都作为字符串，因此可以作为名称 - 值对存储而不是在BLOB列中以其序列化形式存储更多复杂的对象。从长远来看，这是更安全的，因为您避免了将非String类序列化为BLOB的类版本问题。
+                 tablePrefix: qrtz_  #数据库表前缀
+                 misfireThreshold: 60000 #在被认为“失火”之前，调度程序将“容忍”一个Triggers将其下一个启动时间通过的毫秒数。默认值（如果您在配置中未输入此属性）为60000（60秒）。
+                 clusterCheckinInterval: 5000 #设置此实例“检入”*与群集的其他实例的频率（以毫秒为单位）。影响检测失败实例的速度。
+                 isClustered: true #打开群集功能
+               threadPool: #连接池
+                 class: org.quartz.simpl.SimpleThreadPool
+                 threadCount: 10
+                 threadPriority: 5
+                 threadsInheritContextClassLoaderOfInitializingThread: true
+     ```
+
+* 使用
+
+  ```java
+  /**
+   * 必须继承{@link AbstractJob}，添加{@link QuartzJob}注解
+   * 最简单的quartz demo就完成了，是不是很简单
+   */
+  @QuartzJob(cron = "0/5 * * * * ?")
+  public class TestJob extends AbstractJob{
+      @Override
+      public void run(JobExecutionContext context) throws JobExecutionException{
+          System.out.println("quartz定时器运行");
+      }
+  }
+  ```
+
+  
+
+ ##  Jackson、yaml工具类 com.github.gxhunter.util.BeanMapperUtil
+
  * **描述**  
     Jackson是spring默认的json序列化工具，但是与fastjson不同，没有内置很方便的方法可以在对象和javabean之间互转，大多数情况你可能会考虑fastjson作为json工具类，但这样有个问题，Jackson的注解在fastjson不再适用，为了解决这个问题，你可能还要侵入式地添加fastjson的注解。
     在同一个项目使用两个json工具也是不提倡的做法，所以这里提供了一个Jackson的封装工具JsonUtil。
 
- * 默认配置
+ * 通过springboot yml进行配置
  ```$xslt
-static{
-        //只序列化不为null的字段
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        //取消默认转换timestamps形式
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
-        //忽略空Bean转json的错误
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
-        //忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-}
+
+spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      FAIL_ON_EMPTY_BEANS: false
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    default-property-inclusion: non_null
  ```
 * 静态方法
-    1. 对象转为Json字符串
+    1. 对象转为字符串
     ```$xslt
     /**
      * 对象转json
      */
-    public static <T> String toJSON(T obj)
+    public <T> String stringify(T obj)
     ```
     
-    2. 对象转为json数组
+    2. 对象转为字符串并格式化
     ```$xslt
     /**
      * 对象转json
      */
-    public static <T> String toJSON(T obj)
+    public <T> String stringifyPretty(T obj)
     ```
     
-    3. JSON转为java对象
+    3. 字符串 转为java对象
     ```$xslt
-    /**
-     * JSON转为java对象
-     * @param str   json字符串
-     * @param clazz java对象类型
-     * @param <T>   java对象类型
-     * @return
-     */
-    public static <T> T parse(String str,Class<T> clazz)
+        /**
+         * 字符串转为java对象
+         *
+         * @param str   json字符串
+         * @param clazz java对象类型
+         * @param <T>   java对象类型
+         * @return
+         */
+        public <T> T parse(String str, Class<T> clazz)
     ```
+    
+* 使用方法
+
+    ```
+    //        获取json工具
+            BeanMapperUtil jsonMapper = BeanMapperFactory.getJsonMapper();
+    //        获取yaml工具
+            BeanMapperUtil yamlMapper = BeanMapperFactory.getYamlMapper();
+            
+    //        json字符串转为java对象，yaml同理
+            Map parse = jsonMapper.parse("{a:1}",Map.class);
+    //        对象转为json，yaml同理
+            String stringify = jsonMapper.stringify(new Object());
+    //        对象转字符串后写入到磁盘文件，yaml同理
+            jsonMapper.write(new Object(),new File("E:/test.txt"));
+    ```
+
     
 
 ## Redis工具类
@@ -188,102 +412,8 @@ hunter:
             name: 开发者名称
             url: 开发者url
 ```
-## 返回码枚举
-com.github.gxhunter.result.ResultEnum
-### 内置返回码对照表
-遵循COC原则，内置了几个返回码枚举，你也可以实现`IResponseCode.java`自定义扩展
-内置的返回码枚举在`com.github.gxhunter.result.ResultEnum`
 
-返回码|描述
---|--
-0 |成功
-1000|操作失败（一般是抛出服务端手段throw ApiException）
-1001|参数校验失败
-1999|网络超时（上述之外的其他异常）
-#### 修改默认返回码
-如果你不想使用默认的返回码，那么可以在你的resource目录下新建一个**response-code.properties**文件，配置如下
-```
-SUCCESS=成功时返回码
-DEFAULT_ERROR=默认错误返回码
-METHOD_ARGUMENT_VALID_FAIL=方法校验失败返回码
-UNKNOW_ERROR=其他错误返回码
-```
-> * 注意：如果你的项目下包含了**response-code.properties**文件，那么上述所有字段都必须配置，不能只配置其中几个！
-#### 扩展
-默认提供的ResultEnum只是最基础的几个情况，可能无法满足覆盖业务需求，你可以编写一个枚举继承com.github.gxhunter.enums.IResponseCode实现扩展。
 
-## @DefaultWebMVC
-* 默认配置一些Javabean的序列化与反序列化格式、时区、过滤的url
-* 使用方法：再启动类加上 @DefaultWebMVC注解
- 1. json与java互转格式
-
-    java对象|json对象
-    :--|:--:
-    Date|yyyy-MM-dd HH:mm:ss
-    LocalDateTime|yyyy-MM-dd HH:mm:ss
-    LocalDate|yyyy-MM-dd
-    LocalTime|HH:mm:ss
-    Long|string
-    null|不序列化
-> 配置时区为GMT+8
- 2. 不拦截swagger相关url
- 3. 添加此注解后开启了默认异常处理，捕获服务端的异常，分类返回给前端，具体看下一节
-## 全局异常处理器 com.github.gxhunter.exception    
-* **描述**  
-    在企业项目中，后端的错误不能把具体异常抛给前端，需要做异常捕获、分类等。并且根据异常类型返回不同的错误码（通用返回类Result中的status），
-    这里默认捕获了所有异常，并对常见的几个异常做分类，使之返回不同的status。
-* **启用方法**  
-     在启动类加上@DefaultWebMVC注解即可
-     
-* 分类捕获的异常
-
-    1. **ApiException** 
-    自定义的异常，由后端手动抛出，再被异常处理器捕获，把具体信息[code]返回给前端，比如你在java中这样写  
-    `throw new ApiException("服务端抛出异常");`  
-    前端接收到的结果：
-    ```
-    {
-        status:1000,
-        message:"服务端抛出异常",
-        success: false
-    }
-    ```
-    
-    2. MethodArgumentNotValidException  
-    服务端使用jsr303注解作参数校验,校验不通过时，会自动抛出MethodArgumentNotValidException异常，异常处理器捕获了这类校验异常，把校验失败的原因、字段返回给前端，校验失败的status为1001
-    ```$xslt
-        {
-          "status": "1001",
-          "message": "参数校验失败",
-          "data": {
-            "校验失败的字段": "失败原因",
-          },
-          "success": false
-        }
-    ```
-    
-    3. Exception
-    其他异常没有被分类，统一返回一下1999状态码
-    ```$xslt
-        {
-          "status": "1999",
-          "message": "网络超时",
-          "success": false
-        }
-    ```
-* **关闭异常处理器**
-  
-    不想使用内置的异常处理器，或者内置的异常处理器不能满足你的业务需求，
-    两种可选方式可以关闭默认的异常处理器， **任选**其一
-    1. 在yml中配置
-    ```
-    hunter:
-        spring:
-        #      是否开启内置异常处理器
-            exceptionResolver: true
-    ```
-    2. 去除@DefaultWebMVC注解
-    
 ## 待续...
 
 

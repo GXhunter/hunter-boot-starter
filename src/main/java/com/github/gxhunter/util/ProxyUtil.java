@@ -34,7 +34,8 @@ public class ProxyUtil{
         return clazz.cast(
                 Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class[]{clazz},
-                (proxy,method,args) -> clazz.cast(handler.invoke(proxy, method, args))));
+                handler::invoke
+                ));
     }
 
     public static <T> T cglibProxy(Class<T> clazz,InvocationHandler handler){

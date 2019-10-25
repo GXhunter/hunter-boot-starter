@@ -27,11 +27,11 @@ public class RestTemplateAutoConfig{
 
     @Bean
     @SuppressWarnings("all")
-    public ClientHttpRequestFactory simpleClientHttpRequestFactory(RestTemplateProperties info){
+    public ClientHttpRequestFactory simpleClientHttpRequestFactory(RestTemplateProperties restTemplateProperties){
         OkHttp3ClientHttpRequestFactory factory = new OkHttp3ClientHttpRequestFactory();
-        factory.setReadTimeout(info.getReadTimeout());
-        factory.setConnectTimeout(info.getConnectTimeout());
-        factory.setWriteTimeout(info.getWriteTimeout());
+        factory.setReadTimeout(restTemplateProperties.getReadTimeout());
+        factory.setConnectTimeout(restTemplateProperties.getConnectTimeout());
+        factory.setWriteTimeout(restTemplateProperties.getWriteTimeout());
         return factory;
     }
 }

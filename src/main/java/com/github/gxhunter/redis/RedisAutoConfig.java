@@ -100,7 +100,6 @@ public class RedisAutoConfig implements ApplicationContextAware{
                 genericObjectPoolConfig.setMinIdle(properties.getLettuce().getPool().getMinIdle());
                 genericObjectPoolConfig.setMaxIdle(properties.getLettuce().getPool().getMaxIdle());
                 genericObjectPoolConfig.setMaxWaitMillis(properties.getLettuce().getPool().getMaxWait().toMillis());
-//                genericObjectPoolConfig.setMaxTotal();
             }
 
 

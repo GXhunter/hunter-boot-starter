@@ -43,6 +43,7 @@ public class RedisLockTemplate extends AbstractLockTemplate{
      * @param expireTime 单位是ms
      * @return 生成的锁名称,null
      */
+    @Override
     public String lock(String key,String value,long expireTime){
 //        只有当前应用，当前线程才能解锁
         Object lockResult = mRedisTemplate.execute(
@@ -63,6 +64,7 @@ public class RedisLockTemplate extends AbstractLockTemplate{
      * @param key 锁
      * @return 是否释放成功
      */
+    @Override
     public boolean unlock(String key,String value){
         log.debug("redis unlock debug, start. resource:[{}].",key);
         String result = mRedisTemplate.execute(
