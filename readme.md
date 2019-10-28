@@ -57,9 +57,12 @@
 ```
 # 功能描述
 > 介绍本starter提供的一些通用工具、自动化装配方案等。
-##  通用返回类com.github.gxhunter.vo.Result<T>
-* 描述  
- 在企业开发中，Controller一般需要返回通用的一个对象，一般包含status（返回码）、data（数据）、message（提示信息），这里提供了我本人常用的一个通用Result解决方案
+> ##  通用Controller
+>
+> ##  com.github.gxhunter.controller.BaseController
+>
+> * 描述  
+>  在你的Controller中继承`BaseController`，包含以下方法，快速响应数据给前端。内容包含以下字段：
  * 字段描述
 
 
@@ -344,11 +347,7 @@ spring:
 
     
 
-## Redis工具类
-com.github.gxhunter.springdata.IRedisClient
-基于Resttemplate做的二次封装
 
-引入spring-boot-data-redis-starter即可使用
 
 ## restTemplate
 * 使用okhttp代替默认的httpclient作为底层实现
@@ -379,7 +378,7 @@ private ExecutorService mPoolExecutor;
 ```
 ## swagger 支持
 * 描述  
-开发中，我们一般需要swagger来自动生成restapi文档，省去了在postman填写各类参数和url的麻烦，而swagger2官方目前并没有提供自动化装配starter，为了使用swagger2，你不得不编写bean和configuration，为了解决这个繁琐的问题本starter提供了swagger2的自动化装配。
+swagger能自动生成restapi文档，省去了在postman填写各类参数和url的麻烦，而swagger2官方目前并没有提供自动化装配starter，为了使用swagger2，你不得不编写bean和configuration，为了解决这个繁琐的问题这里提供了swagger2的自动化装配。
 1. 在pom中引入相关依赖，如
 ```$xslt
 <dependency>
@@ -395,7 +394,7 @@ private ExecutorService mPoolExecutor;
 ```
 > 建议结合swagger-bootstart-ui使用
 2. 在yml中做相关配置,如
-```$xslt
+```yml
 hunter:
     spring:
         swagger:
@@ -412,6 +411,15 @@ hunter:
             name: 开发者名称
             url: 开发者url
 ```
+
+ 3. 查看效果
+
+    项目运行后，访问http://ip:port/doc.html
+
+
+
+
+
 
 
 ## 待续...
