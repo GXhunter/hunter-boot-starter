@@ -46,7 +46,9 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware{
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 // 扫描该包下的所有需要在Swagger中展示的API，@ApiIgnore注解标注的除外
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .pathMapping(swaggerProperties.getMappingPath())
+                ;
     }
 
 

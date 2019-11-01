@@ -4,7 +4,6 @@ import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.result.ResultSupport;
 import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
-import com.github.gxhunter.util.SpelPaser;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ import java.util.Optional;
 public abstract class BaseController{
     @Autowired
     protected ResultSupport mResultSupport;
-    private static final SpelPaser SPEL_PASER = SpelPaser.builder().regExp("#\\{[\\w.\\d]+}").build();
     /**
      * 日志打印
      */

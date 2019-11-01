@@ -1,7 +1,5 @@
 package com.github.gxhunter.result;
 
-import com.github.gxhunter.result.AResult;
-
 /**
  * @author 树荫下的天空
  * @date 2019/7/27 10:28

@@ -2,8 +2,6 @@ package com.github.gxhunter.webmvc;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +47,10 @@ public class SwaggerProperties{
      **/
     private List<String> excludePath = new ArrayList<>();
 
+    /**
+     * 统一前缀
+     */
+    private String mappingPath;
     /**
      * host信息
      **/
