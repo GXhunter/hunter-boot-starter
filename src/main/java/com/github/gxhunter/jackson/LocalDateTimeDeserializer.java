@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -22,16 +24,22 @@ import java.util.TimeZone;
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime>{
     @Autowired
     private JacksonProperties mJacksonProperties;
+
     @Override
-    public LocalDateTime deserialize(JsonParser jsonParser,DeserializationContext ctxt) throws IOException, JsonProcessingException{
+    public LocalDateTime deserialize(JsonParser jsonParser,DeserializationContext context) throws IOException, JsonProcessingException{
         ZoneId zoneId = Optional.ofNullable(mJacksonProperties)
                 .map(JacksonProperties::getTimeZone)
                 .map(TimeZone::toZoneId)
                 .orElseGet(TimeZone.getDefault()::toZoneId);
-        if(jsonParser != null && StringUtils.isNotEmpty(jsonParser.getText())){
+        //        以application.yaml配置dateformat格式为准，没配置的话默认序列化为时间戳
+        if(StringUtils.isEmpty(mJacksonProperties.getDateFormat())){
             return LocalDateTime.ofInstant(Instant.ofEpochMilli(jsonParser.getLongValue()),zoneId);
         }else{
-            return null;
+            String text = jsonParser.getText();
+            Locale locale = Optional.ofNullable(mJacksonProperties.getLocale())
+                    .orElse(Locale.CHINA);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(mJacksonProperties.getDateFormat(),locale);
+            return LocalDateTime.parse(text,formatter);
         }
     }
 }

@@ -28,6 +28,8 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime>{
                 .map(TimeZone::toZoneId)
                 .orElseGet(TimeZone.getDefault()::toZoneId);
         String dateFormat = mJacksonProperties.getDateFormat();
+
+//        以application.yaml配置dateformat格式为准，没配置的话默认序列化为时间戳
         if(StringUtils.isNotBlank(dateFormat)){
             generator.writeString(DateTimeFormatter.ofPattern(dateFormat).withZone(zoneId).format(value));
         }else {
