@@ -12,7 +12,7 @@ public class JwtHeader {
     /**
      * 加密算法
      */
-    private String alg;
+    private AlgEnum alg;
 
     /**
      * 声明类型

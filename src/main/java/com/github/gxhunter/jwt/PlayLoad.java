@@ -3,7 +3,6 @@ package com.github.gxhunter.jwt;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * jwt载荷

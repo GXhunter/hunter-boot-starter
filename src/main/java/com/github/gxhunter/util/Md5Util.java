@@ -3,6 +3,9 @@ package com.github.gxhunter.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * @author hunter
+ */
 public class Md5Util {
     /**
      * 将明文转为MD5密文

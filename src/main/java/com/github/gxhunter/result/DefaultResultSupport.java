@@ -26,11 +26,6 @@ public class DefaultResultSupport implements ResultSupport {
     private Result exceptionResult = new Result<>(null,null,999);;
     /**
      * 提供一个表示“失败”的返回类到spring上下文。
-     * 主要在{{@link BaseController#faild()}}和异常处理相关使用
-     *
-     * @see com.github.gxhunter.controller.ExceptionResolveAdvice
-     * @see com.github.gxhunter.controller.BaseController.ExceptionList
-     * @see com.github.gxhunter.controller.BaseController.IfException
      */
     private Result failedResult = new Result<>(null,"faild",0);
 

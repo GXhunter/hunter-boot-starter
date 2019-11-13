@@ -1,6 +1,5 @@
 package com.github.gxhunter.lock;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -28,8 +27,8 @@ public class DistributionLockAutoConfig{
 
     @Bean
     @ConditionalOnMissingBean
-    public AbstractLockTemplate LockTemplate(@Qualifier("redisTemplate") RedisTemplate redisTemplate){
-        return new RedisLockTemplate(redisTemplate);
+    public AbstractLockTemplate redisLockTemplate(RedisTemplate redLockTemplate){
+        return new RedisLockTemplate(redLockTemplate);
     }
 
 }
