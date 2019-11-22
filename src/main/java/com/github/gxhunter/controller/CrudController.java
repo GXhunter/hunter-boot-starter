@@ -8,8 +8,6 @@ import com.github.gxhunter.result.AResult;
 import com.github.gxhunter.result.IResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.Serializable;
-
 /**
  * <pre>
  * <h2>注意：在项目引入mybatis-plus后才可用</h2>
@@ -24,7 +22,7 @@ import java.io.Serializable;
  * @see AResult
  * @see ResultSupport
  */
-public class MPController<M extends IService<E>,E> extends BaseController{
+public class CrudController<M extends IService<E>,E> extends BaseController{
     @Autowired(required = false)
     protected M mService;
 
@@ -47,7 +45,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @return
      * @see org.springframework.web.bind.annotation.DeleteMapping
      */
-    public IResult deleteById(Serializable id){
+    public IResult deleteById(Long id){
         return mService.removeById(id) ? success() : faild();
     }
 
@@ -106,7 +104,7 @@ public class MPController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.GetMapping
      * @see org.springframework.web.bind.annotation.PathVariable
      */
-    public IResult<E> getById(Serializable id){
+    public IResult<E> getById(Long id){
         return success(mService.getById(id));
     }
 

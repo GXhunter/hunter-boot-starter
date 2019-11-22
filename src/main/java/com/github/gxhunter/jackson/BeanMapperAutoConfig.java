@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.gxhunter.util.BeanMapperUtil;
 import com.github.gxhunter.util.SpringUtil;
 import org.springframework.beans.BeansException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -20,6 +21,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 @Configuration
 public class BeanMapperAutoConfig implements ApplicationContextAware{
     @Bean("jsonUtil")
+    @ConditionalOnClass(ObjectMapper.class)
     public BeanMapperUtil jsonUtil(Jackson2ObjectMapperBuilder objectMapperBuilder){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapperBuilder.configure(objectMapper);
@@ -27,6 +29,7 @@ public class BeanMapperAutoConfig implements ApplicationContextAware{
     }
 
     @Bean("yamlUtil")
+    @ConditionalOnClass(YAMLMapper.class)
     public BeanMapperUtil yamlUtil(Jackson2ObjectMapperBuilder objectMapperBuilder){
         YAMLMapper objectMapper = new YAMLMapper();
         objectMapperBuilder.configure(objectMapper);

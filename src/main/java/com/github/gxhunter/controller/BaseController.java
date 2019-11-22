@@ -35,7 +35,7 @@ public abstract class BaseController{
      * @param entity 携带数据
      * @return
      */
-    protected <T> IResult<T> success(T entity){
+    protected final  <T> IResult<T> success(T entity){
         AResult<T> result = mResultSupport.success().clone();
         result.setCode(mResultSupport.success().getCode());
         result.setMessage(mResultSupport.success().getMessage());
@@ -48,7 +48,7 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected <T> IResult<T> success(){
+    protected final  <T> IResult<T> success(){
         return success(null);
     }
 
@@ -58,7 +58,7 @@ public abstract class BaseController{
      * @param message
      * @return
      */
-    protected IResult successMsg(String message){
+    protected final IResult successMsg(String message){
         AResult result = mResultSupport.success().clone();
         result.setCode(mResultSupport.success().getCode());
         result.setMessage(message);
@@ -70,14 +70,14 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected IResult faild(){
+    protected final IResult faild(){
         AResult result = mResultSupport.faild().clone();
         result.setMessage(mResultSupport.faild().getMessage());
         result.setCode(mResultSupport.faild().getCode());
         return result;
     }
 
-    protected IResult faild(Object data){
+    protected final IResult faild(Object data){
         AResult result = mResultSupport.faild().clone();
         result.setMessage(mResultSupport.faild().getMessage());
         result.setCode(mResultSupport.faild().getCode());
@@ -91,7 +91,7 @@ public abstract class BaseController{
      * @param message 错误信息
      * @return
      */
-    protected IResult faild(String message){
+    protected final IResult faild(String message){
         AResult result = mResultSupport.faild().clone();
         result.setMessage(message);
         result.setCode(mResultSupport.faild().getCode());
@@ -105,7 +105,7 @@ public abstract class BaseController{
      * @param errorCode
      * @return
      */
-    protected IResult faild(IResult errorCode){
+    protected final IResult faild(IResult errorCode){
         AResult result = mResultSupport.faild().clone();
         result.setMessage(errorCode.getMessage());
         result.setCode(errorCode.getCode());

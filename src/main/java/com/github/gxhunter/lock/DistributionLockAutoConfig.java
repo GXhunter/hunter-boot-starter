@@ -27,8 +27,8 @@ public class DistributionLockAutoConfig{
 
     @Bean
     @ConditionalOnMissingBean
-    public AbstractLockTemplate redisLockTemplate(RedisTemplate redLockTemplate){
-        return new RedisLockTemplate(redLockTemplate);
+    public AbstractLockTemplate redisLockTemplate(RedisTemplate redisTemplate){
+        return new RedisLockTemplate(redisTemplate);
     }
 
 }

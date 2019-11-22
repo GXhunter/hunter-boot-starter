@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,9 +24,9 @@ import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfi
  */
 @Configuration
 @Import({
-        SwaggerProperties.class,
         Swagger2DocumentationConfiguration.class
 })
+@EnableConfigurationProperties(SwaggerProperties.class)
 @ConditionalOnProperty(name = "hunter.spring.swagger.enabled")
 @ConditionalOnClass(EnableSwagger2.class)
 public class SwaggerAutoConfiguration implements BeanFactoryAware{
