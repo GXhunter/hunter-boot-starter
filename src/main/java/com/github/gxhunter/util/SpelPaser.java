@@ -1,4 +1,5 @@
 package com.github.gxhunter.util;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -46,7 +47,10 @@ public class SpelPaser{
      * @return
      */
     public String parse(String value){
-        Assert.notNull(mPattern);
+        if (mPattern == null) {
+            return mParser.parseExpression(value).getValue(mContext, String.class);
+        }
+
         String el;
         StringBuilder result = new StringBuilder();
         Matcher matcher = mPattern.matcher(value);
@@ -106,7 +110,9 @@ public class SpelPaser{
             spelPaser.mContext = context;
             spelPaser.mParser = parse;
             spelPaser.mDiscoverer = nameDiscoverer;
-            spelPaser.mPattern = Pattern.compile(regExp);
+            if (StringUtils.isNotEmpty(regExp)) {
+                spelPaser.mPattern = Pattern.compile(regExp);
+            }
             return spelPaser;
         }
     }

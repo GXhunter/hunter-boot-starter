@@ -26,8 +26,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 /**
@@ -85,14 +87,7 @@ public class RedisAutoConfig implements ApplicationContextAware{
         }
         source.forEach((beanName,properties) -> {
             /* ========= 基本配置 ========= */
-            RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-            configuration.setHostName(properties.getHost());
-            configuration.setPort(properties.getPort());
-            configuration.setDatabase(properties.getDatabase());
-            if(!ObjectUtils.isEmpty(properties.getPassword())){
-                RedisPassword redisPassword = RedisPassword.of(properties.getPassword());
-                configuration.setPassword(redisPassword);
-            }
+            RedisStandaloneConfiguration configuration = getStandaloneConfig(properties);
 
             /* ========= 连接池通用配置 ========= */
             GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
@@ -145,4 +140,75 @@ public class RedisAutoConfig implements ApplicationContextAware{
         return redisTemplate;
 
     }
+
+
+    protected final RedisStandaloneConfiguration getStandaloneConfig(RedisProperties properties) {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+        if (StringUtils.hasText(properties.getUrl())) {
+            ConnectionInfo connectionInfo = parseUrl(properties.getUrl());
+            config.setHostName(connectionInfo.getHostName());
+            config.setPort(connectionInfo.getPort());
+            config.setPassword(RedisPassword.of(connectionInfo.getPassword()));
+        }
+        else {
+            config.setHostName(properties.getHost());
+            config.setPort(properties.getPort());
+            config.setPassword(RedisPassword.of(properties.getPassword()));
+        }
+        config.setDatabase(properties.getDatabase());
+        return config;
+    }
+
+    protected ConnectionInfo parseUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            boolean useSsl = (url.startsWith("rediss://"));
+            String password = null;
+            if (uri.getUserInfo() != null) {
+                password = uri.getUserInfo();
+                int index = password.indexOf(':');
+                if (index >= 0) {
+                    password = password.substring(index + 1);
+                }
+            }
+            return new ConnectionInfo(uri, useSsl, password);
+        }
+        catch (URISyntaxException ex) {
+            throw new IllegalArgumentException("Malformed url '" + url + "'", ex);
+        }
+    }
+
+    protected static class ConnectionInfo {
+
+        private final URI uri;
+
+        private final boolean useSsl;
+
+        private final String password;
+
+        public ConnectionInfo(URI uri, boolean useSsl, String password) {
+            this.uri = uri;
+            this.useSsl = useSsl;
+            this.password = password;
+        }
+
+        public boolean isUseSsl() {
+            return this.useSsl;
+        }
+
+        public String getHostName() {
+            return this.uri.getHost();
+        }
+
+        public int getPort() {
+            return this.uri.getPort();
+        }
+
+        public String getPassword() {
+            return this.password;
+        }
+
+    }
+
+
 }

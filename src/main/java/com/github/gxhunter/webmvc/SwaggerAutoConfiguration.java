@@ -30,7 +30,6 @@ import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfi
 @ConditionalOnProperty(name = "hunter.spring.swagger.enabled")
 @ConditionalOnClass(EnableSwagger2.class)
 public class SwaggerAutoConfiguration implements BeanFactoryAware{
-    private BeanFactory beanFactory;
     @Bean
     public Docket createRestApi(SwaggerProperties swaggerProperties) {
         ApiInfo apiInfo = new ApiInfoBuilder()
@@ -44,17 +43,17 @@ public class SwaggerAutoConfiguration implements BeanFactoryAware{
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
+                .apis(RequestHandlerSelectors.any())
                 // 扫描该包下的所有需要在Swagger中展示的API，@ApiIgnore注解标注的除外
                 .paths(PathSelectors.any())
                 .build()
                 .pathMapping(swaggerProperties.getMappingPath())
+                .enable(swaggerProperties.getEnabled())
                 ;
     }
 
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException{
-        this.beanFactory = beanFactory;
     }
 }

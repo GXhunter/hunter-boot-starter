@@ -1,6 +1,5 @@
 package com.github.gxhunter.webmvc;
 
-import com.github.gxhunter.webmvc.DefaultWebConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
