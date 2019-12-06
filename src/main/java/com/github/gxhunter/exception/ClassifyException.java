@@ -16,7 +16,7 @@
 package com.github.gxhunter.exception;
 
 
-import com.github.gxhunter.result.AResult;
+import com.github.gxhunter.result.Result;
 import lombok.Getter;
 
 /**
@@ -31,7 +31,7 @@ public class ClassifyException extends RuntimeException {
      * 错误码
      */
     @Getter
-    private AResult exceptionInfo;
+    private Result exceptionInfo;
 
     /**
      * 捕获到的原始异常类型
@@ -39,13 +39,13 @@ public class ClassifyException extends RuntimeException {
     @Getter
     private Class<? extends Exception> exceptionClass;
 
-    public ClassifyException(AResult exceptionInfo) {
+    public ClassifyException(Result exceptionInfo) {
         super(exceptionInfo.getMessage());
         this.exceptionInfo = exceptionInfo;
     }
 
 
-    public ClassifyException(AResult exceptionInfo,Class<? extends Exception> exceptionClass) {
+    public ClassifyException(Result exceptionInfo,Class<? extends Exception> exceptionClass) {
         super(exceptionInfo.getMessage());
         this.exceptionInfo = exceptionInfo;
         this.exceptionClass = exceptionClass;

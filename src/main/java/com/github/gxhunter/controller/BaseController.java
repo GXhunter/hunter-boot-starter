@@ -2,8 +2,7 @@ package com.github.gxhunter.controller;
 
 import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.result.ResultSupport;
-import com.github.gxhunter.result.AResult;
-import com.github.gxhunter.result.IResult;
+import com.github.gxhunter.result.Result;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +34,8 @@ public abstract class BaseController{
      * @param entity 携带数据
      * @return
      */
-    protected final  <T> IResult<T> success(T entity){
-        AResult<T> result = mResultSupport.success().clone();
+    protected final  <T> Result<T> success(T entity){
+        Result<T> result = mResultSupport.success().clone();
         result.setCode(mResultSupport.success().getCode());
         result.setMessage(mResultSupport.success().getMessage());
         result.setData(entity);
@@ -48,7 +47,7 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected final  <T> IResult<T> success(){
+    protected final  <T> Result<T> success(){
         return success(null);
     }
 
@@ -58,8 +57,8 @@ public abstract class BaseController{
      * @param message
      * @return
      */
-    protected final IResult successMsg(String message){
-        AResult result = mResultSupport.success().clone();
+    protected final Result successMsg(String message){
+        Result result = mResultSupport.success().clone();
         result.setCode(mResultSupport.success().getCode());
         result.setMessage(message);
         return result;
@@ -70,15 +69,15 @@ public abstract class BaseController{
      *
      * @return
      */
-    protected final IResult faild(){
-        AResult result = mResultSupport.faild().clone();
+    protected final Result faild(){
+        Result result = mResultSupport.faild().clone();
         result.setMessage(mResultSupport.faild().getMessage());
         result.setCode(mResultSupport.faild().getCode());
         return result;
     }
 
-    protected final IResult faild(Object data){
-        AResult result = mResultSupport.faild().clone();
+    protected final Result faild(Object data){
+        Result result = mResultSupport.faild().clone();
         result.setMessage(mResultSupport.faild().getMessage());
         result.setCode(mResultSupport.faild().getCode());
         result.setData(data);
@@ -91,8 +90,8 @@ public abstract class BaseController{
      * @param message 错误信息
      * @return
      */
-    protected final IResult faild(String message){
-        AResult result = mResultSupport.faild().clone();
+    protected final Result faild(String message){
+        Result result = mResultSupport.faild().clone();
         result.setMessage(message);
         result.setCode(mResultSupport.faild().getCode());
         return result;
@@ -105,8 +104,8 @@ public abstract class BaseController{
      * @param errorCode
      * @return
      */
-    protected final IResult faild(IResult errorCode){
-        AResult result = mResultSupport.faild().clone();
+    protected final Result faild(Result errorCode){
+        Result result = mResultSupport.faild().clone();
         result.setMessage(errorCode.getMessage());
         result.setCode(errorCode.getCode());
         result.setData(errorCode.getData());
@@ -122,7 +121,7 @@ public abstract class BaseController{
     @ExceptionHandler(ApiException.class)
     public Object handleApiException(ApiException exception){
         log.error(exception.getMessage(),exception);
-        AResult result = mResultSupport.exception().clone();
+        Result result = mResultSupport.exception().clone();
         if(exception.getErrorCode() != null){
             return faild(exception.getErrorCode());
         }else{
@@ -144,7 +143,7 @@ public abstract class BaseController{
                 resultMap.put(field,message);
             }
         }
-        AResult result = mResultSupport.exception().clone();
+        Result result = mResultSupport.exception().clone();
         result.setData(resultMap);
         return result;
     }
@@ -158,7 +157,7 @@ public abstract class BaseController{
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
         log.error("出现异常:",e);
-        AResult result = mResultSupport.exception().clone();
+        Result result = mResultSupport.exception().clone();
         String message = Optional.ofNullable(mResultSupport.exception().getMessage())
                 .orElse(e.getMessage());
         result.setMessage(message);

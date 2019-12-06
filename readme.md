@@ -163,7 +163,7 @@ failed()|失败，不携带信息
        * @see Lock
        */
       @Lock
-      public IResult testLock(){
+      public Result testLock(){
           return success(Thread.currentThread().getId());
       }
   ```

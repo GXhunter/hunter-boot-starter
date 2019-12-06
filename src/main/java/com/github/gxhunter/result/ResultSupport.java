@@ -10,19 +10,19 @@ public interface ResultSupport {
      *
      * @return
      */
-    AResult success();
+    Result success();
 
     /**
      * 失败返回
      *
      * @return
      */
-    AResult faild();
+    Result faild();
 
     /**
      * 异常返回，异常处理器拦截到异常时的返回，默认和{{@link #faild()}}一样
      *
      * @return
      */
-    AResult exception();
+    Result exception();
 }

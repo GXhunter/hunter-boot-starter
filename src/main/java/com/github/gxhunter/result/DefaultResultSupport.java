@@ -1,7 +1,6 @@
 package com.github.gxhunter.result;
 
 import com.github.gxhunter.controller.BaseController;
-import com.github.gxhunter.entity.Result;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,17 +29,17 @@ public class DefaultResultSupport implements ResultSupport {
     private final Result failedResult = new Result<>(null,"faild",0);
 
     @Override
-    public AResult success(){
+    public Result success(){
         return successResult;
     }
 
     @Override
-    public AResult faild(){
+    public Result faild(){
         return failedResult;
     }
 
     @Override
-    public AResult exception(){
+    public Result exception(){
         return exceptionResult;
     }
 

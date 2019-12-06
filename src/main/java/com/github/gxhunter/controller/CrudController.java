@@ -3,23 +3,21 @@ package com.github.gxhunter.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.gxhunter.result.Result;
 import com.github.gxhunter.result.ResultSupport;
-import com.github.gxhunter.result.AResult;
-import com.github.gxhunter.result.IResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <pre>
  * <h2>注意：在项目引入mybatis-plus后才可用</h2>
  * 继承自{@link BaseController} 包含默认的异常处理
- * 在spring容器中，提供一个{@link ResultSupport}，即可配置返回的{@link AResult}对象
+ * 在spring容器中，提供一个{@link ResultSupport}，即可配置返回的对象
  * </pre>
  *
  * @param <M> 服务层
  * @param <E> 实体类
  * @author 树荫下的天空
  * @see BaseController
- * @see AResult
  * @see ResultSupport
  */
 public class CrudController<M extends IService<E>,E> extends BaseController{
@@ -34,7 +32,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PostMapping
      * @see org.springframework.web.bind.annotation.RequestBody
      */
-    public IResult create(E entity){
+    public Result create(E entity){
         return mService.save(entity) ? success() : faild();
     }
 
@@ -45,7 +43,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @return
      * @see org.springframework.web.bind.annotation.DeleteMapping
      */
-    public IResult deleteById(Long id){
+    public Result deleteById(Long id){
         return mService.removeById(id) ? success() : faild();
     }
 
@@ -55,7 +53,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @param entity id不为空时修改，为空新增
      * @return
      */
-    public IResult saveOrUpdate(E entity){
+    public Result saveOrUpdate(E entity){
         return mService.saveOrUpdate(entity) ? success() : faild();
     }
 
@@ -67,7 +65,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PutMapping
      * @see org.springframework.web.bind.annotation.RequestBody
      */
-    public IResult update(E entity){
+    public Result update(E entity){
         return mService.updateById(entity) ? success() : faild();
     }
 
@@ -77,7 +75,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @return
      * @see org.springframework.web.bind.annotation.GetMapping
      */
-    public IResult listAll(){
+    public Result listAll(){
         return success(mService.list());
     }
 
@@ -91,7 +89,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.PathVariable
      * @see org.springframework.web.bind.annotation.GetMapping
      */
-    public IResult<IPage<E>> page(Integer pageNum,Integer pageSize){
+    public Result<IPage<E>> page(Integer pageNum,Integer pageSize){
         Page<E> page = new Page<>(pageNum,pageSize);
         return success(mService.page(page));
     }
@@ -104,7 +102,7 @@ public class CrudController<M extends IService<E>,E> extends BaseController{
      * @see org.springframework.web.bind.annotation.GetMapping
      * @see org.springframework.web.bind.annotation.PathVariable
      */
-    public IResult<E> getById(Long id){
+    public Result<E> getById(Long id){
         return success(mService.getById(id));
     }
 
