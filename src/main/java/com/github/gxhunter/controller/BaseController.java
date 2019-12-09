@@ -1,8 +1,8 @@
 package com.github.gxhunter.controller;
 
 import com.github.gxhunter.exception.ApiException;
-import com.github.gxhunter.result.ResultSupport;
 import com.github.gxhunter.result.Result;
+import com.github.gxhunter.result.ResultSupport;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

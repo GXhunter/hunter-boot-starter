@@ -22,9 +22,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class BeanMapperAutoConfig implements ApplicationContextAware{
     @Bean("jsonUtil")
     @ConditionalOnClass(ObjectMapper.class)
-    public BeanMapperUtil jsonUtil(Jackson2ObjectMapperBuilder objectMapperBuilder){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapperBuilder.configure(objectMapper);
+    public BeanMapperUtil jsonUtil(ObjectMapper objectMapper){
         return new BeanMapperUtil(objectMapper);
     }
 
