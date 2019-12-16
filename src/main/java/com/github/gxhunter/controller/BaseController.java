@@ -156,7 +156,7 @@ public abstract class BaseController{
      */
     @ExceptionHandler(Exception.class)
     public Object handleOtherException(Exception e){
-        log.error("出现异常:",e);
+        log.error(e.getClass().getName(),e);
         Result result = mResultSupport.exception().clone();
         String message = Optional.ofNullable(mResultSupport.exception().getMessage())
                 .orElse(e.getMessage());
