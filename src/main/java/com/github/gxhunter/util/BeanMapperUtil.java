@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
@@ -156,6 +157,24 @@ public class BeanMapperUtil {
     @SafeVarargs
     public final <T extends Collection<E>, E> T parse(String str, Class<T> collectionClass, Class<E>... elementClasses) {
         JavaType javaType = objectMapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
+        try {
+            return objectMapper.readValue(str, javaType);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 支持泛型的反序列化
+     *
+     * @param str  json字符串
+     * @param type 类型
+     * @param <T>  返回类型
+     * @return java对象啊
+     */
+    public final <T> T parse(String str, Type type) {
+        JavaType javaType = objectMapper.getTypeFactory().constructType(type);
         try {
             return objectMapper.readValue(str, javaType);
         } catch (Exception e) {
