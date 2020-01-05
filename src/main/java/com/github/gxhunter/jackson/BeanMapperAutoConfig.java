@@ -6,6 +6,7 @@ import com.github.gxhunter.util.BeanMapperUtil;
 import com.github.gxhunter.util.SpringUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,12 +23,14 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class BeanMapperAutoConfig implements ApplicationContextAware{
     @Bean("jsonUtil")
     @ConditionalOnClass(ObjectMapper.class)
+    @ConditionalOnMissingBean(name = "jsonUtil")
     public BeanMapperUtil jsonUtil(ObjectMapper objectMapper){
         return new BeanMapperUtil(objectMapper);
     }
 
     @Bean("yamlUtil")
     @ConditionalOnClass(YAMLMapper.class)
+    @ConditionalOnMissingBean(name = "yamlUtil")
     public BeanMapperUtil yamlUtil(Jackson2ObjectMapperBuilder objectMapperBuilder){
         YAMLMapper objectMapper = new YAMLMapper();
         objectMapperBuilder.configure(objectMapper);

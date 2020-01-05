@@ -1,6 +1,8 @@
 package com.github.gxhunter.jackson;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,7 +30,10 @@ public class ObjectMapperConfig {
         javaTimeModule.addDeserializer(LocalDateTime.class,
                 localDateTimeDeserializer);
         javaTimeModule.addSerializer(LocalDateTime.class, localDateTimeSerializer);
-
+        //忽略空Bean转json的错误
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+        //忽略 在json字符串中存在，但是在java对象中不存在对应属性的情况。防止错误
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
 //        序列换成json时,将所有的long转成string
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -174,13 +175,24 @@ public class BeanMapperUtil {
      * @return java对象啊
      */
     public final <T> T parse(String str, Type type) {
-        JavaType javaType = objectMapper.getTypeFactory().constructType(type);
+        if (StringUtils.isEmpty(str) || type == null) {
+            return null;
+        }
+        JavaType javaType = getTypeFactory().constructType(type);
         try {
             return objectMapper.readValue(str, javaType);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 获取类型构造器
+     * @return
+     */
+    public TypeFactory getTypeFactory() {
+        return objectMapper.getTypeFactory();
     }
 
 }
