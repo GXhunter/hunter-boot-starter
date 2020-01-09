@@ -90,7 +90,7 @@ public class BeanMapperUtil {
             return null;
         }
         try {
-            return obj instanceof String ? (String) obj : objectMapper.writeValueAsString(obj);
+            return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -106,7 +106,7 @@ public class BeanMapperUtil {
             return null;
         }
         try {
-            return obj instanceof String ? (String) obj : objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -127,7 +127,7 @@ public class BeanMapperUtil {
         }
 
         try {
-            return clazz.equals(String.class) ? clazz.cast(str) : objectMapper.readValue(str, clazz);
+            return objectMapper.readValue(str, clazz);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -139,7 +139,7 @@ public class BeanMapperUtil {
             return null;
         }
         try {
-            return (T) (typeReference.getType().equals(String.class) ? str : objectMapper.readValue(str, typeReference));
+            return (T) objectMapper.readValue(str, typeReference);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -157,6 +157,9 @@ public class BeanMapperUtil {
      */
     @SafeVarargs
     public final <T extends Collection<E>, E> T parse(String str, Class<T> collectionClass, Class<E>... elementClasses) {
+        if (StringUtils.isBlank(str)) {
+            return null;
+        }
         JavaType javaType = objectMapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
         try {
             return objectMapper.readValue(str, javaType);
@@ -189,6 +192,7 @@ public class BeanMapperUtil {
 
     /**
      * 获取类型构造器
+     *
      * @return
      */
     public TypeFactory getTypeFactory() {
