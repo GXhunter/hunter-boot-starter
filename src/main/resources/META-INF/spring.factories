@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.github.gxhunter.redis.RedisAutoConfig,\
   com.github.gxhunter.webmvc.RestTemplateAutoConfig,\
   com.github.gxhunter.webmvc.RestTemplateProperties,\
   com.github.gxhunter.threadpool.ThreadPoolProperties,\

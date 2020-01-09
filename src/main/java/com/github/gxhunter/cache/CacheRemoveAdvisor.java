@@ -26,30 +26,23 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @AllArgsConstructor
-public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
+public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
     private final ApplicationContext mContext;
     private final SpelPaser mSpelPaser = new SpelPaser();
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
-        Cache cache = method.getAnnotation(Cache.class);
+        CacheRemove cache = method.getAnnotation(CacheRemove.class);
         AbstractCacheTemplate cacheTemplate = mContext.getBean(cache.keyStrategy().getCacheTemplate());
-
         List<String> keys = Arrays.stream(cache.key())
                 .filter(StringUtils::isNotBlank)
                 .map(el->mSpelPaser.parse(el,method,invocation.getArguments(),String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
-        Object result;
         String prefix = mSpelPaser.parse(cache.prefix(), method, invocation.getArguments(), String.class);
-        result = cacheTemplate.get(prefix, keys, method.getGenericReturnType());
-
-        if (result == null) {
-            result = invocation.proceed();
-            cacheTemplate.put(prefix, keys, result, cache.timeout());
-        }
-        return result;
+        cacheTemplate.remove(prefix,keys);
+        return invocation.proceed();
     }
 
     @Override

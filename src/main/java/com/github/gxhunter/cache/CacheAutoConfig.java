@@ -38,4 +38,9 @@ public class CacheAutoConfig {
         return new CacheAdvisor(context);
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public CacheRemoveAdvisor cacheRemoveAdvisor(ApplicationContext context) {
+        return new CacheRemoveAdvisor(context);
+    }
 }

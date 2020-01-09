@@ -17,29 +17,31 @@ public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
     protected ApplicationContext mContext;
     protected BeanMapperUtil jsonUtil;
     protected ICacheManager mCacheManager;
+
     /**
      * 通过多个key获取缓存目标
      *
      * @param prefix 方法名，拼接到key前面
-     * @param key  key
-     * @param type 返回类型，支持泛型
-     * @return
+     * @param key    必须是转化后的，不能是spel表达式
+     * @param type   返回类型，支持泛型
      * @param <T>
+     * @return
      */
-    public abstract <T> T get(String prefix,List<String> key, Type type);
+    public abstract <T> T get(String prefix, List<String> key, Type type);
 
     /**
-     * @param prefix 每个key都会有这个前缀
-     * @param key
+     * @param prefix  每个key都会有这个前缀
+     * @param key     必须是转化后的，不能是spel表达式
      * @param value
      * @param timeout
      */
-    public abstract void put(String prefix,List<String> key, Object value,long timeout);
+    public abstract void put(String prefix, List<String> key, Object value, long timeout);
 
     /**
      * 移除方法的缓存
-     * @param prifex
-     * @param key
+     *
+     * @param prifex 必须是转化后的，不能是spel表达式
+     * @param key    必须是转化后的，不能是spel表达式
      */
     public abstract void remove(String prifex, List<String> key);
 }
