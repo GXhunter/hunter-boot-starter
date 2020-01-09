@@ -24,16 +24,16 @@ public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
      * @param prefix 方法名，拼接到key前面
      * @param key    必须是转化后的，不能是spel表达式
      * @param type   返回类型，支持泛型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return 反序列化好的对象
      */
     public abstract <T> T get(String prefix, List<String> key, Type type);
 
     /**
      * @param prefix  每个key都会有这个前缀
      * @param key     必须是转化后的，不能是spel表达式
-     * @param value
-     * @param timeout
+     * @param value   对象
+     * @param timeout 超时时间
      */
     public abstract void put(String prefix, List<String> key, Object value, long timeout);
 
