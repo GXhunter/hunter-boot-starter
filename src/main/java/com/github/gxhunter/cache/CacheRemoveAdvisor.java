@@ -47,7 +47,7 @@ public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements Metho
 
     @Override
     public Pointcut getPointcut() {
-        return AnnotationMatchingPointcut.forMethodAnnotation(Cache.class);
+        return AnnotationMatchingPointcut.forMethodAnnotation(CacheRemove.class);
     }
 
     @Override

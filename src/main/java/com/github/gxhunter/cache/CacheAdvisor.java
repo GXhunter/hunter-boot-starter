@@ -12,6 +12,7 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -47,8 +48,12 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
 
         if (result == null) {
             result = invocation.proceed();
+        }
+
+        if (result != null && !CollectionUtils.isEmpty(keys)) {
             cacheTemplate.put(prefix, keys, result, cache.timeout());
         }
+
         return result;
     }
 

@@ -29,7 +29,7 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
         } else {
             redisKey = StringUtils.join(key, SPLIT);
         }
-        T result = mCacheManager.get(redisKey,type);
+        T result = mCacheManager.get(redisKey, type);
         log.debug("获取缓存,key:{},value:{}", redisKey, result);
         return result;
     }
@@ -43,11 +43,9 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
         } else {
             redisKey = StringUtils.join(key, SPLIT);
         }
-        String json = jsonUtil.stringify(value);
-        if (StringUtils.isNotBlank(json)) {
-            log.debug("存入redis：key {}, value {}", redisKey, value);
-            mCacheManager.put(redisKey, json, timeout);
-        }
+        log.debug("存入redis：key {}, value {}", redisKey, value);
+
+        mCacheManager.put(redisKey, value, timeout);
     }
 
     @Override

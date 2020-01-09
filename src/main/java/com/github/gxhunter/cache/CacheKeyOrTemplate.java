@@ -36,10 +36,6 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
     @Override
     @SneakyThrows
     public void put(String prefix, List<String> keys, Object value, long timeout) {
-        String json = jsonUtil.stringify(value);
-        if (StringUtils.isBlank(json)) {
-            return;
-        }
         for (String key : keys) {
             if (StringUtils.isBlank(key)) {
                 continue;
@@ -48,7 +44,7 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
                 key = prefix + SPLIT + key;
             }
             log.debug("存入redis: key {},value {}", key, value);
-            mCacheManager.put(key, json, timeout);
+            mCacheManager.put(key, value, timeout);
         }
     }
 
