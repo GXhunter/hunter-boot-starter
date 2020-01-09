@@ -43,7 +43,7 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
         } else {
             redisKey = StringUtils.join(key, SPLIT);
         }
-        log.debug("存入redis：key {}, value {}", redisKey, value);
+        log.debug("存入redis：key {}, value {},timeouot:{}", redisKey, value, timeout);
 
         mCacheManager.put(redisKey, value, timeout);
     }

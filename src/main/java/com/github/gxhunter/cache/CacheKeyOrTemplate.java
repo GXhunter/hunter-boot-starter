@@ -43,7 +43,7 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
             if (StringUtils.isNotBlank(prefix)) {
                 key = prefix + SPLIT + key;
             }
-            log.debug("存入redis: key {},value {}", key, value);
+            log.debug("存入redis: key {},value {},超时", key, value,timeout);
             mCacheManager.put(key, value, timeout);
         }
     }
