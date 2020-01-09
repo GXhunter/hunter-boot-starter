@@ -1,23 +1,24 @@
 package com.github.gxhunter.cache;
 
-import lombok.AllArgsConstructor;
+import com.github.gxhunter.util.BeanMapperUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author wanggx
  * @date 2020-01-03 20:24
  **/
-@Component
-@AllArgsConstructor
 @Slf4j
 public class CacheKeyAndTemplate extends AbstractCacheTemplate {
+
+    public CacheKeyAndTemplate(ApplicationContext mContext, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
+        super(mContext, jsonUtil, mCacheManager);
+    }
 
     @Override
     @SneakyThrows
@@ -28,9 +29,9 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
         } else {
             redisKey = StringUtils.join(key, SPLIT);
         }
-        String json = mRedisTemplate.opsForValue().get(redisKey);
-        log.debug("获取缓存,key:{},value:{}", redisKey, json);
-        return jsonUtil.parse(json, type);
+        T result = mCacheManager.get(redisKey,type);
+        log.debug("获取缓存,key:{},value:{}", redisKey, result);
+        return result;
     }
 
     @SneakyThrows
@@ -45,7 +46,7 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
         String json = jsonUtil.stringify(value);
         if (StringUtils.isNotBlank(json)) {
             log.debug("存入redis：key {}, value {}", redisKey, value);
-            mRedisTemplate.opsForValue().set(redisKey, json, timeout, TimeUnit.SECONDS);
+            mCacheManager.put(redisKey, json, timeout);
         }
     }
 
@@ -58,6 +59,6 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
             redisKey = StringUtils.join(key, SPLIT);
         }
         log.debug("移除缓存:{}", redisKey);
-        mRedisTemplate.delete(redisKey);
+        mCacheManager.remove(redisKey);
     }
 }

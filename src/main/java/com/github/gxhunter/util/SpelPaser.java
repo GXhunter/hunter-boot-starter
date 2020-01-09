@@ -13,6 +13,7 @@ import java.util.Optional;
 
 /**
  * spring el表达式解析器
+ *
  * @author wanggx
  * @date 2019/7/18 14:59
  */
@@ -36,6 +37,14 @@ public class SpelPaser {
                 .map(expression->expression.getValue(context, returnType))
                 .orElse(null);
     }
+
+    public <T> T parse(String express, EvaluationContext context, Class<T> returnType) {
+        return Optional.ofNullable(express)
+                .map(mParser::parseExpression)
+                .map(expression->expression.getValue(context, returnType))
+                .orElse(null);
+    }
+
 
     public String parse(String express, Method method, Object[] args) {
         return parse(express, method, args, String.class);

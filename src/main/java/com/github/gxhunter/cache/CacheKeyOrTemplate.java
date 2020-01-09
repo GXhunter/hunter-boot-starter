@@ -1,37 +1,34 @@
 package com.github.gxhunter.cache;
 
-import lombok.AllArgsConstructor;
+import com.github.gxhunter.util.BeanMapperUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
  * @author wanggx
  * @date 2020-01-03 20:24
  **/
-@Component
-@AllArgsConstructor
 @Slf4j
 public class CacheKeyOrTemplate extends AbstractCacheTemplate {
+    public CacheKeyOrTemplate(ApplicationContext mContext, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
+        super(mContext, jsonUtil, mCacheManager);
+    }
+
     @Override
     @SneakyThrows
     public <T> T get(String prefix, List<String> key, Type type) {
         for (String redisKey : key) {
-            String json;
             if (StringUtils.isNotBlank(prefix)) {
                 redisKey = prefix + SPLIT + redisKey;
             }
-            json = mRedisTemplate.opsForValue().get(redisKey);
-            log.debug("获取缓存，key:{},value:{}",redisKey,json);
-            if (StringUtils.isNotBlank(json)) {
-                return jsonUtil.parse(json, type);
-            }
+            T result = mCacheManager.get(redisKey, type);
+            log.debug("获取缓存，key:{},value:{}", redisKey, result);
         }
         return null;
     }
@@ -51,7 +48,7 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
                 key = prefix + SPLIT + key;
             }
             log.debug("存入redis: key {},value {}", key, value);
-            mRedisTemplate.opsForValue().set(key, json, timeout, TimeUnit.SECONDS);
+            mCacheManager.put(key, json, timeout);
         }
     }
 
@@ -61,6 +58,6 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
             key = key.stream().map(k->prifex + SPLIT + k).collect(Collectors.toList());
         }
         log.debug("移除缓存:{}", key);
-        mRedisTemplate.delete(key);
+        mCacheManager.remove(key);
     }
 }

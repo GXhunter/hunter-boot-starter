@@ -12,7 +12,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -43,7 +42,8 @@ public class CacheAdvisor {
         AbstractCacheTemplate cacheTemplate = mContext.getBean(cache.keyStrategy().getCacheTemplate());
 
         List<String> keys = Arrays.stream(cache.key())
-                .map(el->mSpelPaser.parse(el,method,pjp.getArgs(),String.class))
+                .filter(StringUtils::isNotBlank)
+                .map(el->mSpelPaser.parse(el,context,String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
         Object result;

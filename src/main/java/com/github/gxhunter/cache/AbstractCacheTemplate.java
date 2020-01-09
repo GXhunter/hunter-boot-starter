@@ -2,9 +2,8 @@ package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.BeanMapperUtil;
 import com.github.gxhunter.util.ConstantValue;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,14 +12,11 @@ import java.util.List;
  * @author wanggx
  * @date 2020-01-03 20:23
  **/
+@AllArgsConstructor
 public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
-    @Autowired
     protected ApplicationContext mContext;
-    @Autowired
-    protected RedisTemplate<String, String> mRedisTemplate;
-    @Autowired
     protected BeanMapperUtil jsonUtil;
-
+    protected ICacheManager mCacheManager;
     /**
      * 通过多个key获取缓存目标
      *
