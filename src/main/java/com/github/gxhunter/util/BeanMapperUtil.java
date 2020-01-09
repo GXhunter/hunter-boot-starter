@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.Collection;
  * @author hunter
  * @date 2018.6.21
  */
+@Slf4j
 public class BeanMapperUtil {
     private ObjectMapper objectMapper;
 
@@ -129,7 +131,7 @@ public class BeanMapperUtil {
         try {
             return objectMapper.readValue(str, clazz);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("json反序列化失败，json:{},type:{}",clazz,str,e);
             return null;
         }
     }
@@ -141,7 +143,7 @@ public class BeanMapperUtil {
         try {
             return (T) objectMapper.readValue(str, typeReference);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("json反序列化失败，json:{},type:{}",typeReference,str,e);
             return null;
         }
     }
@@ -164,7 +166,7 @@ public class BeanMapperUtil {
         try {
             return objectMapper.readValue(str, javaType);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("json反序列化失败，json:{},type:{}",javaType,str,e);
             return null;
         }
     }
@@ -185,7 +187,7 @@ public class BeanMapperUtil {
         try {
             return objectMapper.readValue(str, javaType);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("json反序列化失败，json:{},type:{}",type,str,e);
             return null;
         }
     }
