@@ -281,11 +281,11 @@ failed()|失败，不携带信息
 
   
 
- ##  Jackson、yaml工具类 com.github.gxhunter.util.BeanMapperUtil
+ ##  Jackson、yaml工具类 com.github.gxhunter.util.BeanMapper
 
  * **描述**  
     Jackson是spring默认的json序列化工具，但是与fastjson不同，没有内置很方便的方法可以在对象和javabean之间互转，大多数情况你可能会考虑fastjson作为json工具类，但这样有个问题，Jackson的注解在fastjson不再适用，为了解决这个问题，你可能还要侵入式地添加fastjson的注解。
-    在同一个项目使用两个json工具也是不提倡的做法，所以这里提供了一个Jackson的封装工具JsonUtil。
+    在同一个项目使用两个json工具也是不提倡的做法，所以这里提供了一个Jackson的封装工具jsonMapper。
 
  * 通过springboot yml进行配置
  ```$xslt

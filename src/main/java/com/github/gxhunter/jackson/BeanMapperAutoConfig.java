@@ -2,8 +2,9 @@ package com.github.gxhunter.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import com.github.gxhunter.util.SpringUtil;
+import lombok.Builder;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,6 +13,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
@@ -21,20 +23,21 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
  */
 @Configuration
 public class BeanMapperAutoConfig implements ApplicationContextAware{
-    @Bean("jsonUtil")
+    @Bean("jsonMapper")
     @ConditionalOnClass(ObjectMapper.class)
-    @ConditionalOnMissingBean(name = "jsonUtil")
-    public BeanMapperUtil jsonUtil(ObjectMapper objectMapper){
-        return new BeanMapperUtil(objectMapper);
+    @ConditionalOnMissingBean(name = "jsonMapper")
+    @Primary
+    public BeanMapper jsonMapper(ObjectMapper objectMapper){
+        return new BeanMapper(objectMapper);
     }
 
     @Bean("yamlUtil")
     @ConditionalOnClass(YAMLMapper.class)
-    @ConditionalOnMissingBean(name = "yamlUtil")
-    public BeanMapperUtil yamlUtil(Jackson2ObjectMapperBuilder objectMapperBuilder){
+    @ConditionalOnMissingBean(name = "yamlMapper")
+    public BeanMapper yamlMapper(Jackson2ObjectMapperBuilder objectMapperBuilder){
         YAMLMapper objectMapper = new YAMLMapper();
         objectMapperBuilder.configure(objectMapper);
-        return new BeanMapperUtil(objectMapper);
+        return new BeanMapper(objectMapper);
     }
 
 

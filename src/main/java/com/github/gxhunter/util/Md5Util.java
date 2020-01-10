@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * @author hunter
  */
-public class Md5Util {
+public class Md5Util implements ConstantValue.MessageAlgorithm,ConstantValue.Number{
     /**
      * 将明文转为MD5密文
      *
@@ -16,7 +16,7 @@ public class Md5Util {
         String result = null;
         try {
             //1,指定加密算法类型
-            MessageDigest digest = MessageDigest.getInstance("MD5");
+            MessageDigest digest = MessageDigest.getInstance(MD5);
             //2,将需要加密的字符串中转换成byte类型的数组,然后进行随机哈希过程
             byte[] bs = digest.digest(psd.getBytes());
             //3,循环遍历bs,然后让其生成32位字符串,固定写法
@@ -26,8 +26,8 @@ public class Md5Util {
                 int i = b & 0xff;
                 //int类型的i需要转换成16机制字符
                 String hexString = Integer.toHexString(i);
-                if (hexString.length() < 2) {
-                    hexString = "0" + hexString;
+                if (hexString.length() < TWO) {
+                    hexString = ZERO + hexString;
                 }
                 stringBuffer.append(hexString);
             }

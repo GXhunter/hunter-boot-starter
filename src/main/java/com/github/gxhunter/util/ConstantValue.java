@@ -8,6 +8,29 @@ import org.springframework.core.Ordered;
  **/
 public interface ConstantValue {
     /**
+     * 数字
+     */
+    interface Number {
+        int ZERO = 0;
+        int ONE = 1;
+        int TWO = 2;
+        int THREE = 3;
+        int FOUR = 4;
+        int FIVE = 5;
+        int SIX = 6;
+        int SEVEN = 7;
+        int EIGHT = 8;
+        int NIGHT = 9;
+    }
+
+    /**
+     * 加密算法算法
+     */
+    interface MessageAlgorithm {
+        String MD5 = "MD5";
+    }
+
+    /**
      * 分布式锁
      */
     interface DistributeLock {

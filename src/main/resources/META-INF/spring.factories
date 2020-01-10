@@ -7,8 +7,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.github.gxhunter.job.QuartzConfig,\
   com.github.gxhunter.lock.DistributionLockAutoConfig,\
   com.github.gxhunter.result.DefaultResultSupport,\
-  com.github.gxhunter.util.BeanMapperFactory,\
-  com.github.gxhunter.debug.SSHProxyAutoConfig
+  com.github.gxhunter.util.BeanMapperFactory
 
 
 

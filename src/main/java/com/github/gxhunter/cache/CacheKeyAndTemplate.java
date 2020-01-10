@@ -1,6 +1,6 @@
 package com.github.gxhunter.cache;
 
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +16,8 @@ import java.util.List;
 @Slf4j
 public class CacheKeyAndTemplate extends AbstractCacheTemplate {
 
-    public CacheKeyAndTemplate(ApplicationContext mContext, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
-        super(mContext, jsonUtil, mCacheManager);
+    public CacheKeyAndTemplate(ApplicationContext mContext, BeanMapper jsonMapper, ICacheManager mCacheManager) {
+        super(mContext, jsonMapper, mCacheManager);
     }
 
     @Override

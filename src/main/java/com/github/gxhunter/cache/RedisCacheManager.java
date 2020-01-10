@@ -1,6 +1,6 @@
 package com.github.gxhunter.cache;
 
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class RedisCacheManager implements ICacheManager {
     private final RedisTemplate<String, String> mRedisTemplate;
-    protected final BeanMapperUtil jsonUtil;
+    protected final BeanMapper jsonMapper;
 
     @Override
     public void put(String key, Object object, long timeout) {
@@ -25,7 +25,7 @@ public class RedisCacheManager implements ICacheManager {
             return;
         }
 
-        String json = jsonUtil.stringify(object);
+        String json = jsonMapper.stringify(object);
         if (StringUtils.isNotBlank(json)) {
             mRedisTemplate.opsForValue().set(key, json, timeout, TimeUnit.SECONDS);
         }
@@ -36,7 +36,7 @@ public class RedisCacheManager implements ICacheManager {
         if (StringUtils.isBlank(key) || object == null) {
             return;
         }
-        String json = jsonUtil.stringify(object);
+        String json = jsonMapper.stringify(object);
         if (StringUtils.isNotBlank(json)) {
             mRedisTemplate.opsForValue().set(key, json);
         }
@@ -66,7 +66,7 @@ public class RedisCacheManager implements ICacheManager {
 
         String json = mRedisTemplate.opsForValue().get(cacheKey);
         if (StringUtils.isNotBlank(json)) {
-            return jsonUtil.parse(json, type);
+            return jsonMapper.parse(json, type);
         }
         return null;
     }

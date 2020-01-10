@@ -1,6 +1,6 @@
 package com.github.gxhunter.cache;
 
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,23 +21,23 @@ public class CacheAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnClass(RedisTemplate.class)
-    public ICacheManager cacheManager(RedisTemplate<String, String> redisTemplate,BeanMapperUtil jsonUtil) {
+    public ICacheManager cacheManager(RedisTemplate<String, String> redisTemplate, BeanMapper jsonMapper) {
         log.debug("当前使用默认RedisTemplate作为缓存工具");
-        return new RedisCacheManager(redisTemplate, jsonUtil);
+        return new RedisCacheManager(redisTemplate, jsonMapper);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(ICacheManager.class)
-    public CacheKeyAndTemplate cacheKeyAndTemplate(ApplicationContext context, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
-        return new CacheKeyAndTemplate(context,jsonUtil,mCacheManager);
+    public CacheKeyAndTemplate cacheKeyAndTemplate(ApplicationContext context, BeanMapper jsonMapper, ICacheManager mCacheManager) {
+        return new CacheKeyAndTemplate(context,jsonMapper,mCacheManager);
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(ICacheManager.class)
-    public CacheKeyOrTemplate cacheKeyOrTemplate(ApplicationContext context, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
-        return new CacheKeyOrTemplate(context,jsonUtil,mCacheManager);
+    public CacheKeyOrTemplate cacheKeyOrTemplate(ApplicationContext context, BeanMapper jsonMapper, ICacheManager mCacheManager) {
+        return new CacheKeyOrTemplate(context,jsonMapper,mCacheManager);
     }
 
     @Bean

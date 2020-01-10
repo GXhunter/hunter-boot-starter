@@ -1,6 +1,6 @@
 package com.github.gxhunter.cache;
 
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 public class CacheKeyOrTemplate extends AbstractCacheTemplate {
-    public CacheKeyOrTemplate(ApplicationContext mContext, BeanMapperUtil jsonUtil, ICacheManager mCacheManager) {
-        super(mContext, jsonUtil, mCacheManager);
+    public CacheKeyOrTemplate(ApplicationContext mContext, BeanMapper jsonMapper, ICacheManager mCacheManager) {
+        super(mContext, jsonMapper, mCacheManager);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
             if (StringUtils.isNotBlank(prefix)) {
                 key = prefix + SPLIT + key;
             }
-            log.debug("存入redis: key {},value {},超时", key, value,timeout);
+            log.debug("存入redis: key {},value {},超时:{}", key, value,timeout);
             mCacheManager.put(key, value, timeout);
         }
     }

@@ -17,10 +17,10 @@ import java.util.Collection;
  * @author hunter
  * @date 2018.6.21
  */
-public class BeanMapperUtil {
+public class BeanMapper {
     private ObjectMapper objectMapper;
 
-    public BeanMapperUtil(ObjectMapper objectMapper) {
+    public BeanMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 

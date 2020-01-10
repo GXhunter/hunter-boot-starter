@@ -1,6 +1,6 @@
 package com.github.gxhunter.cache;
 
-import com.github.gxhunter.util.BeanMapperUtil;
+import com.github.gxhunter.util.BeanMapper;
 import com.github.gxhunter.util.ConstantValue;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
     protected ApplicationContext mContext;
-    protected BeanMapperUtil jsonUtil;
+    protected BeanMapper jsonMapper;
     protected ICacheManager mCacheManager;
 
     /**

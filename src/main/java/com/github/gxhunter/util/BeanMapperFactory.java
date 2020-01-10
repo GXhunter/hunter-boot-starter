@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Import;
  */
 @Import(BeanMapperAutoConfig.class)
 public class BeanMapperFactory implements ApplicationContextAware{
-    private static BeanMapperUtil jsonMapper;
-    private static BeanMapperUtil yamlMapper;
+    private static BeanMapper jsonMapper;
+    private static BeanMapper yamlMapper;
 
 
     /**
@@ -21,7 +21,7 @@ public class BeanMapperFactory implements ApplicationContextAware{
      *
      * @return
      */
-    public static BeanMapperUtil getJsonMapper() {
+    public static BeanMapper getJsonMapper() {
         return jsonMapper;
     }
 
@@ -30,13 +30,13 @@ public class BeanMapperFactory implements ApplicationContextAware{
      *
      * @return
      */
-    public static BeanMapperUtil getYamlMapper() {
+    public static BeanMapper getYamlMapper() {
         return yamlMapper;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        jsonMapper = context.getBean("jsonUtil",BeanMapperUtil.class);
-        yamlMapper = context.getBean("yamlUtil",BeanMapperUtil.class);
+        jsonMapper = context.getBean("jsonMapper", BeanMapper.class);
+        yamlMapper = context.getBean("yamlUtil", BeanMapper.class);
     }
 }
