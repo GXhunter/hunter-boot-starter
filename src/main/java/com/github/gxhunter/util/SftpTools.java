@@ -13,6 +13,7 @@ import java.util.Properties;
  * @author hunter
  * ftp相关操作
  */
+@SuppressWarnings("all")
 public class SftpTools implements AutoCloseable{
 
     private static final String NSF = "no such file";
