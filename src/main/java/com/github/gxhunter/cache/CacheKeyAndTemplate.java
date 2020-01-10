@@ -49,10 +49,10 @@ public class CacheKeyAndTemplate extends AbstractCacheTemplate {
     }
 
     @Override
-    public void remove(String prifex, List<String> key) {
+    public void remove(String prefix, List<String> key) {
         String redisKey;
-        if (prifex != null) {
-            redisKey = prifex + SPLIT + StringUtils.join(key, SPLIT);
+        if (prefix != null) {
+            redisKey = prefix + SPLIT + StringUtils.join(key, SPLIT);
         } else {
             redisKey = StringUtils.join(key, SPLIT);
         }

@@ -40,8 +40,8 @@ public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
     /**
      * 移除方法的缓存
      *
-     * @param prifex 必须是转化后的，不能是spel表达式
+     * @param prefix 必须是转化后的，不能是spel表达式
      * @param key    必须是转化后的，不能是spel表达式
      */
-    public abstract void remove(String prifex, List<String> key);
+    public abstract void remove(String prefix, List<String> key);
 }

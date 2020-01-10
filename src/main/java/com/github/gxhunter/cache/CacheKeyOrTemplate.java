@@ -49,9 +49,9 @@ public class CacheKeyOrTemplate extends AbstractCacheTemplate {
     }
 
     @Override
-    public void remove(String prifex, List<String> key) {
-        if (prifex != null) {
-            key = key.stream().map(k->prifex + SPLIT + k).collect(Collectors.toList());
+    public void remove(String prefix, List<String> key) {
+        if (prefix != null) {
+            key = key.stream().map(k->prefix + SPLIT + k).collect(Collectors.toList());
         }
         log.debug("移除缓存:{}", key);
         mCacheManager.remove(key);
