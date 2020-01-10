@@ -6,6 +6,7 @@ import java.util.UUID;
 
 /**
  * 分布式锁
+ * @author hunter
  */
 @Slf4j
 public abstract class AbstractLockTemplate{

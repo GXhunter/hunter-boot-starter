@@ -86,9 +86,9 @@ public class SftpTools implements AutoCloseable{
     public boolean isDirExist(String directory) throws SftpException{
         boolean isDirExistFlag = false;
         try{
-            SftpATTRS sftpATTRS = chnSftp.lstat(directory);
+            SftpATTRS sftpAttrs = chnSftp.lstat(directory);
             isDirExistFlag = true;
-            return sftpATTRS.isDir();
+            return sftpAttrs.isDir();
         }catch(Exception e){
             if(NSF.equals(e.getMessage().toLowerCase())){
                 isDirExistFlag = false;
@@ -283,8 +283,8 @@ public class SftpTools implements AutoCloseable{
         //文件大于等于0则存在
         long fileSize = 0;
         try{
-            SftpATTRS sftpATTRS = chnSftp.lstat(srcSftpFilePath);
-            fileSize = sftpATTRS.getSize();
+            SftpATTRS sftpAttr = chnSftp.lstat(srcSftpFilePath);
+            fileSize = sftpAttr.getSize();
         }catch(Exception e){
             //获取文件大小异常
             fileSize = -1;

@@ -30,6 +30,7 @@ public abstract class AbstractCacheTemplate implements ConstantValue.Cache {
     public abstract <T> T get(String prefix, List<String> key, Type type);
 
     /**
+     * 存入数据到缓存
      * @param prefix  每个key都会有这个前缀
      * @param key     必须是转化后的，不能是spel表达式
      * @param value   对象

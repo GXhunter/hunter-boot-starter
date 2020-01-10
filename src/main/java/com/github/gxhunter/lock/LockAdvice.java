@@ -26,7 +26,7 @@ public class LockAdvice extends AbstractPointcutAdvisor implements MethodInterce
     /**
      * spel表达式解析器
      */
-    protected static final SpelPaser spelPaser = new SpelPaser();
+    protected static final SpelPaser SPEL_PASER = new SpelPaser();
 
     public LockAdvice(AbstractLockTemplate lockTemplate) {
         this.mLockTemplate = lockTemplate;
@@ -58,7 +58,7 @@ public class LockAdvice extends AbstractPointcutAdvisor implements MethodInterce
         Lock lock = invocation.getMethod().getAnnotation(Lock.class);
         try {
             keyName = Arrays.stream(lock.keys())
-                    .map(el->spelPaser.parse(el, invocation.getMethod(), invocation.getArguments(), String.class))
+                    .map(el->SPEL_PASER.parse(el, invocation.getMethod(), invocation.getArguments(), String.class))
                     .filter(StringUtils::isNotBlank)
                     .reduce((a, b)->a + SPLIT + b)
                     .map(key->PREFIX + SPLIT + key)
