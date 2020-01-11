@@ -38,9 +38,4 @@ public class DefaultResultSupport implements ResultSupport {
         return failedResult;
     }
 
-    @Override
-    public Result exception(){
-        return exceptionResult;
-    }
-
 }

@@ -19,10 +19,4 @@ public interface ResultSupport {
      */
     Result faild();
 
-    /**
-     * 异常返回，异常处理器拦截到异常时的返回，默认和{{@link #faild()}}一样
-     *
-     * @return
-     */
-    Result exception();
 }

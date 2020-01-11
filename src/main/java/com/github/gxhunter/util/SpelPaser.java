@@ -18,7 +18,7 @@ import java.util.Optional;
  * @date 2019/7/18 14:59
  */
 @NoArgsConstructor
-public class SpelPaser {
+public class SpelPaser implements ConstantValue.Spel{
     /**
      * spel表达式解析器
      */
@@ -31,7 +31,12 @@ public class SpelPaser {
     }
 
     public <T> T parse(String express, Method method, Object[] args, Class<T> returnType) {
-        EvaluationContext context = new MethodBasedEvaluationContext(null, method, args, mDiscoverer);
+        EvaluationContext context = new MethodBasedEvaluationContext(method, method, args, mDiscoverer);
+        context.setVariable(METHOD_NAME,method.getName());
+        context.setVariable(METHOD_GENERIC_SIGN,method.toGenericString());
+        context.setVariable(METHOD_RETURN_TYPE,method.getReturnType());
+        context.setVariable(METHOD_RETURN_GEN_TYPE,method.getGenericReturnType());
+
         return Optional.ofNullable(express)
                 .map(mParser::parseExpression)
                 .map(expression->expression.getValue(context, returnType))

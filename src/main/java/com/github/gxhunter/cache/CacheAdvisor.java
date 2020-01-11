@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,30 +29,40 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
-    private final ApplicationContext mContext;
     private final SpelPaser mSpelPaser = new SpelPaser();
+    private final ICacheManager mCacheManager;
 
+    /**
+     * @param invocation
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
         Cache cache = method.getAnnotation(Cache.class);
-        AbstractCacheTemplate cacheTemplate = mContext.getBean(cache.keyStrategy().getCacheTemplate());
 
-        List<String> keys = Arrays.stream(cache.key())
-                .filter(StringUtils::isNotBlank)
-                .map(el->mSpelPaser.parse(el,method,invocation.getArguments(),String.class))
+//        前缀列表
+        List<String> prefixList = Arrays.stream(cache.prefix())
+                .map(el->mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
-        Object result;
-        String prefix = mSpelPaser.parse(cache.prefix(), method, invocation.getArguments(), String.class);
-        result = cacheTemplate.get(prefix, keys, method.getGenericReturnType());
 
-        if (result == null) {
-            result = invocation.proceed();
+        String key = mSpelPaser.parse(cache.key(), method, invocation.getArguments());
+
+        if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(prefixList)) {
+            log.warn("你的key/prefix为空,不走缓存,前缀：{}，key:{}", prefixList, key);
+            return invocation.proceed();
         }
 
-        if (result != null && !CollectionUtils.isEmpty(keys)) {
-            cacheTemplate.put(prefix, keys, result, cache.timeout());
+        Object result = mCacheManager.get(prefixList, key, method.getGenericReturnType());
+        if (CACHE_EMPTY_VALUE.equals(result)) {
+            return null;
+        }
+        if (result == null) {
+//            缓存获取不到数据，执行目标方法，并缓存
+            result = invocation.proceed();
+            mCacheManager.put(prefixList, key, result, cache.timeout());
         }
 
         return result;

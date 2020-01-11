@@ -112,56 +112,6 @@ public abstract class BaseController{
         return result;
     }
 
-    /**
-     * 手动抛出的异常，不指定错误码时为“操作失败”
-     *
-     * @param exception
-     * @return
-     */
-    @ExceptionHandler(ApiException.class)
-    public Object handleApiException(ApiException exception){
-        log.error(exception.getMessage(),exception);
-        Result result = mResultSupport.exception().clone();
-        if(exception.getErrorCode() != null){
-            return faild(exception.getErrorCode());
-        }else{
-            result.setCode(mResultSupport.exception().getCode());
-            result.setMessage(exception.getMessage());
-            return faild(result);
-        }
-    }
 
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object handMethodValidException(MethodArgumentNotValidException ex){
-        List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
-        HashMap<String, String> resultMap = Maps.newHashMap();
-        if(!CollectionUtils.isEmpty(objectErrors)){
-            for(ObjectError objectError : objectErrors){
-                String field = ((FieldError) objectError).getField();
-                String message = objectError.getDefaultMessage();
-                resultMap.put(field,message);
-            }
-        }
-        Result result = mResultSupport.exception().clone();
-        result.setData(resultMap);
-        return result;
-    }
-
-    /**
-     * 其他异常
-     *
-     * @param e
-     * @return
-     */
-    @ExceptionHandler(Exception.class)
-    public Object handleOtherException(Exception e){
-        log.error(e.getClass().getName(),e);
-        Result result = mResultSupport.exception().clone();
-        String message = Optional.ofNullable(mResultSupport.exception().getMessage())
-                .orElse(e.getMessage());
-        result.setMessage(message);
-        return result;
-    }
 
 }

@@ -14,20 +14,13 @@ public @interface CacheRemove {
     /**
      * 缓存的key，el表达式,多个key根据策略不同，存入的方式也不一样
      * @return
-     * @see CacheStrategy
      */
-    String[] key();
+    String key();
 
-    /**
-     * 多个key时的匹配策略，当前支持and和or
-     * @see CacheStrategy
-     * @return
-     */
-    CacheStrategy keyStrategy() default CacheStrategy.AND;
 
     /**
      * 前缀，el表达式
      * @return
      */
-    String prefix() default "''";
+    String[] prefix();
 }
