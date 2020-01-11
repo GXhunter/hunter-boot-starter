@@ -26,23 +26,55 @@ public interface ConstantValue {
     /**
      * spel表达式相关
      */
-    interface Spel{
+    interface Spel {
+
         /**
-         * 方法名
+         * 存储时使用
          */
-        String METHOD_NAME = "method_name";
+        interface VariableKey {
+            /**
+             * 方法名
+             */
+            String METHOD_NAME = "method_name";
+            /**
+             * 方法完整签名（含泛型）
+             */
+            String METHOD_GENERIC_SIGN = "method_generic";
+            /**
+             * 方法返回值（class，不含泛型）
+             */
+            String METHOD_RETURN_TYPE = "method_return_type";
+            /**
+             * 方法返回值 含泛型
+             */
+            String METHOD_RETURN_GEN_TYPE = "method_return_gen_type";
+        }
+
         /**
-         * 方法完整签名（含泛型）
+         * 获取时多加个#
          */
-        String METHOD_GENERIC_SIGN = "method_generic";
-        /**
-         * 方法返回值（class，不含泛型）
-         */
-        String METHOD_RETURN_TYPE = "method_return_type";
-        /**
-         * 方法返回值 含泛型
-         */
-        String METHOD_RETURN_GEN_TYPE = "method_return_gen_type";
+        interface Context{
+
+            String SHARP = "#";
+            /**
+             * 方法名
+             */
+            String METHOD_NAME = SHARP + VariableKey.METHOD_NAME;
+            /**
+             * 方法完整签名（含泛型）
+             */
+            String METHOD_GENERIC_SIGN = SHARP + VariableKey.METHOD_GENERIC_SIGN;
+            /**
+             * 方法返回值（class，不含泛型）
+             */
+            String METHOD_RETURN_TYPE = SHARP + VariableKey.METHOD_RETURN_TYPE;
+            /**
+             * 方法返回值 含泛型
+             */
+            String METHOD_RETURN_GEN_TYPE = SHARP + VariableKey.METHOD_RETURN_GEN_TYPE;
+        }
+
+
     }
 
     /**

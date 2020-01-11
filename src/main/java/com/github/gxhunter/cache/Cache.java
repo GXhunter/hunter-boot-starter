@@ -28,7 +28,7 @@ public @interface Cache {
      * 前缀，el表达式。几个前缀存储几个缓存。
      * @return 默认为方法签名
      */
-    String[] prefix() default "#root.toGenericString()";
+    String[] prefix() ;
 
     /**
      * 条件满足时才缓存

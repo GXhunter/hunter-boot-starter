@@ -18,7 +18,7 @@ import java.util.Optional;
  * @date 2019/7/18 14:59
  */
 @NoArgsConstructor
-public class SpelPaser implements ConstantValue.Spel{
+public class SpelPaser implements ConstantValue.Spel.VariableKey {
     /**
      * spel表达式解析器
      */
