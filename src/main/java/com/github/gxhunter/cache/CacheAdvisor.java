@@ -44,7 +44,7 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
 
 //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
-                .map(el->mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
+                .map(el->mSpelPaser.parse(el, invocation, String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
 
