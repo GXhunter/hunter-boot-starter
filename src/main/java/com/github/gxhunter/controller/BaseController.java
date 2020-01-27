@@ -1,21 +1,8 @@
 package com.github.gxhunter.controller;
 
-import com.github.gxhunter.exception.ApiException;
 import com.github.gxhunter.result.Result;
 import com.github.gxhunter.result.ResultSupport;
-import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author 树荫下的天空
@@ -24,10 +11,6 @@ import java.util.Optional;
 public abstract class BaseController{
     @Autowired
     protected ResultSupport mResultSupport;
-    /**
-     * 日志打印
-     */
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     /**
      * 返回成功，并携带数据
      *

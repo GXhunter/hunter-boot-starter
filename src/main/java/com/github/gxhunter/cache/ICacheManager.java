@@ -5,9 +5,9 @@ import com.github.gxhunter.util.ConstantValue;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
+ * 缓存管理器
  * @author wanggx
  * @date 2020-01-09 18:37
  **/

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ * redis缓存管理器
  * @author wanggx
  * @date 2020-01-09 18:39
  **/
