@@ -48,6 +48,11 @@ public interface ConstantValue {
              * 方法返回值 含泛型
              */
             String METHOD_RETURN_GEN_TYPE = "method_return_gen_type";
+
+            /**
+             * 所属类的类名
+             */
+            String CLASS_SIMPLE_NAME = "class_simple_name";
         }
 
         /**

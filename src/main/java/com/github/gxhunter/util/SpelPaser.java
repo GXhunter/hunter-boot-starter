@@ -62,7 +62,7 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
         context.setVariable(METHOD_GENERIC_SIGN, method.toGenericString());
         context.setVariable(METHOD_RETURN_TYPE, method.getReturnType());
         context.setVariable(METHOD_RETURN_GEN_TYPE, method.getGenericReturnType());
-
+        context.setVariable(CLASS_SIMPLE_NAME,method.getDeclaringClass().getSimpleName());
         return Optional.ofNullable(express)
                 .map(mParser::parseExpression)
                 .map(expression->expression.getValue(context, returnType))
