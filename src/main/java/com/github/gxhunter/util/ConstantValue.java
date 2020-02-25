@@ -29,7 +29,7 @@ public interface ConstantValue {
     interface Spel {
 
         /**
-         * 存储时使用
+         * 注意，仅框架开发者使用
          */
         interface VariableKey {
             /**
@@ -56,7 +56,7 @@ public interface ConstantValue {
         }
 
         /**
-         * 获取时多加个#
+         * 调用者使用，获取spel内置的上下文变量
          */
         interface Context{
 

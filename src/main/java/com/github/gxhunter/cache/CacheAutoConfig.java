@@ -18,7 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class CacheAutoConfig {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(ICacheManager.class)
     @ConditionalOnClass(RedisTemplate.class)
     public ICacheManager redisCacheManager(RedisTemplate<String, String> redisTemplate, BeanMapper jsonMapper) {
         log.debug("当前使用默认RedisTemplate作为缓存工具");

@@ -36,6 +36,8 @@
         </developer>
     </developers>
     <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
         <deploy.version>${project.version}</deploy.version>
         <springboot.version>2.0.6.RELEASE</springboot.version>
         <lombok.version>1.16.20</lombok.version>
