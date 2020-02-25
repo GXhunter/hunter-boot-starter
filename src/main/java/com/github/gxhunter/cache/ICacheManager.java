@@ -23,6 +23,8 @@ public interface ICacheManager extends ConstantValue.Cache {
     void put(String key, Object value, long timeout);
 
     /**
+     * 存入缓存
+     *
      * @param prefix  前缀，几个前缀就存几个缓存。回调此方法保证不会{{@link org.springframework.util.CollectionUtils#isEmpty(Collection)}}
      * @param key     key
      * @param value   缓存值，java对象。
@@ -65,15 +67,17 @@ public interface ICacheManager extends ConstantValue.Cache {
     <T> T get(String cacheKey, Type type);
 
     /**
+     * 获取缓存数据
      * @param prefix   回调时不会空
      * @param cacheKey 回调时不会是空
      * @param type     返回类型
      * @param <T>      外层类型
-     * @return
+     * @return 缓存没数据返回null
      */
     <T> T get(List<String> prefix, String cacheKey, Type type);
 
     /**
+     * 移除缓存
      * @param prefixList 回调时不会为空
      * @param key 回调时不会为空
      */

@@ -11,13 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +49,7 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
         String key = mSpelPaser.parse(cache.key(), method, invocation.getArguments());
 
         if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(prefixList)) {
-            log.warn("你的key/prefix为空,不走缓存,前缀：{}，key:{}", prefixList, key);
+            log.debug("key/prefix为空,不走缓存,前缀：{}，key:{}", prefixList, key);
             return invocation.proceed();
         }
 
