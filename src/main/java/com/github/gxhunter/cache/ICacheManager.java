@@ -52,16 +52,16 @@ public interface ICacheManager extends ConstantValue.Cache {
      * 批量移除
      *
      * @param keys 键
-     * @return
+     * @return 移除
      */
-    long remove(Collection<String> keys);
+    Long remove(Collection<String> keys);
 
     /**
      * 获取缓存
      *
-     * @param cacheKey
+     * @param cacheKey 缓存key
      * @param type     返回类型支持泛型
-     * @param <T>
+     * @param <T> 泛型
      * @return
      */
     <T> T get(String cacheKey, Type type);
@@ -82,4 +82,10 @@ public interface ICacheManager extends ConstantValue.Cache {
      * @param key 回调时不会为空
      */
     void remove(List<String> prefixList, String key);
+
+    /**
+     * 获取缓存所有key
+     * @return 所有缓存key
+     */
+    Collection<String> listCacheNames();
 }

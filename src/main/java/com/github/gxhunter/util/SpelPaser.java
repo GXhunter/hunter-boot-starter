@@ -37,8 +37,8 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
      *
      * @param express    el表达式
      * @param returnType 返回类型
-     * @param <T>
-     * @return
+     * @param <T> 泛型
+     * @return 解析结果
      */
     public <T> T parse(String express, Class<T> returnType) {
         return mParser.parseExpression(express).getValue(standardEvaluationContext, returnType);
@@ -54,7 +54,7 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
      * @param args       方法参数
      * @param returnType 解析的结果类型
      * @param <T>        泛型
-     * @return
+     * @return 解析结果
      */
     public <T> T parse(String express, Method method, Object[] args, Class<T> returnType) {
         EvaluationContext context = new MethodBasedEvaluationContext(method, method, args, mDiscoverer);
@@ -62,17 +62,17 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
         context.setVariable(METHOD_GENERIC_SIGN, method.toGenericString());
         context.setVariable(METHOD_RETURN_TYPE, method.getReturnType());
         context.setVariable(METHOD_RETURN_GEN_TYPE, method.getGenericReturnType());
-        context.setVariable(CLASS_SIMPLE_NAME,method.getDeclaringClass().getSimpleName());
+        context.setVariable(CLASS_SIMPLE_NAME, method.getDeclaringClass().getSimpleName());
         return Optional.ofNullable(express)
                 .map(mParser::parseExpression)
-                .map(expression->expression.getValue(context, returnType))
+                .map(expression -> expression.getValue(context, returnType))
                 .orElse(null);
     }
 
     public <T> T parse(String express, EvaluationContext context, Class<T> returnType) {
         return Optional.ofNullable(express)
                 .map(mParser::parseExpression)
-                .map(expression->expression.getValue(context, returnType))
+                .map(expression -> expression.getValue(context, returnType))
                 .orElse(null);
     }
 

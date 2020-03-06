@@ -1,6 +1,7 @@
 package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.BeanMapper;
+import com.github.gxhunter.util.ConstantValue;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,11 +15,12 @@ import java.util.stream.Collectors;
 
 /**
  * redis缓存管理器
+ *
  * @author wanggx
  * @date 2020-01-09 18:39
  **/
 @AllArgsConstructor
-public class RedisCacheManager implements ICacheManager {
+public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
     private final RedisTemplate<String, String> mRedisTemplate;
     private final BeanMapper jsonMapper;
 
@@ -30,6 +32,7 @@ public class RedisCacheManager implements ICacheManager {
 
         String json = jsonMapper.stringify(object);
         mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
+        mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, key);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class RedisCacheManager implements ICacheManager {
         for (String prefix : prefixList) {
             String cacheValue = jsonMapper.stringify(value);
             mRedisTemplate.opsForValue().set(prefix + SPLIT + key, cacheValue == null ? CACHE_EMPTY_VALUE : cacheValue, timeout, TimeUnit.SECONDS);
+            mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, prefix + SPLIT + key);
         }
     }
 
@@ -45,8 +49,10 @@ public class RedisCacheManager implements ICacheManager {
         if (StringUtils.isBlank(key) || object == null) {
             return;
         }
+
         String json = jsonMapper.stringify(object);
         mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json);
+        mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, key);
     }
 
     @Override
@@ -54,15 +60,18 @@ public class RedisCacheManager implements ICacheManager {
         if (StringUtils.isBlank(key)) {
             return false;
         }
+        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST,  key);
         return mRedisTemplate.delete(key);
     }
 
     @Override
-    public long remove(Collection<String> keys) {
+    public Long remove(Collection<String> keys) {
         if (CollectionUtils.isEmpty(keys)) {
             return 0L;
         }
-        return mRedisTemplate.delete(keys);
+        Long delete = mRedisTemplate.delete(keys);
+        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST, keys.toArray());
+        return delete;
     }
 
     @Override
@@ -97,7 +106,13 @@ public class RedisCacheManager implements ICacheManager {
 
     @Override
     public void remove(List<String> prefixList, String key) {
-        List<String> keys = prefixList.stream().map(prefix->prefix + SPLIT + key).collect(Collectors.toList());
+        List<String> keys = prefixList.stream().map(prefix -> prefix + SPLIT + key).collect(Collectors.toList());
+        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST, keys.toArray());
         mRedisTemplate.delete(keys);
+    }
+
+    @Override
+    public Collection<String> listCacheNames() {
+        return mRedisTemplate.opsForSet().members(CACHE_KEY_LIST);
     }
 }
