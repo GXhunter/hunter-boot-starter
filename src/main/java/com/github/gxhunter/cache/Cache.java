@@ -35,4 +35,10 @@ public @interface Cache {
      * @return
      */
     String condition() default "true";
+
+    /**
+     * 缓存管理器
+     * @return 缓存管理器
+     */
+    String cacheManager() default "redisCacheManager";
 }

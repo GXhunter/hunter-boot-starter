@@ -23,4 +23,9 @@ public @interface CacheRemove {
      * @return
      */
     String[] prefix();
+
+    /**
+     * @return 缓存管理器
+     */
+    String cacheManager() default "redisCacheManager";
 }

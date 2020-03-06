@@ -2,6 +2,7 @@ package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.ConstantValue;
 import com.github.gxhunter.util.SpelPaser;
+import com.github.gxhunter.util.SpringUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -28,7 +29,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
     private final SpelPaser mSpelPaser = new SpelPaser();
-    private final ICacheManager mCacheManager;
 
     /**
      * @param invocation
@@ -39,6 +39,7 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
         Cache cache = method.getAnnotation(Cache.class);
+        ICacheManager cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
 
 //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
@@ -53,14 +54,14 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
             return invocation.proceed();
         }
 
-        Object result = mCacheManager.get(prefixList, key, method.getGenericReturnType());
+        Object result = cacheManager.get(prefixList, key, method.getGenericReturnType());
         if (CACHE_EMPTY_VALUE.equals(result)) {
             return null;
         }
         if (result == null) {
 //            缓存获取不到数据，执行目标方法，并缓存
             result = invocation.proceed();
-            mCacheManager.put(prefixList, key, result, cache.timeout());
+            cacheManager.put(prefixList, key, result, cache.timeout());
         }
 
         return result;

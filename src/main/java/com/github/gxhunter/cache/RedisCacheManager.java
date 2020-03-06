@@ -29,10 +29,8 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
         if (StringUtils.isBlank(key) || object == null) {
             return;
         }
-
         String json = jsonMapper.stringify(object);
         mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
-        mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, key);
     }
 
     @Override
@@ -40,7 +38,6 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
         for (String prefix : prefixList) {
             String cacheValue = jsonMapper.stringify(value);
             mRedisTemplate.opsForValue().set(prefix + SPLIT + key, cacheValue == null ? CACHE_EMPTY_VALUE : cacheValue, timeout, TimeUnit.SECONDS);
-            mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, prefix + SPLIT + key);
         }
     }
 
@@ -52,7 +49,6 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
 
         String json = jsonMapper.stringify(object);
         mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json);
-        mRedisTemplate.opsForSet().add(CACHE_KEY_LIST, key);
     }
 
     @Override
@@ -60,7 +56,6 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
         if (StringUtils.isBlank(key)) {
             return false;
         }
-        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST,  key);
         return mRedisTemplate.delete(key);
     }
 
@@ -70,7 +65,6 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
             return 0L;
         }
         Long delete = mRedisTemplate.delete(keys);
-        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST, keys.toArray());
         return delete;
     }
 
@@ -107,12 +101,7 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
     @Override
     public void remove(List<String> prefixList, String key) {
         List<String> keys = prefixList.stream().map(prefix -> prefix + SPLIT + key).collect(Collectors.toList());
-        mRedisTemplate.opsForSet().remove(CACHE_KEY_LIST, keys.toArray());
         mRedisTemplate.delete(keys);
     }
 
-    @Override
-    public Collection<String> listCacheNames() {
-        return mRedisTemplate.opsForSet().members(CACHE_KEY_LIST);
-    }
 }

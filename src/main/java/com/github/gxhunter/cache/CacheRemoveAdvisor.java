@@ -2,6 +2,7 @@ package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.ConstantValue;
 import com.github.gxhunter.util.SpelPaser;
+import com.github.gxhunter.util.SpringUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -29,12 +30,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
     private final SpelPaser mSpelPaser = new SpelPaser();
-    private final ICacheManager mCacheManager;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
         CacheRemove cache = method.getAnnotation(CacheRemove.class);
+        ICacheManager cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
         //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
                 .map(el -> mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
@@ -46,7 +47,7 @@ public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements Metho
         if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(prefixList)) {
             log.warn("你的key/prefix为空,不删除缓存,前缀：{}，key:{}", prefixList, key);
         } else {
-            mCacheManager.remove(prefixList, key);
+            cacheManager.remove(prefixList, key);
         }
         return invocation.proceed();
     }

@@ -86,11 +86,4 @@ public interface ICacheManager extends ConstantValue.Cache {
      */
     void remove(List<String> prefixList, String key);
 
-    /**
-     * 获取缓存所有key
-     *
-     * @return 所有缓存key
-     */
-    Collection<String> listCacheNames();
-
 }
