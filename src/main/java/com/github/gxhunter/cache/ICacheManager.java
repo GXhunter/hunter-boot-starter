@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 缓存管理器
+ *
  * @author wanggx
  * @date 2020-01-09 18:37
  **/
@@ -61,13 +62,14 @@ public interface ICacheManager extends ConstantValue.Cache {
      *
      * @param cacheKey 缓存key
      * @param type     返回类型支持泛型
-     * @param <T> 泛型
+     * @param <T>      泛型
      * @return
      */
     <T> T get(String cacheKey, Type type);
 
     /**
      * 获取缓存数据
+     *
      * @param prefix   回调时不会空
      * @param cacheKey 回调时不会是空
      * @param type     返回类型
@@ -78,14 +80,17 @@ public interface ICacheManager extends ConstantValue.Cache {
 
     /**
      * 移除缓存
+     *
      * @param prefixList 回调时不会为空
-     * @param key 回调时不会为空
+     * @param key        回调时不会为空
      */
     void remove(List<String> prefixList, String key);
 
     /**
      * 获取缓存所有key
+     *
      * @return 所有缓存key
      */
     Collection<String> listCacheNames();
+
 }
