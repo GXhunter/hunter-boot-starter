@@ -37,7 +37,7 @@ public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements Metho
         CacheRemove cache = method.getAnnotation(CacheRemove.class);
         //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
-                .map(el->mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
+                .map(el -> mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
 
@@ -45,11 +45,10 @@ public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements Metho
 
         if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(prefixList)) {
             log.warn("你的key/prefix为空,不删除缓存,前缀：{}，key:{}", prefixList, key);
-            return invocation.proceed();
         } else {
             mCacheManager.remove(prefixList, key);
-            return invocation.proceed();
         }
+        return invocation.proceed();
     }
 
     @Override
