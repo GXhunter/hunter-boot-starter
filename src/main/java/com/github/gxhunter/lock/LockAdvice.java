@@ -64,7 +64,7 @@ public class LockAdvice extends AbstractPointcutAdvisor implements MethodInterce
                     .map(key->PREFIX + SPLIT + key)
                     .get();
 
-            String value = mLockTemplate.getLockValue(lock.reentrant());
+            String value = mLockTemplate.getLockValue();
             log.debug(keyName + "尝试获取锁...");
             while ((lockValue = mLockTemplate.lock(keyName, value, lock.expireTime())) == null) {
                 if (startTime + lock.retryTimes() < System.currentTimeMillis()) {

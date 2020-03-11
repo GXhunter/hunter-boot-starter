@@ -48,10 +48,5 @@ public @interface Lock{
      */
     boolean delay() default false;
 
-    /**
-     * 是否可重入（同个应用同个线程）
-     * @return
-     */
-    boolean reentrant() default true;
 
 }

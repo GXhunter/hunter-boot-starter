@@ -28,16 +28,16 @@ public class CacheAutoConfig {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(ICacheManager.class)
-    public CacheAdvisor cacheAdvisor(ICacheManager cacheManager) {
+    public CacheAdvisor cacheAdvisor() {
         log.debug("自动缓存注解已开启支持");
-        return new CacheAdvisor(cacheManager);
+        return new CacheAdvisor();
     }
 
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(ICacheManager.class)
-    public CacheRemoveAdvisor cacheRemoveAdvisor(ICacheManager cacheManager) {
+    public CacheRemoveAdvisor cacheRemoveAdvisor() {
         log.debug("自动缓存注解已开启支持");
-        return new CacheRemoveAdvisor(cacheManager);
+        return new CacheRemoveAdvisor();
     }
 }
