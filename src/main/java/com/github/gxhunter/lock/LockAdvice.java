@@ -61,7 +61,6 @@ public class LockAdvice extends AbstractPointcutAdvisor implements MethodInterce
                     .map(el->SPEL_PASER.parse(el, invocation.getMethod(), invocation.getArguments(), String.class))
                     .filter(StringUtils::isNotBlank)
                     .reduce((a, b)->a + SPLIT + b)
-                    .map(key->PREFIX + SPLIT + key)
                     .get();
 
             String value = mLockTemplate.getLockValue();

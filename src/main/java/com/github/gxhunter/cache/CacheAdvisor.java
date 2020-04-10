@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
     private final SpelPaser mSpelPaser = new SpelPaser();
+    private final ICacheManager mCacheManager;
 
     /**
      * @param invocation
@@ -39,11 +40,13 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
         Cache cache = method.getAnnotation(Cache.class);
-        ICacheManager cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
-
+        ICacheManager cacheManager = mCacheManager;
+        if (StringUtils.isNotBlank(cache.cacheManager())) {
+            cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
+        }
 //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
-                .map(el->mSpelPaser.parse(el, invocation, String.class))
+                .map(el -> mSpelPaser.parse(el, invocation, String.class))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
 

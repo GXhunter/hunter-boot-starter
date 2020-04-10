@@ -2,7 +2,6 @@ package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.ConstantValue;
 import com.github.gxhunter.util.SpelPaser;
-import com.github.gxhunter.util.SpringUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
@@ -30,12 +28,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CacheRemoveAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
     private final SpelPaser mSpelPaser = new SpelPaser();
+    private final ICacheManager mCacheManager;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Method method = invocation.getMethod();
+        ICacheManager cacheManager = mCacheManager;
         CacheRemove cache = method.getAnnotation(CacheRemove.class);
-        ICacheManager cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
+        if (StringUtils.isNotBlank(cache.cacheManager())) {
+            cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
+        }
         //        前缀列表
         List<String> prefixList = Arrays.stream(cache.prefix())
                 .map(el -> mSpelPaser.parse(el, method, invocation.getArguments(), String.class))
