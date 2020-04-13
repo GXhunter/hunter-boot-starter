@@ -25,8 +25,8 @@ public class LocalPager<T> implements IPage<T> {
     public LocalPager(int current, int pageSize) {
         Assert.isTrue(current > 0 && pageSize > 0);
         this.pageSize = pageSize;
-        this.current = current - 1;
-        this.startIndex = pageSize * current;
+        this.current = current;
+        this.startIndex = pageSize * (current - 1);
         this.endIndex = startIndex + pageSize;
     }
 
@@ -60,27 +60,21 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public long getSize() {
-        return this.pageSize;
+        return Math.min(this.pageSize, this.records.size());
     }
 
     @Override
     public IPage<T> setSize(long size) {
-        this.pageSize = Math.toIntExact(size);
-        this.current = 1;
-        this.endIndex = pageSize;
-        return this;
+        throw new IllegalStateException("禁止指定");
     }
 
     @Override
     public long getCurrent() {
-        return this.current + 1;
+        return this.current;
     }
 
     @Override
     public IPage<T> setCurrent(long current) {
-        this.current = Math.toIntExact(current);
-        startIndex = this.pageSize * this.current;
-        endIndex = startIndex + this.pageSize;
-        return this;
+        throw new IllegalStateException("禁止指定");
     }
 }
