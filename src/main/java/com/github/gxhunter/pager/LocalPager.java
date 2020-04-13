@@ -16,8 +16,8 @@ public class LocalPager<T> implements IPage<T> {
      * 总得记录
      */
     private List<T> records;
-    private int pageSize;
-    private int current;
+    private final int pageSize;
+    private final int current;
 
     private int startIndex;
     private int endIndex;
