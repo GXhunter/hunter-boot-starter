@@ -33,6 +33,12 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public List<T> getRecords() {
+        if (endIndex > records.size() - 1) {
+            endIndex = records.size() - 1;
+        }
+        if (startIndex >= endIndex) {
+            startIndex = endIndex;
+        }
         return records.subList(startIndex, endIndex);
     }
 
