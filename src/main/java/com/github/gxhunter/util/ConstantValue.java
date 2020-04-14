@@ -28,6 +28,9 @@ public interface ConstantValue {
      */
     interface Spel {
 
+        String SPLIT = "::";
+
+
         /**
          * 注意，仅框架开发者使用
          */

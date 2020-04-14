@@ -2,6 +2,7 @@ package com.github.gxhunter.util;
 
 import lombok.NoArgsConstructor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -11,6 +12,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -78,7 +80,7 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
 
 
     public String parse(String express, Method method, Object[] args) {
-        return parse(express, method, args, String.class);
+        return StringUtils.join(parse(express, method, args, List.class),ConstantValue.Spel.SPLIT);
     }
 
 
