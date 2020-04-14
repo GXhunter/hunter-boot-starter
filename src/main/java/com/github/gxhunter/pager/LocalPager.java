@@ -3,6 +3,7 @@ package com.github.gxhunter.pager;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.github.gxhunter.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public List<T> getRecords() {
+        if (CollectionUtils.isEmpty(records)) {
+            return null;
+        }
         if (endIndex > records.size() - 1) {
             endIndex = Math.max(records.size() - 1, 0);
         }
