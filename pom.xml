@@ -256,9 +256,13 @@
             <distributionManagement>
                 <repository>
                     <id>gprp</id>
-<!--                    <url>http://nexus.4399doc.com:8081/repository/maven-public/</url>-->
+                    <!--                    <url>http://nexus.4399doc.com:8081/repository/maven-public/</url>-->
                     <url>http://nexus.4399doc.com:8081/repository/gprp/</url>
                 </repository>
+                <snapshotRepository>
+                    <id>gprp-snapshot</id>
+                    <url>http://nexus.4399doc.com:8081/repository/gprp-snapshot/</url>
+                </snapshotRepository>
             </distributionManagement>
         </profile>
 
