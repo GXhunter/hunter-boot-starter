@@ -9,7 +9,7 @@
     <groupId>com.github.gxhunter</groupId>
     <artifactId>hunter-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.12-SNASHOT</version>
+    <version>1.0.13-SNASHOT</version>
 
     <licenses>
         <license>
@@ -44,7 +44,7 @@
         <servlet.version>4.0.0</servlet.version>
         <guava.version>27.1-jre</guava.version>
         <jackson.version>2.10.1</jackson.version>
-        <mybatisplus.version>3.1.1</mybatisplus.version>
+        <mybatisplus.version>3.2.0</mybatisplus.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <druid.version>1.1.11</druid.version>
         <okhttp.version>3.12.0</okhttp.version>

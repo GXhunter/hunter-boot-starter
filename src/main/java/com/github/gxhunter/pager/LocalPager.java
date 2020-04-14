@@ -1,6 +1,7 @@
 package com.github.gxhunter.pager;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.github.gxhunter.util.Assert;
 
 import java.util.List;
@@ -32,6 +33,11 @@ public class LocalPager<T> implements IPage<T> {
 
 
     @Override
+    public List<OrderItem> orders() {
+        return null;
+    }
+
+    @Override
     public List<T> getRecords() {
         if (endIndex > records.size() - 1) {
             endIndex = records.size() - 1;
@@ -39,7 +45,7 @@ public class LocalPager<T> implements IPage<T> {
         if (startIndex >= endIndex) {
             startIndex = endIndex;
         }
-        return records.subList(startIndex, endIndex);
+        return records.subList(startIndex, endIndex + 1);
     }
 
     @Override
