@@ -40,7 +40,7 @@ public class LocalPager<T> implements IPage<T> {
     @Override
     public List<T> getRecords() {
         if (endIndex > records.size() - 1) {
-            endIndex = records.size() - 1;
+            endIndex = Math.max(records.size() - 1, 0);
         }
         if (startIndex >= endIndex) {
             startIndex = endIndex;
