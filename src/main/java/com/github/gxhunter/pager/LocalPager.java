@@ -63,7 +63,7 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public long getTotal() {
-        return records.size();
+        return records==null?0:records.size();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public long getSize() {
-        return Math.min(this.pageSize, this.records.size());
+        return pageSize == null ? this.records.size() : Math.min(this.pageSize, this.records.size());
     }
 
     @Override
@@ -83,7 +83,7 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public long getCurrent() {
-        return this.current;
+        return this.current != null ? this.current : 1;
     }
 
     @Override
