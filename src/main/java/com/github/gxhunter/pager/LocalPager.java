@@ -2,7 +2,6 @@ package com.github.gxhunter.pager;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.github.gxhunter.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -18,18 +17,19 @@ public class LocalPager<T> implements IPage<T> {
      * 总得记录
      */
     private List<T> records;
-    private final int pageSize;
-    private final int current;
+    private final Integer pageSize;
+    private final Integer current;
 
     private int startIndex;
     private int endIndex;
 
-    public LocalPager(int current, int pageSize) {
-        Assert.isTrue(current > 0 && pageSize > 0);
+    public LocalPager(Integer current, Integer pageSize) {
         this.pageSize = pageSize;
         this.current = current;
-        this.startIndex = pageSize * (current - 1);
-        this.endIndex = startIndex + pageSize;
+        if (current != null && pageSize != null) {
+            this.startIndex = pageSize * (current - 1);
+            this.endIndex = startIndex + pageSize;
+        }
     }
 
 
@@ -42,6 +42,9 @@ public class LocalPager<T> implements IPage<T> {
     public List<T> getRecords() {
         if (CollectionUtils.isEmpty(records)) {
             return null;
+        }
+        if (this.current == null || this.pageSize == null) {
+            return records;
         }
         if (endIndex > records.size() - 1) {
             endIndex = Math.max(records.size() - 1, 0);
