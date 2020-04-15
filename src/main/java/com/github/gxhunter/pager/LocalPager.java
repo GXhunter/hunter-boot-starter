@@ -22,7 +22,7 @@ public class LocalPager<T> implements IPage<T> {
 
     private int startIndex;
     private int endIndex;
-
+    private LocalOrder<T> order;
     public LocalPager(Integer current, Integer pageSize) {
         this.pageSize = pageSize;
         this.current = current;
@@ -33,9 +33,27 @@ public class LocalPager<T> implements IPage<T> {
     }
 
 
+    /**
+     * @return
+     * @deprecated 都本地分页了，使用本地排序吧 {{@link #order()}}
+     */
     @Override
+    @Deprecated
     public List<OrderItem> orders() {
         return null;
+    }
+
+
+    /**
+     * 本地排序
+     * @return
+     */
+    public LocalOrder<T> order() {
+        return order;
+    }
+
+    public void setOrder(LocalOrder<T> order) {
+        this.order = order;
     }
 
     @Override
@@ -52,8 +70,12 @@ public class LocalPager<T> implements IPage<T> {
         if (startIndex >= endIndex) {
             return null;
         }
+        if (order != null) {
+            records.sort(order().getSort()::apply);
+        }
         return records.subList(startIndex, endIndex);
     }
+
 
     @Override
     public IPage<T> setRecords(List<T> records) {
