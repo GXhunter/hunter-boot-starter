@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,9 +51,9 @@ public class LocalPager<T> implements IPage<T> {
             endIndex = Math.max(records.size() - 1, 0);
         }
         if (startIndex >= endIndex) {
-            startIndex = endIndex;
+            return null;
         }
-        return records.subList(startIndex, endIndex + 1);
+        return records.subList(startIndex, endIndex);
     }
 
     @Override
