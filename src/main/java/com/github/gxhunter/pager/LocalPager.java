@@ -47,8 +47,8 @@ public class LocalPager<T> implements IPage<T> {
         if (this.current == null || this.pageSize == null) {
             return records;
         }
-        if (endIndex > records.size() - 1) {
-            endIndex = Math.max(records.size() - 1, 0);
+        if (endIndex > records.size()) {
+            endIndex = Math.max(records.size(), 0);
         }
         if (startIndex >= endIndex) {
             return null;
