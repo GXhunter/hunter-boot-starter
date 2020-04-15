@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,7 +63,7 @@ public class LocalPager<T> implements IPage<T> {
 
     @Override
     public long getTotal() {
-        return records==null?0:records.size();
+        return records == null ? 0 : records.size();
     }
 
     @Override
