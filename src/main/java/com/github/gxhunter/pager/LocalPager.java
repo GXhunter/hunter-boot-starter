@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ public class LocalPager<T> implements IPage<T> {
     /**
      * 总得记录
      */
-    private List<T> records;
+    private List<T> records = new ArrayList<>();
     private final Integer pageSize;
     private final Integer current;
 
