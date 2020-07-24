@@ -59,12 +59,19 @@ public class SpelPaser implements ConstantValue.Spel.VariableKey {
      * @return 解析结果
      */
     public <T> T parse(String express, Method method, Object[] args, Class<T> returnType) {
+        return parse(express,method,args,null,returnType);
+    }
+
+    public <T> T parse(String express, Method method, Object[] args, Object result,Class<T> returnType) {
         EvaluationContext context = new MethodBasedEvaluationContext(method, method, args, mDiscoverer);
         context.setVariable(METHOD_NAME, method.getName());
         context.setVariable(METHOD_GENERIC_SIGN, method.toGenericString());
         context.setVariable(METHOD_RETURN_TYPE, method.getReturnType());
         context.setVariable(METHOD_RETURN_GEN_TYPE, method.getGenericReturnType());
         context.setVariable(CLASS_SIMPLE_NAME, method.getDeclaringClass().getSimpleName());
+        if(result != null){
+            context.setVariable(RESULT, result);
+        }
         return Optional.ofNullable(express)
                 .map(mParser::parseExpression)
                 .map(expression -> expression.getValue(context, returnType))

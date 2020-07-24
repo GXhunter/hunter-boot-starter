@@ -41,4 +41,10 @@ public @interface Cache {
      * @return 缓存管理器
      */
     String cacheManager() default "redisCacheManager";
+
+    /**
+     * 不缓存的情况
+     * @return true：不缓存，false：需要缓存
+     */
+    String unless() default "false";
 }

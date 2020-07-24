@@ -56,6 +56,7 @@ public interface ConstantValue {
              * 所属类的类名
              */
             String CLASS_SIMPLE_NAME = "class_simple_name";
+            String RESULT = "result";
         }
 
         /**

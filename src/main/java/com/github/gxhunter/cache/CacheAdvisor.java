@@ -64,6 +64,9 @@ public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInter
         if (result == null) {
 //            缓存获取不到数据，执行目标方法，并缓存
             result = invocation.proceed();
+        }
+
+        if(!mSpelPaser.parse(cache.unless(),method,invocation.getArguments(),result,boolean.class)){
             cacheManager.put(prefixList, key, result, cache.timeout());
         }
 
