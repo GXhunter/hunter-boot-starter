@@ -8,7 +8,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -20,92 +22,47 @@ import java.util.stream.Collectors;
  * @date 2020-01-09 18:39
  **/
 @AllArgsConstructor
-public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
+public class RedisCacheManager implements ICacheManager<Object>, ConstantValue.Cache{
     private final RedisTemplate<String, String> mRedisTemplate;
     private final BeanMapper jsonMapper;
 
+
     @Override
-    public void put(String key, Object object, long timeout) {
-        if (StringUtils.isBlank(key) || object == null) {
-            return;
-        }
+    public void put(Object keyObj,Object object,long timeout){
         String json = jsonMapper.stringify(object);
-        mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
-    }
-
-
-    @Override
-    public void put(List<String> keyList, Object object, long timeout) {
-        if (CollectionUtils.isEmpty(keyList)) {
-            return;
+        if(keyObj instanceof Collection && !CollectionUtils.isEmpty((Collection<?>) keyObj)){
+            for(Object key : ((Collection) keyObj)){
+                mRedisTemplate.opsForValue().set(key.toString(),json == null ? CACHE_EMPTY_VALUE : json,timeout,TimeUnit.SECONDS);
+            }
+        }else{
+            mRedisTemplate.opsForValue().set(keyObj.toString(),json == null ? CACHE_EMPTY_VALUE : json,timeout,TimeUnit.SECONDS);
         }
-        for(String key : keyList){
-            String json = jsonMapper.stringify(object);
-            mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
-        }
+
     }
 
     @Override
-    public void put(String key, Object object) {
-        if (StringUtils.isBlank(key) || object == null) {
-            return;
-        }
-
-        String json = jsonMapper.stringify(object);
-        mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json);
-    }
-
-    @Override
-    public boolean remove(String key) {
-        if (StringUtils.isBlank(key)) {
-            return false;
-        }
-        return mRedisTemplate.delete(key);
-    }
-
-    @Override
-    public Long remove(Collection<String> keys) {
-        if (CollectionUtils.isEmpty(keys)) {
+    public Long remove(Collection<String> keys){
+        if(CollectionUtils.isEmpty(keys)){
             return 0L;
         }
-        Long delete = mRedisTemplate.delete(keys);
-        return delete;
+        return mRedisTemplate.delete(keys);
     }
 
     @Override
-    public <T> T get(String cacheKey, Type type) {
-        if (StringUtils.isBlank(cacheKey) || type == null) {
-            return null;
-        }
-
-        String json = mRedisTemplate.opsForValue().get(cacheKey);
-        if (StringUtils.equals(json, CACHE_EMPTY_VALUE)) {
-            return (T) CACHE_EMPTY_VALUE;
-        }
-        if (StringUtils.isNotBlank(json)) {
-            return jsonMapper.parse(json, type);
-        }
-        return null;
-    }
-
-    @Override
-    public <T> T get(List<String> cacheKeyList,Type type) {
-        for (String cacheKey : cacheKeyList) {
-            String json = mRedisTemplate.opsForValue().get(cacheKey);
-            if (StringUtils.equals(json, CACHE_EMPTY_VALUE)) {
-                return null;
-            }
-            if (StringUtils.isNotBlank(json)) {
-                return jsonMapper.parse(json, type);
+    public <T> T get(Object cacheKey,Type type){
+        if(cacheKey instanceof Collection && !CollectionUtils.isEmpty((Collection<?>) cacheKey)){
+            Collection<?> keyList = (Collection<?>) cacheKey;
+            for(Object key : keyList){
+                String json = mRedisTemplate.opsForValue().get(key);
+                if(StringUtils.equals(json,CACHE_EMPTY_VALUE)){
+                    return null;
+                }
+                if(StringUtils.isNotBlank(json)){
+                    return jsonMapper.parse(json,type);
+                }
             }
         }
         return null;
-    }
-
-    @Override
-    public void remove(List<String> prefixList, String key) {
-        List<String> keys = prefixList.stream().map(prefix -> prefix + SPLIT + key).collect(Collectors.toList());
-        mRedisTemplate.delete(keys);
     }
 
 }

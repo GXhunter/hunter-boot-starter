@@ -12,34 +12,16 @@ import java.util.List;
  * @author wanggx
  * @date 2020-01-09 18:37
  **/
-public interface ICacheManager extends ConstantValue.Cache{
+public interface ICacheManager<K> extends ConstantValue.Cache{
 
     /**
      * 存入缓存
      *
-     * @param key     键
-     * @param value   值
-     * @param timeout 超时 秒
+     * @param key key，为list时多个缓存
+     * @param object  待缓存对象
+     * @param timeout 超时，如果支持的话
      */
-    void put(String key,Object value,long timeout);
-
-    void put(List<String> keyList,Object object,long timeout);
-
-    /**
-     * 存入缓存
-     *
-     * @param key   键
-     * @param value 值
-     */
-    void put(String key,Object value);
-
-    /**
-     * 删除缓存
-     *
-     * @param key 键
-     * @return 是否移除成功
-     */
-    boolean remove(String key);
+    void put(K key,Object object,long timeout);
 
     /**
      * 批量移除
@@ -50,23 +32,12 @@ public interface ICacheManager extends ConstantValue.Cache{
     Long remove(Collection<String> keys);
 
     /**
-     * 获取缓存
+     * 从缓存中获取
      *
-     * @param cacheKey 缓存key
-     * @param type     返回类型支持泛型
-     * @param <T>      泛型
-     * @return
+     * @param type         类型
+     * @param <T>          泛型
+     * @return 缓存值
      */
-    <T> T get(String cacheKey,Type type);
-
-    <T> T get(List<String> cacheKeyList,Type type);
-
-    /**
-     * 移除缓存
-     *
-     * @param prefixList 回调时不会为空
-     * @param key        回调时不会为空
-     */
-    void remove(List<String> prefixList,String key);
+    <T> T get(K key,Type type);
 
 }

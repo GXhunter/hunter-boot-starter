@@ -31,6 +31,8 @@ public @interface CacheRemove {
 
     String condition() default "true";
 
+    Class<? extends KeyGenerator> keyGenerator() default StringKeyGenerator.class;
+
     /**
      * 方法执行前清除
      * @return

@@ -37,6 +37,7 @@ public class CachePostProcessor implements BeanPostProcessor, ApplicationContext
                         .unless(cache.unless())
                         .key(cache.key())
                         .prefix(cache.prefix())
+                        .keyGenerator(context.getBean(cache.keyGenerator()))
                         .timeout(cache.timeout())
                         .build();
                 mCacheContextHolder.saveCacheContext(method,AopProxyUtils.ultimateTargetClass(bean),cacheContext);
@@ -53,6 +54,7 @@ public class CachePostProcessor implements BeanPostProcessor, ApplicationContext
                         .cacheAnnotation(cache)
                         .condition(cache.condition())
                         .beforeInvocation(cache.beforeInvocation())
+                        .keyGenerator(context.getBean(cache.keyGenerator()))
                         .key(cache.key())
                         .prefix(cache.prefix())
                         .build();

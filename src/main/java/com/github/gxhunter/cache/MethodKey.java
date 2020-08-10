@@ -22,7 +22,7 @@ public class MethodKey{
     /**
      * 被拦截的对象
      */
-    private final Class targetClass;
+    private final Class<?> targetClass;
     /**
      * 生效注解
      */

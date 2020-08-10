@@ -123,11 +123,6 @@ public interface ConstantValue {
          * 用于解决redis不能存储null的问题
          */
         String CACHE_EMPTY_VALUE = "cache_empty_value";
-        int AOP_ORDER = Ordered.HIGHEST_PRECEDENCE + 2;
 
-        /**
-         * 缓存的键
-         */
-        String CACHE_KEY_LIST = "cache_key_list";
     }
 }

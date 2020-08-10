@@ -14,8 +14,8 @@ public class CacheRemoveContext extends CacheContext<CacheRemove>{
     private final boolean beforeInvocation;
 
     @Builder
-    public CacheRemoveContext(boolean beforeInvocation,String prefix,String key,String cacheResolver,String condition,ICacheManager cacheManager,CacheRemove cacheAnnotation){
-        super(prefix,key,cacheResolver,condition,cacheManager,cacheAnnotation,CacheRemove.class);
+    public CacheRemoveContext(boolean beforeInvocation,KeyGenerator keyGenerator,String prefix,String key,String cacheResolver,String condition,ICacheManager cacheManager,CacheRemove cacheAnnotation){
+        super(prefix,key,cacheResolver,condition,cacheManager,keyGenerator,cacheAnnotation,CacheRemove.class);
         this.beforeInvocation = beforeInvocation;
     }
 }

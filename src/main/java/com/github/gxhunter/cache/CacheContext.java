@@ -38,6 +38,14 @@ public class CacheContext<T extends Annotation>{
     private final ICacheManager cacheManager;
 
     /**
+     * key生成器
+     *
+     * @see #key 不要同时使用
+     * @see #prefix 不要同时使用
+     */
+    private final KeyGenerator keyGenerator;
+
+    /**
      * 注解
      */
     private final T cacheAnnotation;
