@@ -12,7 +12,7 @@ import java.util.List;
  * @author wanggx
  * @date 2020-01-09 18:37
  **/
-public interface ICacheManager extends ConstantValue.Cache {
+public interface ICacheManager extends ConstantValue.Cache{
 
     /**
      * 存入缓存
@@ -21,17 +21,9 @@ public interface ICacheManager extends ConstantValue.Cache {
      * @param value   值
      * @param timeout 超时 秒
      */
-    void put(String key, Object value, long timeout);
+    void put(String key,Object value,long timeout);
 
-    /**
-     * 存入缓存
-     *
-     * @param prefix  前缀，几个前缀就存几个缓存。回调此方法保证不会{{@link org.springframework.util.CollectionUtils#isEmpty(Collection)}}
-     * @param key     key
-     * @param value   缓存值，java对象。
-     * @param timeout 超时
-     */
-    void put(List<String> prefix, String key, Object value, long timeout);
+    void put(List<String> keyList,Object object,long timeout);
 
     /**
      * 存入缓存
@@ -39,7 +31,7 @@ public interface ICacheManager extends ConstantValue.Cache {
      * @param key   键
      * @param value 值
      */
-    void put(String key, Object value);
+    void put(String key,Object value);
 
     /**
      * 删除缓存
@@ -65,18 +57,9 @@ public interface ICacheManager extends ConstantValue.Cache {
      * @param <T>      泛型
      * @return
      */
-    <T> T get(String cacheKey, Type type);
+    <T> T get(String cacheKey,Type type);
 
-    /**
-     * 获取缓存数据
-     *
-     * @param prefix   回调时不会空
-     * @param cacheKey 回调时不会是空
-     * @param type     返回类型
-     * @param <T>      外层类型
-     * @return 缓存没数据返回null
-     */
-    <T> T get(List<String> prefix, String cacheKey, Type type);
+    <T> T get(List<String> cacheKeyList,Type type);
 
     /**
      * 移除缓存
@@ -84,6 +67,6 @@ public interface ICacheManager extends ConstantValue.Cache {
      * @param prefixList 回调时不会为空
      * @param key        回调时不会为空
      */
-    void remove(List<String> prefixList, String key);
+    void remove(List<String> prefixList,String key);
 
 }

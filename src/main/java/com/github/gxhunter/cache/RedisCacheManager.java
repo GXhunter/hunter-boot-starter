@@ -33,11 +33,15 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
         mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
     }
 
+
     @Override
-    public void put(List<String> prefixList, String key, Object value, long timeout) {
-        for (String prefix : prefixList) {
-            String cacheValue = jsonMapper.stringify(value);
-            mRedisTemplate.opsForValue().set(prefix + SPLIT + key, cacheValue == null ? CACHE_EMPTY_VALUE : cacheValue, timeout, TimeUnit.SECONDS);
+    public void put(List<String> keyList, Object object, long timeout) {
+        if (CollectionUtils.isEmpty(keyList)) {
+            return;
+        }
+        for(String key : keyList){
+            String json = jsonMapper.stringify(object);
+            mRedisTemplate.opsForValue().set(key, json == null ? CACHE_EMPTY_VALUE : json, timeout, TimeUnit.SECONDS);
         }
     }
 
@@ -85,11 +89,11 @@ public class RedisCacheManager implements ICacheManager, ConstantValue.Cache {
     }
 
     @Override
-    public <T> T get(List<String> prefixList, String cacheKey, Type type) {
-        for (String prefix : prefixList) {
-            String json = mRedisTemplate.opsForValue().get(prefix + SPLIT + cacheKey);
+    public <T> T get(List<String> cacheKeyList,Type type) {
+        for (String cacheKey : cacheKeyList) {
+            String json = mRedisTemplate.opsForValue().get(cacheKey);
             if (StringUtils.equals(json, CACHE_EMPTY_VALUE)) {
-                return (T) CACHE_EMPTY_VALUE;
+                return null;
             }
             if (StringUtils.isNotBlank(json)) {
                 return jsonMapper.parse(json, type);

@@ -1,6 +1,7 @@
 package com.github.gxhunter.cache;
 
 import org.springframework.context.annotation.Import;
+import org.springframework.core.Ordered;
 
 import java.lang.annotation.*;
 
@@ -14,4 +15,5 @@ import java.lang.annotation.*;
 @Documented
 @Import(CacheAutoConfig.class)
 public @interface EnableAutoCache {
+    int order() default Ordered.LOWEST_PRECEDENCE;
 }

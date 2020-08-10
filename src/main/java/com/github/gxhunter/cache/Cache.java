@@ -28,7 +28,7 @@ public @interface Cache {
      * 前缀，el表达式。几个前缀存储几个缓存。
      * @return 默认为方法签名
      */
-    String[] prefix() ;
+    String prefix() ;
 
     /**
      * 条件满足时才缓存
@@ -47,4 +47,5 @@ public @interface Cache {
      * @return true：不缓存，false：需要缓存
      */
     String unless() default "false";
+
 }

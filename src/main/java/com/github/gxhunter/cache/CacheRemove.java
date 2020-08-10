@@ -22,10 +22,18 @@ public @interface CacheRemove {
      * 前缀，el表达式
      * @return
      */
-    String[] prefix();
+    String prefix();
 
     /**
      * @return 缓存管理器
      */
     String cacheManager() default "redisCacheManager";
+
+    String condition() default "true";
+
+    /**
+     * 方法执行前清除
+     * @return
+     */
+    boolean beforeInvocation() default false;
 }

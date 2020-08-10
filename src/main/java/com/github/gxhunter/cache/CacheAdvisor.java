@@ -2,21 +2,21 @@ package com.github.gxhunter.cache;
 
 import com.github.gxhunter.util.ConstantValue;
 import com.github.gxhunter.util.SpelPaser;
-import com.github.gxhunter.util.SpringUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
+import org.springframework.aop.support.ComposablePointcut;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -27,64 +27,126 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @AllArgsConstructor
-public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache {
+public class CacheAdvisor extends AbstractPointcutAdvisor implements MethodInterceptor, ConstantValue.Cache{
     private final SpelPaser mSpelPaser = new SpelPaser();
-    private final ICacheManager mCacheManager;
-
+    private final CacheContextHolder mCacheContextHolder;
+    private final int order;
     /**
      * @param invocation
      * @return
      * @throws Throwable
      */
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
+    public Object invoke(MethodInvocation invocation) throws Throwable{
         Method method = invocation.getMethod();
-        Cache cache = method.getAnnotation(Cache.class);
-        ICacheManager cacheManager = mCacheManager;
-        if (StringUtils.isNotBlank(cache.cacheManager())) {
-            cacheManager = SpringUtil.getBean(cache.cacheManager(), ICacheManager.class);
+        ProxyMethodMetadata methodContext = ProxyMethodMetadata.builder().method(method).targetClass(invocation.getThis()).args(invocation.getArguments()).build();
+        CacheRemoveContext cacheRemoveContext = (CacheRemoveContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),CacheRemove.class);
+        processCacheRemove(cacheRemoveContext,methodContext,true,null);
+
+        CacheableContext cacheContext = (CacheableContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),Cache.class);
+
+        Object cacheValue = findCachedItem(cacheContext,methodContext);
+        if(cacheValue != null){
+            return cacheValue;
         }
-//        前缀列表
-        List<String> prefixList = Arrays.stream(cache.prefix())
-                .map(el -> mSpelPaser.parse(el, invocation, String.class))
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList());
+        Object returnValue = invocation.proceed();
 
-        String key = mSpelPaser.parse(cache.key(), method, invocation.getArguments());
+        cachePut(returnValue,cacheContext,methodContext);
 
-        if (StringUtils.isBlank(key) || CollectionUtils.isEmpty(prefixList)) {
-            log.debug("key/prefix为空,不走缓存,前缀：{}，key:{}", prefixList, key);
-            return invocation.proceed();
+        processCacheRemove(cacheRemoveContext,methodContext,false,returnValue);
+        return returnValue;
+    }
+
+
+    private void cachePut(Object returnValue,CacheableContext cacheContext,ProxyMethodMetadata methodContext){
+        if(cacheContext == null){
+            return;
+        }
+        Cache cache = cacheContext.getCacheAnnotation();
+        boolean unless = mSpelPaser.parse(cache.unless(),methodContext.getMethod(),methodContext.getArgs(),returnValue,boolean.class);
+        if(!unless){
+            List<String> keyList = generateKey(cacheContext,methodContext,returnValue);
+            log.debug("put缓存,key:{},value:{},超时:{},执行方法:{}",keyList,returnValue,cacheContext.getTimeout(),methodContext);
+            cacheContext.getCacheManager().put(keyList,returnValue,cacheContext.getTimeout());
+        }
+    }
+
+    private void processCacheRemove(CacheRemoveContext cacheContext,ProxyMethodMetadata methodContext,boolean beforeInvocation,Object returnValue){
+        CacheRemove cacheRemove = Optional.ofNullable(cacheContext)
+                .map(CacheContext::getCacheAnnotation).orElse(null);
+
+        if(cacheRemove == null || cacheRemove.beforeInvocation() != beforeInvocation){
+            return;
+        }
+        boolean condition = mSpelPaser.parse(cacheRemove.condition(),methodContext.getMethod(),methodContext.getArgs(),boolean.class);
+        if(!condition){
+            return;
         }
 
-        Object result = cacheManager.get(prefixList, key, method.getGenericReturnType());
-        if (CACHE_EMPTY_VALUE.equals(result)) {
+        List<String> keyList = generateKey(cacheContext,methodContext);
+        Long count = cacheContext.getCacheManager().remove(keyList);
+        log.debug("移除了缓存:{},影响数量:{},执行方法:{}",keyList,count,methodContext);
+    }
+
+
+    /**
+     * 获取缓存中的值
+     *
+     * @param cacheContext  缓存上下文
+     * @param methodContext
+     * @return
+     */
+    private Object findCachedItem(CacheContext cacheContext,ProxyMethodMetadata methodContext){
+        if(cacheContext == null){
             return null;
         }
-        if (result == null) {
-//            缓存获取不到数据，执行目标方法，并缓存
-            result = invocation.proceed();
+        Cache cache = methodContext.getMethod().getAnnotation(Cache.class);
+        if(cache == null){
+            return null;
         }
-
-        if(!mSpelPaser.parse(cache.unless(),method,invocation.getArguments(),result,boolean.class)){
-            cacheManager.put(prefixList, key, result, cache.timeout());
+        boolean condition = mSpelPaser.parse(cache.condition(),methodContext.getMethod(),methodContext.getArgs(),boolean.class);
+        if(!condition){
+            return null;
         }
-
-        return result;
+        List<String> cacheKeys = generateKey(cacheContext,methodContext);
+        if(CollectionUtils.isEmpty(cacheKeys)){
+            return null;
+        }
+        Object cacheValue = cacheContext.getCacheManager().get(cacheKeys,methodContext.getMethod().getGenericReturnType());
+        log.debug("从缓存获取的值为:{},key:{},方法是:{}",cacheValue,cacheKeys,methodContext);
+        return cacheValue;
     }
 
     @Override
-    public Pointcut getPointcut() {
-        return AnnotationMatchingPointcut.forMethodAnnotation(Cache.class);
+    public Pointcut getPointcut(){
+        Pointcut cachePoint = AnnotationMatchingPointcut.forMethodAnnotation(Cache.class);
+        Pointcut cacheRemovePoint = AnnotationMatchingPointcut.forMethodAnnotation(CacheRemove.class);
+        return new ComposablePointcut(cachePoint).union(cacheRemovePoint);
+    }
+
+    List<String> generateKey(CacheContext cacheContext,ProxyMethodMetadata methodMetadata){
+        return generateKey(cacheContext,methodMetadata,null);
+    }
+    /**
+     * 生成目标key
+     *
+     * @param cacheContext   缓存上下文
+     * @param methodMetadata 方法元数据
+     * @return 多个key表示缓存多处
+     */
+    List<String> generateKey(CacheContext cacheContext,ProxyMethodMetadata methodMetadata,Object returnValue){
+        List<String> cacheNames = mSpelPaser.parse(cacheContext.getPrefix(),methodMetadata.getMethod(),methodMetadata.getArgs(),List.class);
+        String keys = mSpelPaser.parse(cacheContext.getKey(),methodMetadata.getMethod(),methodMetadata.getArgs(),returnValue,String.class);
+        return cacheNames.stream().filter(Objects::nonNull).map(p -> p + "::" + keys).collect(Collectors.toList());
     }
 
     @Override
-    public int getOrder() {
-        return AOP_ORDER;
+    public int getOrder(){
+        return order;
     }
 
     @Override
-    public Advice getAdvice() {
+    public Advice getAdvice(){
         return this;
     }
 }
