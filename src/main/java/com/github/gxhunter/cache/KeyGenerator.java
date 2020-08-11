@@ -8,10 +8,4 @@ public interface KeyGenerator{
 
     Object generate(ProxyMethodMetadata methodMetadata,CacheContext cacheContext,Object returnValue);
 
-    default Object generate(ProxyMethodMetadata methodMetadata,CacheContext cacheContext){
-        return generate(methodMetadata,cacheContext,null);
-    }
-
-
-
 }

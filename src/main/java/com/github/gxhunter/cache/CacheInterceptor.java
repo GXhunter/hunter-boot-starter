@@ -11,13 +11,11 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.ComposablePointcut;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 缓存注解支持
@@ -31,6 +29,7 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     private final SpelPaser mSpelPaser = new SpelPaser();
     private final CacheContextHolder mCacheContextHolder;
     private final int order;
+
     /**
      * @param invocation
      * @return
@@ -40,11 +39,10 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     public Object invoke(MethodInvocation invocation) throws Throwable{
         Method method = invocation.getMethod();
         ProxyMethodMetadata methodContext = ProxyMethodMetadata.builder().method(method).targetClass(invocation.getThis()).args(invocation.getArguments()).build();
-        CacheRemoveContext cacheRemoveContext = (CacheRemoveContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),CacheRemove.class);
-
+        List<CacheRemoveContext> cacheRemoveContext = mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),CacheRemove.class);
         processCacheRemove(cacheRemoveContext,methodContext,true,null);
 
-        CacheableContext cacheContext = (CacheableContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),Cache.class);
+        List<CacheableContext> cacheContext = mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),Cache.class);
 
         Object cacheValue = findCachedItem(cacheContext,methodContext);
         if(cacheValue != null){
@@ -59,21 +57,25 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     }
 
 
-    private void cachePut(Object returnValue,CacheableContext cacheContext,ProxyMethodMetadata methodContext){
-        if(cacheContext == null){
+    private void cachePut(Object returnValue,List<CacheableContext> cacheContextList,ProxyMethodMetadata methodContext){
+        if(cacheContextList == null){
             return;
         }
-        Cache cache = cacheContext.getCacheAnnotation();
+        Cache cache = cacheContextList.get(0).getCacheAnnotation();
         boolean unless = mSpelPaser.parse(cache.unless(),methodContext.getMethod(),methodContext.getArgs(),returnValue,boolean.class);
         if(!unless){
-            Object keyList = cacheContext.getKeyGenerator().generate(methodContext,cacheContext,returnValue);
-            log.debug("put缓存,key:{},value:{},超时:{},执行方法:{}",keyList,returnValue,cacheContext.getTimeout(),methodContext);
-            cacheContext.getCacheManager().put(keyList,returnValue,cacheContext.getTimeout());
+            for(CacheableContext cacheableContext : cacheContextList){
+                Object keyList = cacheableContext.getKeyGenerator().generate(methodContext,cacheableContext,returnValue);
+                log.debug("put缓存,key:{},value:{},超时:{},执行方法:{}",keyList,returnValue,cacheableContext.getTimeout(),methodContext);
+                cacheableContext.getCacheManager().put(keyList,returnValue,cacheableContext.getTimeout());
+            }
         }
     }
 
-    private void processCacheRemove(CacheRemoveContext cacheContext,ProxyMethodMetadata methodContext,boolean beforeInvocation,Object returnValue){
-        CacheRemove cacheRemove = Optional.ofNullable(cacheContext)
+    private void processCacheRemove(List<CacheRemoveContext> cacheRemoveContextList,ProxyMethodMetadata methodContext,boolean beforeInvocation,Object returnValue){
+
+        CacheRemove cacheRemove = Optional.ofNullable(cacheRemoveContextList)
+                .map(e->e.get(0))
                 .map(CacheContext::getCacheAnnotation).orElse(null);
 
         if(cacheRemove == null || cacheRemove.beforeInvocation() != beforeInvocation){
@@ -84,21 +86,23 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
             return;
         }
 
-        List<String> keyList = generateKey(cacheContext,methodContext);
-        Long count = cacheContext.getCacheManager().remove(keyList);
-        log.debug("移除了缓存:{},影响数量:{},执行方法:{}",keyList,count,methodContext);
+        for(CacheRemoveContext cacheRemoveContext : cacheRemoveContextList){
+            Object key = cacheRemoveContext.getKeyGenerator().generate(methodContext,cacheRemoveContext,returnValue);
+            cacheRemoveContext.getCacheManager().remove(key);
+            log.debug("移除了缓存:{},执行方法:{}",key,methodContext);
+        }
     }
 
 
     /**
      * 获取缓存中的值
      *
-     * @param cacheContext  缓存上下文
+     * @param cacheContextList 缓存上下文
      * @param methodContext
      * @return
      */
-    private Object findCachedItem(CacheContext cacheContext,ProxyMethodMetadata methodContext){
-        if(cacheContext == null){
+    private Object findCachedItem(List<CacheableContext> cacheContextList,ProxyMethodMetadata methodContext){
+        if(cacheContextList == null){
             return null;
         }
         Cache cache = methodContext.getMethod().getAnnotation(Cache.class);
@@ -109,13 +113,15 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
         if(!condition){
             return null;
         }
-        Object cacheKeys = cacheContext.getKeyGenerator().generate(methodContext,cacheContext);
-        if(cacheKeys == null){
-            return null;
+        for(CacheableContext cacheContext : cacheContextList){
+            Object key = cacheContext.getKeyGenerator().generate(methodContext,cacheContext,null);
+            Object value = cacheContext.getCacheManager().get(key);
+            if(value != null){
+                log.debug("从缓存获取的值为:{},key:{},方法是:{}",value,key,methodContext);
+                return value;
+            }
         }
-        Object cacheValue = cacheContext.getCacheManager().get(cacheKeys,methodContext.getMethod().getGenericReturnType());
-        log.debug("从缓存获取的值为:{},key:{},结果:{},方法是:{}",cacheValue,cacheKeys,cacheValue,methodContext);
-        return cacheValue;
+        return null;
     }
 
     @Override
@@ -125,21 +131,6 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
         return new ComposablePointcut(cachePoint).union(cacheRemovePoint);
     }
 
-    List<String> generateKey(CacheContext cacheContext,ProxyMethodMetadata methodMetadata){
-        return generateKey(cacheContext,methodMetadata,null);
-    }
-    /**
-     * 生成目标key
-     *
-     * @param cacheContext   缓存上下文
-     * @param methodMetadata 方法元数据
-     * @return 多个key表示缓存多处
-     */
-    List<String> generateKey(CacheContext cacheContext,ProxyMethodMetadata methodMetadata,Object returnValue){
-        List<String> cacheNames = mSpelPaser.parse(cacheContext.getPrefix(),methodMetadata.getMethod(),methodMetadata.getArgs(),List.class);
-        String keys = mSpelPaser.parse(cacheContext.getKey(),methodMetadata.getMethod(),methodMetadata.getArgs(),returnValue,String.class);
-        return cacheNames.stream().filter(Objects::nonNull).map(p -> p + "::" + keys).collect(Collectors.toList());
-    }
 
     @Override
     public int getOrder(){

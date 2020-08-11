@@ -22,7 +22,7 @@ public @interface CacheRemove {
      * 前缀，el表达式
      * @return
      */
-    String prefix();
+    String[] cacheNames();
 
     /**
      * @return 缓存管理器

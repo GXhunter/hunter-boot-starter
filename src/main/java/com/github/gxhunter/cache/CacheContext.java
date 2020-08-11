@@ -15,12 +15,12 @@ import java.lang.annotation.Annotation;
 public class CacheContext<T extends Annotation>{
 
     /**
-     * 缓存名，多个表示多处缓存
+     * 缓存名，多个表示多处缓存,不支持spel表达式
      */
-    private final String prefix;
+    private final String cacheName;
 
     /**
-     * key，和{{@link #prefix}}通过"::"拼接
+     * key，和{{@link #cacheName}}通过"::"拼接
      */
     private final String key;
 
@@ -41,7 +41,7 @@ public class CacheContext<T extends Annotation>{
      * key生成器
      *
      * @see #key 不要同时使用
-     * @see #prefix 不要同时使用
+     * @see #cacheName 不要同时使用
      */
     private final KeyGenerator keyGenerator;
 

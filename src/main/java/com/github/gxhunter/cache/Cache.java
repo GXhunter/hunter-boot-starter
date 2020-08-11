@@ -27,11 +27,10 @@ public @interface Cache{
     long timeout() default 60L;
 
     /**
-     * 前缀，el表达式。几个前缀存储几个缓存。
-     *
+     * 缓存名称，与{{@link #key()}}配合使用
      * @return 默认为方法签名
      */
-    String prefix();
+    String[] cacheNames();
 
     /**
      * 条件满足时才缓存
