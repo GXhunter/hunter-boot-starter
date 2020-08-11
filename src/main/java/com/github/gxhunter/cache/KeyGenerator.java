@@ -6,6 +6,13 @@ package com.github.gxhunter.cache;
  */
 public interface KeyGenerator{
 
-    Object generate(ProxyMethodMetadata methodMetadata,CacheContext cacheContext,Object returnValue);
+    /**
+     * @param cacheName 缓存名称
+     * @param methodMetadata 被缓存的方法上下文
+     * @param cacheContext 缓存信息
+     * @param returnValue 返回值（如果有的话）
+     * @return
+     */
+    Object generate(String cacheName,ProxyMethodMetadata methodMetadata,CacheContext cacheContext,Object returnValue);
 
 }

@@ -36,7 +36,6 @@ public class CachePostProcessor implements BeanPostProcessor, ApplicationContext
                         .condition(cache.condition())
                         .unless(cache.unless())
                         .key(cache.key())
-                        .prefix(cache.cacheNames()[0])
                         .keyGenerator(context.getBean(cache.keyGenerator()))
                         .timeout(cache.timeout())
                         .build();
@@ -56,7 +55,6 @@ public class CachePostProcessor implements BeanPostProcessor, ApplicationContext
                         .beforeInvocation(cache.beforeInvocation())
                         .keyGenerator(context.getBean(cache.keyGenerator()))
                         .key(cache.key())
-                        .prefix(cache.cacheNames()[0])
                         .build();
                 mCacheContextHolder.saveCacheContext(method,AopProxyUtils.ultimateTargetClass(bean),cacheContext);
                 log.debug("新增缓存拦截，{}到{}-{}",cache,AopProxyUtils.ultimateTargetClass(bean),method);

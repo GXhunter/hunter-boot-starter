@@ -21,8 +21,8 @@ public class CacheableContext extends CacheContext<Cache>{
     private final String unless;
 
     @Builder
-    public CacheableContext(String prefix,String key,KeyGenerator keyGenerator,String cacheResolver,String condition,String unless,ICacheManager cacheManager,Cache cacheAnnotation,long timeout){
-        super(prefix,key,cacheResolver,condition,cacheManager,keyGenerator,cacheAnnotation,Cache.class);
+    public CacheableContext(String key,KeyGenerator keyGenerator,String cacheResolver,String condition,String unless,ICacheManager cacheManager,Cache cacheAnnotation,long timeout){
+        super(key,cacheResolver,condition,cacheManager,keyGenerator,cacheAnnotation,Cache.class);
         this.timeout = timeout;
         this.unless = unless;
     }

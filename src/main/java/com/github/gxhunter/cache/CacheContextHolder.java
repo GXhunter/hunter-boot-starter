@@ -1,13 +1,10 @@
 package com.github.gxhunter.cache;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,11 +17,11 @@ public class CacheContextHolder{
     /**
      * 方法 -> 缓存
      */
-    private final Map<MethodKey, List<CacheContext>> attributeCache = new ConcurrentHashMap<>(1024);
+    private final Map<MethodKey, CacheContext> attributeCache = new ConcurrentHashMap<>(1024);
 
 
 
-    List getCacheOperations(Method method,@Nullable Class<?> targetClass,Class<? extends Annotation> annotation){
+    CacheContext getCacheOperations(Method method,@Nullable Class<?> targetClass,Class<? extends Annotation> annotation){
         if(method.getDeclaringClass() == Object.class){
             return null;
         }
@@ -38,12 +35,7 @@ public class CacheContextHolder{
             return ;
         }
         MethodKey cacheKey = new MethodKey(method,targetClass,cacheMetadata.getAnnotationType());
-        List<CacheContext> list = this.attributeCache.get(cacheKey);
-        if(list != null){
-            list.add(cacheMetadata);
-        }else {
-            attributeCache.put(cacheKey,Arrays.asList(cacheMetadata));
-        }
+        this.attributeCache.put(cacheKey,cacheMetadata);
 
     }
 

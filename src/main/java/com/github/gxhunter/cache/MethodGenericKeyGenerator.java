@@ -6,7 +6,7 @@ package com.github.gxhunter.cache;
  */
 public class MethodGenericKeyGenerator implements KeyGenerator{
     @Override
-    public Object generate(ProxyMethodMetadata methodMetadata,CacheContext cacheContext,Object returnValue){
+    public Object generate(String cacheName,ProxyMethodMetadata methodMetadata,CacheContext cacheContext,Object returnValue){
         return methodMetadata;
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.aop.support.ComposablePointcut;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +38,11 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     public Object invoke(MethodInvocation invocation) throws Throwable{
         Method method = invocation.getMethod();
         ProxyMethodMetadata methodContext = ProxyMethodMetadata.builder().method(method).targetClass(invocation.getThis()).args(invocation.getArguments()).build();
-        List<CacheRemoveContext> cacheRemoveContext = mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),CacheRemove.class);
+        CacheRemoveContext cacheRemoveContext = (CacheRemoveContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),CacheRemove.class);
+
         processCacheRemove(cacheRemoveContext,methodContext,true,null);
 
-        List<CacheableContext> cacheContext = mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),Cache.class);
+        CacheableContext cacheContext = (CacheableContext) mCacheContextHolder.getCacheOperations(method,invocation.getThis().getClass(),Cache.class);
 
         Object cacheValue = findCachedItem(cacheContext,methodContext);
         if(cacheValue != null){
@@ -57,25 +57,23 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     }
 
 
-    private void cachePut(Object returnValue,List<CacheableContext> cacheContextList,ProxyMethodMetadata methodContext){
-        if(cacheContextList == null){
+    private void cachePut(Object returnValue,CacheableContext cacheContext,ProxyMethodMetadata methodContext){
+        if(cacheContext == null){
             return;
         }
-        Cache cache = cacheContextList.get(0).getCacheAnnotation();
+        Cache cache = cacheContext.getCacheAnnotation();
         boolean unless = mSpelPaser.parse(cache.unless(),methodContext.getMethod(),methodContext.getArgs(),returnValue,boolean.class);
         if(!unless){
-            for(CacheableContext cacheableContext : cacheContextList){
-                Object keyList = cacheableContext.getKeyGenerator().generate(methodContext,cacheableContext,returnValue);
-                log.debug("put缓存,key:{},value:{},超时:{},执行方法:{}",keyList,returnValue,cacheableContext.getTimeout(),methodContext);
-                cacheableContext.getCacheManager().put(keyList,returnValue,cacheableContext.getTimeout());
+            for(String cacheName : cache.cacheNames()){
+                Object keyList = cacheContext.getKeyGenerator().generate(cacheName,methodContext,cacheContext,returnValue);
+                log.debug("put缓存,key:{},value:{},超时:{},执行方法:{}",keyList,returnValue,cacheContext.getTimeout(),methodContext);
+                cacheContext.getCacheManager().put(keyList,returnValue,cacheContext.getTimeout());
             }
         }
     }
 
-    private void processCacheRemove(List<CacheRemoveContext> cacheRemoveContextList,ProxyMethodMetadata methodContext,boolean beforeInvocation,Object returnValue){
-
-        CacheRemove cacheRemove = Optional.ofNullable(cacheRemoveContextList)
-                .map(e->e.get(0))
+    private void processCacheRemove(CacheRemoveContext cacheContext,ProxyMethodMetadata methodContext,boolean beforeInvocation,Object returnValue){
+        CacheRemove cacheRemove = Optional.ofNullable(cacheContext)
                 .map(CacheContext::getCacheAnnotation).orElse(null);
 
         if(cacheRemove == null || cacheRemove.beforeInvocation() != beforeInvocation){
@@ -85,11 +83,10 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
         if(!condition){
             return;
         }
-
-        for(CacheRemoveContext cacheRemoveContext : cacheRemoveContextList){
-            Object key = cacheRemoveContext.getKeyGenerator().generate(methodContext,cacheRemoveContext,returnValue);
-            cacheRemoveContext.getCacheManager().remove(key);
-            log.debug("移除了缓存:{},执行方法:{}",key,methodContext);
+        for(String cacheName : cacheRemove.cacheNames()){
+            Object keyList = cacheContext.getKeyGenerator().generate(cacheName,methodContext,cacheContext,null);
+            cacheContext.getCacheManager().remove(keyList);
+            log.debug("移除了缓存:{},执行方法:{}",keyList,methodContext);
         }
     }
 
@@ -97,12 +94,12 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
     /**
      * 获取缓存中的值
      *
-     * @param cacheContextList 缓存上下文
+     * @param cacheContext  缓存上下文
      * @param methodContext
      * @return
      */
-    private Object findCachedItem(List<CacheableContext> cacheContextList,ProxyMethodMetadata methodContext){
-        if(cacheContextList == null){
+    private Object findCachedItem(CacheContext cacheContext,ProxyMethodMetadata methodContext){
+        if(cacheContext == null){
             return null;
         }
         Cache cache = methodContext.getMethod().getAnnotation(Cache.class);
@@ -113,12 +110,15 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
         if(!condition){
             return null;
         }
-        for(CacheableContext cacheContext : cacheContextList){
-            Object key = cacheContext.getKeyGenerator().generate(methodContext,cacheContext,null);
-            Object value = cacheContext.getCacheManager().get(key);
-            if(value != null){
-                log.debug("从缓存获取的值为:{},key:{},方法是:{}",value,key,methodContext);
-                return value;
+        for(String cacheName : cache.cacheNames()){
+            Object cacheKeys = cacheContext.getKeyGenerator().generate(cacheName,methodContext,cacheContext,null);
+            if(cacheKeys == null){
+                return null;
+            }
+            Object cacheValue = cacheContext.getCacheManager().get(cacheKeys);
+            log.debug("从缓存获取的值为:{},key:{},结果:{},方法是:{}",cacheValue,cacheKeys,cacheValue,methodContext);
+            if(cacheValue != null && !CACHE_EMPTY_VALUE.equals(cacheValue)){
+                return cacheValue;
             }
         }
         return null;
@@ -130,7 +130,6 @@ public class CacheInterceptor extends AbstractPointcutAdvisor implements MethodI
         Pointcut cacheRemovePoint = AnnotationMatchingPointcut.forMethodAnnotation(CacheRemove.class);
         return new ComposablePointcut(cachePoint).union(cacheRemovePoint);
     }
-
 
     @Override
     public int getOrder(){
