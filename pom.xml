@@ -37,7 +37,7 @@
     </developers>
     <properties>
         <deploy.version>${project.version}</deploy.version>
-        <springboot.version>2.0.6.RELEASE</springboot.version>
+        <springboot.version>2.5.12</springboot.version>
         <lombok.version>1.16.20</lombok.version>
         <servlet.version>4.0.0</servlet.version>
         <guava.version>27.1-jre</guava.version>
